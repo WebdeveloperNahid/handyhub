@@ -14,24 +14,25 @@ import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiTool, FiCheck } from "react-
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 
+type UserRole = "user" | "provider";
+
 interface FormState {
   name: string;
   email: string;
   password: string;
-  confirmPassword: string;
+  role: UserRole;
 }
 
 interface FormErrors {
   name?: string;
   email?: string;
   password?: string;
-  confirmPassword?: string;
 }
 
 const trustPoints: string[] = [
-  "৫০০+ যাচাই করা প্রফেশনাল",
-  "ক্লিনিং, ইলেকট্রিক, প্রিন্টার, মেরামত — সব একজায়গায়",
-  "গড়ে ১৫ মিনিটে প্রোভাইডার কনফার্মেশন",
+  "500+ verified professionals",
+  "Cleaning, electrical, printer, repair — all in one place",
+  "Average 15-minute provider confirmation",
 ];
 
 const BACKGROUND_IMAGE_URL =
@@ -44,15 +45,14 @@ export default function SignupPage() {
     name: "",
     email: "",
     password: "",
-    confirmPassword: "",
+    role: "user",
   });
   const [errors, setErrors] = useState<FormErrors>({});
   const [showPassword, setShowPassword] = useState<boolean>(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false);
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
 
-  const handleChange = (field: keyof FormState, value: string) => {
+  const handleChange = (field: "name" | "email" | "password", value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
@@ -61,25 +61,19 @@ export default function SignupPage() {
     const newErrors: FormErrors = {};
 
     if (!form.name.trim()) {
-      newErrors.name = "নাম দিতে হবে";
+      newErrors.name = "Name is required";
     }
 
     if (!form.email.trim()) {
-      newErrors.email = "ইমেইল দিতে হবে";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "সঠিক ইমেইল দিন";
+      newErrors.email = "Enter a valid email";
     }
 
     if (!form.password) {
-      newErrors.password = "পাসওয়ার্ড দিতে হবে";
+      newErrors.password = "Password is required";
     } else if (form.password.length < 8) {
-      newErrors.password = "কমপক্ষে ৮ ক্যারেক্টার হতে হবে";
-    }
-
-    if (!form.confirmPassword) {
-      newErrors.confirmPassword = "পাসওয়ার্ড আবার লিখুন";
-    } else if (form.confirmPassword !== form.password) {
-      newErrors.confirmPassword = "পাসওয়ার্ড মিলছে না";
+      newErrors.password = "Must be at least 8 characters";
     }
 
     setErrors(newErrors);
@@ -87,34 +81,35 @@ export default function SignupPage() {
   };
 
   const handleSubmit = async (e: FormEvent) => {
-  e.preventDefault();
-  if (!validate()) return;
+    e.preventDefault();
+    if (!validate()) return;
 
-  setIsSubmitting(true);
-  setSubmitError("");
+    setIsSubmitting(true);
+    setSubmitError("");
 
-  try {
-    const { error } = await authClient.signUp.email({
-      name: form.name,
-      email: form.email,
-      password: form.password,
-    });
+    try {
+      const { error } = await authClient.signUp.email({
+        name: form.name,
+        email: form.email,
+        password: form.password,
+        role: form.role,
+      });
 
-    if (error) {
-      setSubmitError(error.message || "অ্যাকাউন্ট তৈরি করা যায়নি, আবার চেষ্টা করুন");
-      return;
+      if (error) {
+        setSubmitError(error.message || "Could not create account, please try again");
+        return;
+      }
+
+      window.location.href = "/";
+    } catch {
+      setSubmitError("Something went wrong, please try again");
+    } finally {
+      setIsSubmitting(false);
     }
-
-    window.location.href = "/";
-  } catch {
-    setSubmitError("কিছু একটা ভুল হয়েছে, আবার চেষ্টা করুন");
-  } finally {
-    setIsSubmitting(false);
-  }
-};
+  };
 
   const handleGoogleSignup = () => {
-    // TODO: better-auth google social signIn call এখানে বসাবে
+    // TODO: better-auth google social signIn call goes here
     console.log("Google signup clicked");
   };
 
@@ -134,11 +129,11 @@ export default function SignupPage() {
 
       {/* Centered card */}
       <div className="w-full max-w-4xl max-h-[95vh] overflow-y-auto bg-[#FAF9F7] rounded-2xl sm:rounded-3xl shadow-2xl grid grid-cols-1 md:grid-cols-2">
-        {/* Left info panel — now shown from tablet (md) upward */}
+        {/* Left info panel — shown from tablet upward */}
         <div className="hidden md:flex relative flex-col justify-between p-6 md:p-8 lg:p-10 overflow-hidden min-h-[480px] md:min-h-[560px] lg:min-h-[640px]">
           <Image
             src={CARD_IMAGE_URL}
-            alt="HandyHub প্রফেশনাল কাজ করছেন"
+            alt="HandyHub professional at work"
             fill
             className="object-cover"
           />
@@ -151,13 +146,13 @@ export default function SignupPage() {
 
           <div className="relative z-10 space-y-4 md:space-y-5">
             <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">
-              ঘরের কাজ শুরু হোক
+              Home tasks made
               <br />
-              বিশ্বাস দিয়ে।
+              easy, with trust.
             </h1>
             <p className="text-[#F0F0EE] text-sm">
-              ক্লিনিং, ইলেকট্রিশিয়ান, মেকানিক, প্রিন্টার সার্ভিস — যাচাই করা
-              লোকাল প্রফেশনাল খুঁজুন কয়েক মিনিটে।
+              Cleaning, electrician, mechanic, printer service — find verified
+              local professionals in minutes.
             </p>
 
             <ul className="space-y-2.5 md:space-y-3">
@@ -172,12 +167,12 @@ export default function SignupPage() {
             </ul>
 
             <p className="text-xs text-[#D6D3D1] pt-2">
-              © {new Date().getFullYear()} HandyHub — লোকাল সার্ভিস মার্কেটপ্লেস
+              © {new Date().getFullYear()} HandyHub — Local service marketplace
             </p>
           </div>
         </div>
 
-        {/* Right form panel — Google + manual form always visible together */}
+        {/* Right form panel */}
         <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10">
           <div className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917]">
             <FiTool className="text-2xl text-[#15803D]" />
@@ -185,28 +180,28 @@ export default function SignupPage() {
           </div>
 
           <h2 className="text-xl sm:text-2xl font-semibold text-[#1C1917] mb-1">
-            অ্যাকাউন্ট তৈরি করুন
+            Create your account
           </h2>
           <p className="text-sm text-[#57534E] mb-5 sm:mb-6">
-            আগে থেকে অ্যাকাউন্ট আছে?{" "}
+            Already have an account?{" "}
             <Link href="/signin" className="text-[#15803D] font-medium hover:underline">
-              লগইন করুন
+              Log in
             </Link>
           </p>
 
           <Button
             onPress={handleGoogleSignup}
             variant="outline"
-            className="w-full font-medium mb-4"
+            className="w-full font-medium mb-4 bg-white text-[#1C1917] border-[#E7E5E4] hover:bg-[#F5F5F4]"
             size="lg"
           >
             <FcGoogle className="text-xl mr-2" />
-            Google দিয়ে সাইন আপ করুন
+            Sign up with Google
           </Button>
 
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 bg-[#E7E5E4]" />
-            <span className="text-xs text-[#78716C]">অথবা</span>
+            <span className="text-xs text-[#78716C]">or</span>
             <div className="h-px flex-1 bg-[#E7E5E4]" />
           </div>
 
@@ -218,10 +213,14 @@ export default function SignupPage() {
               value={form.name}
               onChange={(v) => handleChange("name", v)}
             >
-              <Label>নাম</Label>
+              <Label>Name</Label>
               <div className="relative">
-                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
-                <Input placeholder="আপনার পূর্ণ নাম" className="pl-10" fullWidth />
+                <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
+                <Input
+                  placeholder="Your full name"
+                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  fullWidth
+                />
               </div>
               <FieldError>{errors.name}</FieldError>
             </TextField>
@@ -234,10 +233,14 @@ export default function SignupPage() {
               value={form.email}
               onChange={(v) => handleChange("email", v)}
             >
-              <Label>ইমেইল</Label>
+              <Label>Email</Label>
               <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
-                <Input placeholder="you@example.com" className="pl-10" fullWidth />
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
+                <Input
+                  placeholder="you@example.com"
+                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  fullWidth
+                />
               </div>
               <FieldError>{errors.email}</FieldError>
             </TextField>
@@ -250,18 +253,18 @@ export default function SignupPage() {
               value={form.password}
               onChange={(v) => handleChange("password", v)}
             >
-              <Label>পাসওয়ার্ড</Label>
+              <Label>Password</Label>
               <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
-                  placeholder="কমপক্ষে ৮ ক্যারেক্টার"
-                  className="pl-10 pr-10"
+                  placeholder="At least 8 characters"
+                  className="pl-10 pr-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
                   fullWidth
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10"
                   tabIndex={-1}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -270,33 +273,47 @@ export default function SignupPage() {
               <FieldError>{errors.password}</FieldError>
             </TextField>
 
-            <TextField
-              name="confirmPassword"
-              type={showConfirmPassword ? "text" : "password"}
-              fullWidth
-              isInvalid={!!errors.confirmPassword}
-              value={form.confirmPassword}
-              onChange={(v) => handleChange("confirmPassword", v)}
-            >
-              <Label>পাসওয়ার্ড আবার লিখুন</Label>
-              <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
-                <Input
-                  placeholder="পাসওয়ার্ড কনফার্ম করুন"
-                  className="pl-10 pr-10"
-                  fullWidth
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C]"
-                  tabIndex={-1}
+            {/* Role selection — User / Provider */}
+            <div>
+              <Label>I want to join as</Label>
+              <div className="grid grid-cols-2 gap-3 mt-1.5">
+                <label
+                  className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 cursor-pointer transition-colors ${
+                    form.role === "user"
+                      ? "border-[#15803D] bg-[#15803D]/5 text-[#15803D]"
+                      : "border-[#E7E5E4] bg-white text-[#57534E]"
+                  }`}
                 >
-                  {showConfirmPassword ? <FiEyeOff /> : <FiEye />}
-                </button>
+                  <input
+                    type="radio"
+                    name="role"
+                    value="user"
+                    checked={form.role === "user"}
+                    onChange={() => setForm((prev) => ({ ...prev, role: "user" }))}
+                    className="sr-only"
+                  />
+                  <span className="text-sm font-medium">User</span>
+                </label>
+
+                <label
+                  className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 cursor-pointer transition-colors ${
+                    form.role === "provider"
+                      ? "border-[#15803D] bg-[#15803D]/5 text-[#15803D]"
+                      : "border-[#E7E5E4] bg-white text-[#57534E]"
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="role"
+                    value="provider"
+                    checked={form.role === "provider"}
+                    onChange={() => setForm((prev) => ({ ...prev, role: "provider" }))}
+                    className="sr-only"
+                  />
+                  <span className="text-sm font-medium">Provider</span>
+                </label>
               </div>
-              <FieldError>{errors.confirmPassword}</FieldError>
-            </TextField>
+            </div>
 
             {submitError && (
               <p className="text-sm text-red-600 bg-red-50 border border-red-200 rounded-lg px-3 py-2">
@@ -311,15 +328,14 @@ export default function SignupPage() {
               className="w-full bg-[#15803D] text-white font-medium mt-2"
               size="lg"
             >
-              অ্যাকাউন্ট তৈরি করুন
+              Create account
             </Button>
           </form>
 
           <p className="text-xs text-[#78716C] text-center pt-4">
-            অ্যাকাউন্ট তৈরি করলে আপনি HandyHub এর{" "}
-            <Link href="/terms" className="underline">শর্তাবলী</Link> ও{" "}
-            <Link href="/privacy" className="underline">প্রাইভেসি পলিসি</Link>{" "}
-            মেনে নিচ্ছেন।
+            By creating an account you agree to HandyHub&apos;s{" "}
+            <Link href="/terms" className="underline">Terms</Link> and{" "}
+            <Link href="/privacy" className="underline">Privacy Policy</Link>.
           </p>
         </div>
       </div>

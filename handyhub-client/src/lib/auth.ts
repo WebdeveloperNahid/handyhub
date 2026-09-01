@@ -11,6 +11,16 @@ export const auth = betterAuth({
   },
   database: mongodbAdapter(db, {
     // Optional: if you don't provide a client, database transactions won't be enabled.
-    // client,
+    client,
   }),
+   user: {                               // ← এটা betterAuth({...}) এর top-level এ, database এর ভাই (sibling)
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user",
+        input: true,
+      },
+    },
+  },
 });

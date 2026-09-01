@@ -161,7 +161,7 @@ export function DashboardSidebar() {
       {/* Mobile Drawer */}
       <Drawer>
         <Button className="lg:hidden" variant="secondary">
-          <TfiMenuAlt />
+          <TfiMenuAlt className="size-5 text-[#15803D] dark:text-[#22C55E]" />
         </Button>
         <Drawer.Backdrop>
           <Drawer.Content placement="left">

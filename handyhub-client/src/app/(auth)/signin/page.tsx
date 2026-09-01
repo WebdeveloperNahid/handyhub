@@ -3,14 +3,15 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { TextField, Label, Input, FieldError, Button } from "@heroui/react";
 import {
-  TextField,
-  Label,
-  Input,
-  FieldError,
-  Button,
-} from "@heroui/react";
-import { FiMail, FiLock, FiEye, FiEyeOff, FiTool, FiCheck } from "react-icons/fi";
+  FiMail,
+  FiLock,
+  FiEye,
+  FiEyeOff,
+  FiTool,
+  FiCheck,
+} from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 
@@ -25,9 +26,9 @@ interface FormErrors {
 }
 
 const trustPoints: string[] = [
-  "৫০০+ যাচাই করা প্রফেশনাল",
-  "ক্লিনিং, ইলেকট্রিক, প্রিন্টার, মেরামত — সব একজায়গায়",
-  "গড়ে ১৫ মিনিটে প্রোভাইডার কনফার্মেশন",
+  "500+ verified professionals",
+  "Cleaning, electrical, printer, repair — all in one place",
+  "Average 15-minute provider confirmation",
 ];
 
 const BACKGROUND_IMAGE_URL =
@@ -54,13 +55,13 @@ export default function LoginPage() {
     const newErrors: FormErrors = {};
 
     if (!form.email.trim()) {
-      newErrors.email = "ইমেইল দিতে হবে";
+      newErrors.email = "Email is required";
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email)) {
-      newErrors.email = "সঠিক ইমেইল দিন";
+      newErrors.email = "Enter a valid email";
     }
 
     if (!form.password) {
-      newErrors.password = "পাসওয়ার্ড দিতে হবে";
+      newErrors.password = "Password is required";
     }
 
     setErrors(newErrors);
@@ -82,21 +83,21 @@ export default function LoginPage() {
 
       if (error) {
         setSubmitError(
-          error.message || "ইমেইল অথবা পাসওয়ার্ড ভুল হয়েছে, আবার চেষ্টা করুন"
+          error.message || "Incorrect email or password, please try again",
         );
         return;
       }
 
       window.location.href = "/";
     } catch {
-      setSubmitError("কিছু একটা ভুল হয়েছে, আবার চেষ্টা করুন");
+      setSubmitError("Something went wrong, please try again");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   const handleGoogleLogin = () => {
-    // TODO: better-auth google social signIn call এখানে বসাবে
+    // TODO: better-auth google social signIn call goes here
     console.log("Google login clicked");
   };
 
@@ -120,7 +121,7 @@ export default function LoginPage() {
         <div className="hidden md:flex relative flex-col justify-between p-6 md:p-8 lg:p-10 overflow-hidden min-h-[480px] md:min-h-[560px] lg:min-h-[640px]">
           <Image
             src={CARD_IMAGE_URL}
-            alt="HandyHub প্রফেশনাল কাজ করছেন"
+            alt="HandyHub professional at work"
             fill
             className="object-cover"
           />
@@ -128,17 +129,19 @@ export default function LoginPage() {
 
           <div className="relative z-10 flex items-center gap-2 text-white">
             <FiTool className="text-xl md:text-2xl" />
-            <span className="text-lg md:text-xl font-semibold tracking-tight">HandyHub</span>
+            <span className="text-lg md:text-xl font-semibold tracking-tight">
+              HandyHub
+            </span>
           </div>
 
           <div className="relative z-10 space-y-4 md:space-y-5">
             <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">
-              আবার স্বাগতম,
+              Welcome back,
               <br />
-              কাজ চলুক নির্বিঘ্নে।
+              let&apos;s keep things moving.
             </h1>
             <p className="text-[#F0F0EE] text-sm">
-              আপনার বুকিং, প্রোভাইডার আর সার্ভিস হিস্ট্রি দেখতে লগইন করুন।
+              Log in to view your bookings, providers, and service history.
             </p>
 
             <ul className="space-y-2.5 md:space-y-3">
@@ -153,7 +156,7 @@ export default function LoginPage() {
             </ul>
 
             <p className="text-xs text-[#D6D3D1] pt-2">
-              © {new Date().getFullYear()} HandyHub — লোকাল সার্ভিস মার্কেটপ্লেস
+              © {new Date().getFullYear()} HandyHub — Local service marketplace
             </p>
           </div>
         </div>
@@ -166,28 +169,31 @@ export default function LoginPage() {
           </div>
 
           <h2 className="text-xl sm:text-2xl font-semibold text-[#1C1917] mb-1">
-            লগইন করুন
+            Log in
           </h2>
           <p className="text-sm text-[#57534E] mb-5 sm:mb-6">
-            অ্যাকাউন্ট নেই?{" "}
-            <Link href="/signup" className="text-[#15803D] font-medium hover:underline">
-              অ্যাকাউন্ট তৈরি করুন
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/signup"
+              className="text-[#15803D] font-medium hover:underline"
+            >
+              Create one
             </Link>
           </p>
 
           <Button
             onPress={handleGoogleLogin}
             variant="outline"
-            className="w-full font-medium mb-4"
+            className="w-full font-medium mb-4 bg-white text-[#1C1917] border-[#E7E5E4] hover:bg-[#F5F5F4]"
             size="lg"
           >
             <FcGoogle className="text-xl mr-2" />
-            Google দিয়ে লগইন করুন
+            Log in with Google
           </Button>
 
           <div className="flex items-center gap-3 mb-4">
             <div className="h-px flex-1 bg-[#E7E5E4]" />
-            <span className="text-xs text-[#78716C]">অথবা</span>
+            <span className="text-xs text-[#78716C]">or</span>
             <div className="h-px flex-1 bg-[#E7E5E4]" />
           </div>
 
@@ -200,10 +206,14 @@ export default function LoginPage() {
               value={form.email}
               onChange={(v) => handleChange("email", v)}
             >
-              <Label>ইমেইল</Label>
+              <Label>Email</Label>
               <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
-                <Input placeholder="you@example.com" className="pl-10" fullWidth />
+                <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
+                <Input
+                  placeholder="you@example.com"
+                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  fullWidth
+                />
               </div>
               <FieldError>{errors.email}</FieldError>
             </TextField>
@@ -217,25 +227,25 @@ export default function LoginPage() {
               onChange={(v) => handleChange("password", v)}
             >
               <div className="flex items-center justify-between">
-                <Label>পাসওয়ার্ড</Label>
+                <Label>Password</Label>
                 <Link
                   href="/forgot-password"
                   className="text-xs text-[#15803D] hover:underline"
                 >
-                  পাসওয়ার্ড ভুলে গেছেন?
+                  Forgot password?
                 </Link>
               </div>
               <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C]" />
+                <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
-                  placeholder="আপনার পাসওয়ার্ড"
-                  className="pl-10 pr-10"
+                  placeholder="Your password"
+                  className="pl-10 pr-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
                   fullWidth
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword((s) => !s)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C]"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10"
                   tabIndex={-1}
                 >
                   {showPassword ? <FiEyeOff /> : <FiEye />}
@@ -257,7 +267,7 @@ export default function LoginPage() {
               className="w-full bg-[#15803D] text-white font-medium mt-2"
               size="lg"
             >
-              লগইন করুন
+              Log in
             </Button>
           </form>
         </div>

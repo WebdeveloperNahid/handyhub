@@ -1,36 +1,236 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# HandyHub
 
-## Getting Started
+**AI-powered Local Service Marketplace** — ইলেকট্রিশিয়ান, প্লাম্বার, AC মেকানিক, ক্লিনার-এর মতো লোকাল সার্ভিস প্রোভাইডার খুঁজে বুক করার প্ল্যাটফর্ম।
 
-First, run the development server:
+Full-Stack Team Project | Deadline: **23 September 2026**
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+---
+
+## 📌 Project Overview
+
+HandyHub-এ ইউজার তাদের সমস্যা লিখে (যেমন *"পাইপ লিক করছে"*) অথবা সরাসরি ক্যাটাগরি থেকে ব্রাউজ করে সার্ভিস প্রোভাইডার খুঁজে বের করতে পারবে। AI প্রথমে সমস্যাটা বিশ্লেষণ করে সঠিক ক্যাটাগরি সাজেস্ট করে, তারপর database থেকে real verified provider দেখায়।
+
+---
+
+## 👥 User Roles
+
+| Role | কাজ |
+|---|---|
+| **User** | সার্ভিস খুঁজবে, request পাঠাবে, রিভিউ দেবে |
+| **Provider** | প্রোফাইল/সার্ভিস তৈরি করবে, request accept/reject করবে |
+| **Admin** | User/Provider ম্যানেজ করবে, Provider verify করবে, Category কন্ট্রোল করবে |
+
+---
+
+## 🛠️ Tech Stack
+
+| Layer | Technology |
+|---|---|
+| Frontend | Next.js (App Router) + TypeScript + Tailwind CSS v4 |
+| UI Components | HeroUI v3 |
+| Animation | Framer Motion |
+| Backend | Express.js + TypeScript |
+| Database | MongoDB Atlas |
+| Authentication | Better Auth (Email/Password, Google OAuth পরে যোগ হবে) |
+| AI | LLM API — Problem Analyzer + Provider Recommendation |
+
+---
+
+## 🎨 Design System
+
+**সর্বোচ্চ ৩টা Main Color** (assignment requirement অনুযায়ী):
+
+| Color | Light Mode | Dark Mode | ব্যবহার |
+|---|---|---|---|
+| Primary | `#15803D` | `#22C55E` | Logo, buttons, links |
+| Accent | `#F59E0B` | `#FBBF24` | CTA highlight, badges |
+| Neutral (bg) | `#FAF9F7` | `#181818` | Background/surface |
+
+Text/border-এ standard black/white/gray shade ব্যবহার হয় (brand color হিসেবে গণনা হয় না)।
+
+Light/Dark mode toggle → `src/Components/ThemeToggle.tsx` + `src/lib/core/theme.ts`
+
+---
+
+## 📁 Repository Structure (Monorepo)
+
+```
+handyhub/
+├── handyhub-client/   ← Next.js frontend (port 3000)
+└── handyhub-server/   ← Express backend (port 5000)
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Client — `handyhub-client/src/`
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```
+app/
+├── (auth)/
+│   ├── signin/page.tsx
+│   └── signup/page.tsx
+├── api/auth/[...all]/route.ts     ← Better Auth handler
+├── all-services/
+│   ├── page.tsx                   ← Provider listing (search + filter)
+│   └── [id]/page.tsx              ← Provider details
+├── dashboard/                     ← নিচে বিস্তারিত
+├── layout.tsx
+└── page.tsx                       ← Home
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+Components/
+├── Navbar.tsx
+├── Themetoggle.tsx
+└── ... (আরো যোগ হবে)
 
-## Learn More
+lib/
+├── core/
+│   ├── auth.ts
+│   ├── auth-client.ts
+│   └── theme.ts
+├── actions/
+├── api/
+└── ...
 
-To learn more about Next.js, take a look at the following resources:
+types/
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Server — `handyhub-server/`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+```
+index.ts
+config/db.ts
+models/
+routes/
+controllers/
+middleware/
+```
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🔐 Dashboard Structure (Role-Based)
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+প্রতিটা role-এর জন্য আলাদা dashboard section, `layout.tsx` দিয়ে role-check করে protect করা হবে (ভুল role হলে `/unauthorized`-এ redirect):
+
+```
+src/app/(dashboard)dashboard/
+│
+├── admin/                          ← শুধু Admin role access করবে
+│   ├── manage-users/
+│   │   └── page.tsx                ← সব user দেখা, Suspend/Activate করা
+│   ├── manage-providers/
+│   │   └── page.tsx                ← Provider verification (Approve/Reject)
+│   ├── manage-categories/
+│   │   └── page.tsx                ← Service category Add/Edit/Delete
+│   └── page.tsx                    ← Admin Overview (stats, summary)
+│
+├── provider/                       ← শুধু Provider role access করবে
+│   ├── my-services/
+│   │   └── page.tsx                ← নিজের services দেখা/এডিট করা
+│   ├── add-service/
+│   │   └── page.tsx                ← নতুন service যোগ করা
+│   ├── availability/
+│   │   └── page.tsx                ← কবে/কখন available সেট করা
+│   ├── incoming-requests/
+│   │   └── page.tsx                ← User-দের পাঠানো request দেখা, Accept/Reject
+│   ├── active-jobs/
+│   │   └── page.tsx                ← যেসব কাজ চলমান (In Progress)
+│   └── page.tsx                    ← Provider Overview
+│
+├── user/                           ← শুধু সাধারণ User role access করবে
+│   ├── my-requests/
+│   │   └── page.tsx                ← নিজের পাঠানো সব service request-এর status
+│   ├── saved-providers/
+│   │   └── page.tsx                ← পছন্দের provider সেভ করা লিস্ট
+│   └── page.tsx                    ← User Overview
+│
+└── layout.tsx                      ← Role check করবে, ভুল role হলে /unauthorized এ পাঠাবে
+```
+
+**নামকরণের নিয়ম:** প্রতিটা folder-এর নাম = ভেতরে কী কাজ হবে তার বর্ণনা (verb+noun pattern, যেমন `add-service`, `manage-categories`), generic নাম (`page1`, `data`) এড়ানো হয়েছে।
+
+---
+
+## 🔄 Core Workflow
+
+```
+User সমস্যা লিখে/browse করে
+        ↓
+AI ক্যাটাগরি সাজেস্ট করে (optional)
+        ↓
+Provider list দেখানো হয় (real DB data)
+        ↓
+User Service Request পাঠায়
+        ↓
+Provider Accept/Reject করে
+        ↓
+Status: In Progress → Completed
+        ↓
+User Review দেয়
+```
+
+Request status flow: `PENDING → ACCEPTED/REJECTED → IN_PROGRESS → COMPLETED` (অথবা `CANCELLED` pending অবস্থায়)
+
+---
+
+## 🗄️ Database Collections (MongoDB)
+
+`users`, `providerProfiles`, `categories`, `providerServices`, `availability`, `serviceRequests`, `reviews`
+
+---
+
+## ✅ এখন পর্যন্ত যা সম্পূর্ণ হয়েছে
+
+- [x] Monorepo GitHub setup + Branch protection + PR workflow
+- [x] Better Auth + MongoDB সংযুক্ত (Email/Password কাজ করছে)
+- [x] Sign in / Sign up page
+- [x] Navbar (logo, nav links, theme toggle, auth-aware button)
+- [x] Light/Dark mode toggle
+- [x] `all-services` listing + details page (structure তৈরি, content বাকি)
+
+## 🔲 বাকি আছে
+
+- [ ] Google OAuth login
+- [ ] Forgot Password flow
+- [ ] Dashboard-এর সব page (Admin/Provider/User) এর actual content ও logic
+- [ ] Role-based route protection (`dashboard/layout.tsx`)
+- [ ] Service Request workflow (Create → Accept/Reject → Status update)
+- [ ] Review & Rating system
+- [ ] AI Assistant feature (Problem Analyzer + Recommendation)
+- [ ] Search + Filter (Explore/all-services page)
+- [ ] Express backend API routes (models, controllers)
+- [ ] Deployment (Client → Vercel, Server → TBD)
+
+---
+
+## 🌿 Git Workflow
+
+**Team Member:**
+```bash
+git checkout main
+git pull origin main
+git checkout -b feature/[name]
+# কোড লেখা
+git add .
+git commit -m "feat: description"
+git push origin feature/[name]
+# → GitHub-এ PR বানানো
+```
+
+**Team Lead:** PR-এর Files changed রিভিউ → Approve → **Merge pull request** ক্লিক → Branch delete
+
+Branch naming: `feature/xyz` (নতুন কাজ), `fix/xyz` (bug fix)
+
+---
+
+## 📝 Assignment Requirements Checklist
+
+- [x] Next.js + TypeScript + Tailwind
+- [x] Better Auth
+- [ ] Google Social Login
+- [x] JWT Authentication (Better Auth handles)
+- [ ] Private/Protected Routes (role-based, in progress)
+- [ ] Full CRUD (in progress)
+- [ ] Search & min. 2 Filters
+- [x] Light/Dark Mode
+- [x] Max 3 main colors
+- [ ] Form Validation (signup/login-এ আছে, বাকি form-এ বাকি)
+- [ ] At least 1 AI Feature
+- [ ] Working Deployment

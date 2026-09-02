@@ -62,29 +62,42 @@ handyhub/
 
 ### Client — `handyhub-client/src/`
 
+Route Group (`(...)`) ব্যবহার করা হয়েছে — এগুলো URL-কে প্রভাবিত করে না, শুধু ফোল্ডার organize রাখার জন্য।
+
 ```
 app/
 ├── (auth)/
 │   ├── signin/page.tsx
 │   └── signup/page.tsx
-├── api/auth/[...all]/route.ts     ← Better Auth handler
-├── all-services/
-│   ├── page.tsx                   ← Provider listing (search + filter)
-│   └── [id]/page.tsx              ← Provider details
-├── dashboard/                     ← নিচে বিস্তারিত
+│
+├── (dashboard)/dashboard/          ← Route group দিয়ে organize করা
+│   ├── admin/
+│   ├── provider/
+│   ├── user/
+│   ├── layout.tsx                 ← Role-based protection এখানে
+│   └── page.tsx
+│
+├── (main)/
+│   └── all-services/               ← Provider listing (search + filter)
+│       └── [id]/                   ← Provider details
+│
+├── api/auth/[...all]/route.ts      ← Better Auth handler
+├── favicon.ico
+├── globals.css
 ├── layout.tsx
-└── page.tsx                       ← Home
+└── page.tsx                        ← Home
 
 Components/
+├── dashboard/
 ├── Navbar.tsx
 ├── Themetoggle.tsx
 └── ... (আরো যোগ হবে)
 
 lib/
 ├── core/
-│   ├── auth.ts
-│   ├── auth-client.ts
 │   └── theme.ts
+├── auth-client.ts
+├── auth.ts
 ├── actions/
 ├── api/
 └── ...
@@ -110,7 +123,7 @@ middleware/
 প্রতিটা role-এর জন্য আলাদা dashboard section, `layout.tsx` দিয়ে role-check করে protect করা হবে (ভুল role হলে `/unauthorized`-এ redirect):
 
 ```
-src/app/(dashboard)dashboard/
+src/app/(dashboard)/dashboard/      ← (dashboard) route group-এর ভেতরে, URL-এ প্রভাব ফেলে না
 │
 ├── admin/                          ← শুধু Admin role access করবে
 │   ├── manage-users/

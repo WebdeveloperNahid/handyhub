@@ -216,12 +216,12 @@ export default function LoginPage() {
               value={form.email}
               onChange={(v) => handleChange("email", v)}
             >
-              <Label>Email</Label>
+              <Label className="text-[#1C1917]">Email</Label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="you@example.com"
-                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                   className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
               </div>
@@ -237,7 +237,7 @@ export default function LoginPage() {
               onChange={(v) => handleChange("password", v)}
             >
               <div className="flex items-center justify-between">
-                <Label>Password</Label>
+                <Label className="text-[#1C1917]">Password</Label>
                 <Link
                   href="/forgot-password"
                   className="text-xs text-[#15803D] hover:underline"
@@ -249,7 +249,7 @@ export default function LoginPage() {
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="Your password"
-                  className="pl-10 pr-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
                 <button

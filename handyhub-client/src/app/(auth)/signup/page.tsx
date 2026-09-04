@@ -223,12 +223,12 @@ export default function SignupPage() {
               value={form.name}
               onChange={(v) => handleChange("name", v)}
             >
-              <Label>Name</Label>
+              <Label className="text-[#1C1917]">Name</Label>
               <div className="relative">
                 <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="Your full name"
-                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
               </div>
@@ -243,12 +243,12 @@ export default function SignupPage() {
               value={form.email}
               onChange={(v) => handleChange("email", v)}
             >
-              <Label>Email</Label>
+              <Label className="text-[#1C1917]">Email</Label>
               <div className="relative">
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="you@example.com"
-                  className="pl-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
               </div>
@@ -263,12 +263,12 @@ export default function SignupPage() {
               value={form.password}
               onChange={(v) => handleChange("password", v)}
             >
-              <Label>Password</Label>
+              <Label className="text-[#1C1917]">Password</Label>
               <div className="relative">
                 <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="At least 8 characters"
-                  className="pl-10 pr-10 bg-white text-[#1C1917] placeholder:text-[#A8A29E] border-[#E7E5E4]"
+                  className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
                 <button
@@ -285,7 +285,7 @@ export default function SignupPage() {
 
             {/* Role selection — User / Provider */}
             <div>
-              <Label>I want to join as</Label>
+              <Label className="text-[#1C1917]">I want to join as</Label>
               <div className="grid grid-cols-2 gap-3 mt-1.5">
                 <label
                   className={`flex items-center justify-center gap-2 rounded-lg border px-3 py-2.5 cursor-pointer transition-colors ${

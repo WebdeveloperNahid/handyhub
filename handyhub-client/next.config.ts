@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
         hostname: "**",
       },
     ],
+    qualities: [60, 70, 75],
+    formats: ["image/webp"],
   },
 };
 

@@ -3,6 +3,7 @@
 import { useState, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import {
   TextField,
   Label,
@@ -13,6 +14,8 @@ import {
 import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiTool, FiCheck } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
+import backgroundImage from "@/assets/images/login_bg.png";
+import cardImage from "@/assets/images/login.png";
 
 type UserRole = "user" | "provider";
 
@@ -35,12 +38,9 @@ const trustPoints: string[] = [
   "Average 15-minute provider confirmation",
 ];
 
-const BACKGROUND_IMAGE_URL =
-  "https://images.unsplash.com/photo-1676311396794-f14881e9daaa?auto=format&fit=crop&w=1920&q=80";
-const CARD_IMAGE_URL =
-  "https://images.unsplash.com/photo-1608109704808-62aadbc33a7d?auto=format&fit=crop&w=800&q=80";
-
 export default function SignupPage() {
+  const router = useRouter();
+
   const [form, setForm] = useState<FormState>({
     name: "",
     email: "",
@@ -100,7 +100,11 @@ export default function SignupPage() {
         return;
       }
 
-      window.location.href = "/";
+      // window.location.href এর বদলে router.push — client-side navigation,
+      // full page reload হয় না, তাই অনেক দ্রুত।
+      // router.refresh() Navbar-এর session state সাথে সাথে আপডেট করে দেয়।
+      router.push("/");
+      router.refresh();
     } catch {
       setSubmitError("Something went wrong, please try again");
     } finally {
@@ -118,9 +122,12 @@ export default function SignupPage() {
       {/* Full-page background image */}
       <div className="fixed inset-0 -z-10">
         <Image
-          src={BACKGROUND_IMAGE_URL}
+          src={backgroundImage}
           alt=""
           fill
+          sizes="100vw"
+          quality={60}
+          placeholder="blur"
           className="object-cover scale-105 blur-[2px]"
           priority
         />
@@ -132,9 +139,12 @@ export default function SignupPage() {
         {/* Left info panel — shown from tablet upward */}
         <div className="hidden md:flex relative flex-col justify-between p-6 md:p-8 lg:p-10 overflow-hidden min-h-[480px] md:min-h-[560px] lg:min-h-[640px]">
           <Image
-            src={CARD_IMAGE_URL}
+            src={cardImage}
             alt="HandyHub professional at work"
             fill
+            sizes="(max-width: 768px) 0px, 50vw"
+            quality={70}
+            placeholder="blur"
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />

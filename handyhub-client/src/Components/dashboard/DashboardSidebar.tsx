@@ -2,7 +2,7 @@
 
 import type { ComponentType, SVGProps } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import {
   House,
   Person,
@@ -15,6 +15,7 @@ import {
 } from "@gravity-ui/icons";
 import { Button, Drawer } from "@heroui/react";
 import { TfiMenuAlt } from "react-icons/tfi";
+import { FiLogOut } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
 
 type NavItem = {
@@ -25,14 +26,20 @@ type NavItem = {
 
 export function DashboardSidebar() {
   const pathname = usePathname();
+  const router = useRouter();
+
   const { data: session, isPending } = authClient.useSession();
 
-  // ১. Session থেকে User Role বের করা
-  const role = !isPending ? (session?.user as { role?: string })?.role : null;
+  const role = !isPending
+    ? (session?.user as { role?: string })?.role
+    : null;
 
-  // ২. Customer/User এর জন্য সাইডবার মেনু
   const userItems: NavItem[] = [
-    { icon: House, label: "Overview", href: "/dashboard/user" },
+    {
+      icon: House,
+      label: "Overview",
+      href: "/dashboard/user",
+    },
     {
       icon: ListCheck,
       label: "My Requests",
@@ -43,12 +50,19 @@ export function DashboardSidebar() {
       label: "Saved Providers",
       href: "/dashboard/user/saved-providers",
     },
-    { icon: Boxes3, label: "Browse Services", href: "/all-services" },
+    {
+      icon: Boxes3,
+      label: "Browse Services",
+      href: "/all-services",
+    },
   ];
 
-  // ৩. Provider এর জন্য সাইডবার মেনু
   const providerItems: NavItem[] = [
-    { icon: House, label: "Overview", href: "/dashboard/provider" },
+    {
+      icon: House,
+      label: "Overview",
+      href: "/dashboard/provider",
+    },
     {
       icon: Briefcase,
       label: "My Services",
@@ -76,9 +90,12 @@ export function DashboardSidebar() {
     },
   ];
 
-  // ৪. Admin এর জন্য সাইডবার মেনু
   const adminItems: NavItem[] = [
-    { icon: House, label: "Overview", href: "/dashboard/admin" },
+    {
+      icon: House,
+      label: "Overview",
+      href: "/dashboard/admin",
+    },
     {
       icon: Person,
       label: "Manage Users",
@@ -96,43 +113,68 @@ export function DashboardSidebar() {
     },
   ];
 
-  // ৫. রোল অনুযায়ী লিঙ্ক নির্বাচন
   const getNavDetails = () => {
-    if (role === "admin") return { items: adminItems, label: "Admin Panel" };
-    if (role === "provider")
-      return { items: providerItems, label: "Provider Panel" };
-    return { items: userItems, label: "Customer Panel" };
+    if (role === "admin") {
+      return {
+        items: adminItems,
+        label: "Admin Panel",
+      };
+    }
+
+    if (role === "provider") {
+      return {
+        items: providerItems,
+        label: "Provider Panel",
+      };
+    }
+
+    return {
+      items: userItems,
+      label: "Customer Panel",
+    };
   };
 
   const { items, label: roleLabel } = getNavDetails();
 
+  const handleLogout = async () => {
+    await authClient.signOut();
+    router.push("/signin");
+    router.refresh();
+  };
+
   const renderLinks = (list: NavItem[]) => (
     <nav className="flex flex-col gap-1">
       {list.map((item) => {
-        const isActive = pathname === item.href;
+        const isActive =
+          pathname === item.href ||
+          (item.href !== "/dashboard/user" &&
+            item.href !== "/dashboard/provider" &&
+            item.href !== "/dashboard/admin" &&
+            pathname.startsWith(`${item.href}/`));
 
         return (
           <Link
             key={item.href}
             href={item.href}
-            className={`group relative flex items-center gap-3 whitespace-nowrap rounded-lg px-3 py-2 text-sm font-medium transition-all duration-200 ${
-              isActive
-                ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]"
-                : "text-slate-600 hover:bg-slate-100 dark:text-zinc-400 dark:hover:bg-zinc-800"
-            }`}
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
+              ? "bg-[#6E473B]/10 text-[#6E473B] dark:bg-[#A78D78]/10 dark:text-[#A78D78]"
+              : "text-[#6E473B]/75 hover:bg-[#6E473B]/5 hover:text-[#291C0E] dark:text-[#C5B8AA]/70 dark:hover:bg-white/5 dark:hover:text-[#E1D4C2]"
+              }`}
           >
             <span
-              className={`absolute left-0 top-1/2 h-4 w-[3px] -translate-y-1/2 rounded-full bg-[#15803D] transition-opacity duration-200 dark:bg-[#22C55E] ${
-                isActive ? "opacity-100" : "opacity-0"
-              }`}
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#6E473B] transition-opacity dark:bg-[#A78D78] ${isActive
+                ? "opacity-100"
+                : "opacity-0"
+                }`}
             />
+
             <item.icon
-              className={`size-4 transition-colors duration-200 ${
-                isActive
-                  ? "text-[#15803D] dark:text-[#22C55E]"
-                  : "text-slate-500 dark:text-zinc-400"
-              }`}
+              className={`size-4 ${isActive
+                ? "text-[#6E473B] dark:text-[#A78D78]"
+                : "text-[#6E473B]/50 dark:text-[#C5B8AA]/50"
+                }`}
             />
+
             {item.label}
           </Link>
         );
@@ -141,12 +183,43 @@ export function DashboardSidebar() {
   );
 
   const NavContent = (
-    <div className="flex flex-col gap-6">
-      <div>
-        <p className="mb-2 px-3 text-xs font-semibold uppercase tracking-wider text-slate-400 dark:text-zinc-500">
+    <div className="flex h-full flex-col">
+      {/* Logo */}
+      <Link
+        href="/"
+        className="mb-8 flex items-center px-3"
+      >
+        <span className="text-xl font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+          Handy
+          <span className="text-[#6E473B] dark:text-[#A78D78]">
+            Hub
+          </span>
+        </span>
+      </Link>
+
+      {/* Navigation */}
+      <div className="flex-1 overflow-y-auto pr-1">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6E473B]/45 dark:text-[#C5B8AA]/40">
           {roleLabel}
         </p>
+
         {renderLinks(items)}
+      </div>
+
+      {/* Logout */}
+      <div className="mt-4 border-t border-[#6E473B]/10 pt-4 dark:border-white/10">
+        <button
+          type="button"
+          onClick={handleLogout}
+          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#6E473B]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#C5B8AA]/70 dark:hover:text-red-400"
+        >
+          <FiLogOut
+            size={16}
+            className="transition-transform duration-200 group-hover:translate-x-0.5"
+          />
+
+          Logout
+        </button>
       </div>
     </div>
   );
@@ -154,29 +227,53 @@ export function DashboardSidebar() {
   return (
     <>
       {/* Desktop Sidebar */}
-      <aside className="hidden w-64 flex-shrink-0 border-r border-slate-200 bg-white px-3 py-4 dark:border-zinc-800 dark:bg-[#18181B] lg:block">
+      <aside
+        className="
+            hidden
+            lg:block
+            h-screen
+            w-full
+            border-r
+            border-[#6E473B]/15
+            bg-[#E8DDCE]
+            px-3
+            py-5
+            dark:border-white/10
+            dark:bg-[#181411]
+          "
+      >
         {NavContent}
       </aside>
 
-      {/* Mobile Drawer */}
-      <Drawer>
-        <Button className="lg:hidden" variant="secondary">
-          <TfiMenuAlt className="size-5 text-[#15803D] dark:text-[#22C55E]" />
-        </Button>
-        <Drawer.Backdrop>
-          <Drawer.Content placement="left">
-            <Drawer.Dialog>
-              <Drawer.CloseTrigger />
-              <Drawer.Header>
-                <Drawer.Heading className="text-slate-900 dark:text-white">
-                  HandyHub Navigation
-                </Drawer.Heading>
-              </Drawer.Header>
-              <Drawer.Body>{NavContent}</Drawer.Body>
-            </Drawer.Dialog>
-          </Drawer.Content>
-        </Drawer.Backdrop>
-      </Drawer>
+      {/* Mobile Menu */}
+      <div className="fixed left-4 top-20 z-50 lg:hidden">
+        <Drawer>
+          <Button
+            className="h-10 w-10 min-w-10 rounded-xl border border-[#6E473B]/15 bg-[#E8DDCE] p-0 shadow-md dark:border-white/10 dark:bg-[#241B17]"
+            variant="secondary"
+          >
+            <TfiMenuAlt className="size-5 text-[#6E473B] dark:text-[#A78D78]" />
+          </Button>
+
+          <Drawer.Backdrop>
+            <Drawer.Content placement="left">
+              <Drawer.Dialog>
+                <Drawer.CloseTrigger />
+
+                <Drawer.Header>
+                  <Drawer.Heading className="text-[#291C0E] dark:text-[#E1D4C2]">
+                    HandyHub
+                  </Drawer.Heading>
+                </Drawer.Header>
+
+                <Drawer.Body className="bg-[#E8DDCE] dark:bg-[#181411]">
+                  {NavContent}
+                </Drawer.Body>
+              </Drawer.Dialog>
+            </Drawer.Content>
+          </Drawer.Backdrop>
+        </Drawer>
+      </div>
     </>
   );
 }

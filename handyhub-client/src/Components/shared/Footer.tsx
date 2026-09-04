@@ -1,0 +1,139 @@
+'use client'
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
+export default function Footer() {
+  const pathName = usePathname();
+  if (pathName.includes('dashboard') || pathName.includes('signin') || pathName.includes('signup')) {
+        return null;
+    }
+  return (
+    <footer className="bg-[#291C0E] text-[#E1D4C2]">
+      <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
+        <div className="grid gap-10 md:grid-cols-4">
+          {/* Brand */}
+          <div className="md:col-span-2">
+            <Link href="/" className="flex items-center gap-2">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6E473B] text-[#E1D4C2]">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z" />
+                </svg>
+              </span>
+
+              <span className="text-lg font-semibold tracking-tight">
+                HandyHub
+              </span>
+            </Link>
+
+            <p className="mt-4 max-w-md text-sm leading-6 text-[#BEB5A9]">
+              Find trusted local services and connect with reliable
+              professionals for your everyday needs.
+            </p>
+          </div>
+
+          {/* Quick Links */}
+          <div>
+            <h3 className="text-sm font-semibold text-[#E1D4C2]">
+              Quick Links
+            </h3>
+
+            <ul className="mt-4 space-y-3 text-sm">
+              <li>
+                <Link
+                  href="/"
+                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                >
+                  Home
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/explore"
+                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                >
+                  Browse Services
+                </Link>
+              </li>
+
+              <li>
+                <Link
+                  href="/signin"
+                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                >
+                  Login
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h3 className="text-sm font-semibold text-[#E1D4C2]">
+              Services
+            </h3>
+
+            <ul className="mt-4 space-y-3 text-sm">
+              <li>
+                <span className="text-[#BEB5A9]">Home Cleaning</span>
+              </li>
+
+              <li>
+                <span className="text-[#BEB5A9]">AC Repair</span>
+              </li>
+
+              <li>
+                <span className="text-[#BEB5A9]">Plumbing</span>
+              </li>
+
+              <li>
+                <span className="text-[#BEB5A9]">Electrical</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        {/* Bottom */}
+        <div className="mt-10 border-t border-[#BEB5A9]/20 pt-6">
+          <div className="flex flex-col items-center justify-between gap-3 text-sm sm:flex-row">
+            <p className="text-[#BEB5A9]">
+              © 2026 HandyHub. All rights reserved.
+            </p>
+
+            <div className="flex gap-5">
+              <Link
+                href="/privacy"
+                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+              >
+                Privacy
+              </Link>
+
+              <Link
+                href="/terms"
+                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+              >
+                Terms
+              </Link>
+
+              <Link
+                href="/contact"
+                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+              >
+                Contact
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+}

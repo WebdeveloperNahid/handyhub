@@ -5,19 +5,23 @@ import { FiBell } from "react-icons/fi";
 import ThemeToggle from "../Themetoggle";
 
 const DashboardNavbar = () => {
-  const { data: session } = authClient.useSession();
+    const { data: session } = authClient.useSession();
 
-  const user = session?.user;
-  const role = (user as { role?: string })?.role;
+    const user = session?.user;
+    const role = (user as { role?: string })?.role;
 
-  const roleLabel =
-    role === "admin" ? "Admin" : role === "provider" ? "Provider" : "Customer";
+    const roleLabel =
+        role === "admin"
+            ? "Admin"
+            : role === "provider"
+                ? "Provider"
+                : "Customer";
 
-  const userName = user?.name || "User";
+    const userName = user?.name || "User";
 
-  return (
-    <header
-      className="
+    return (
+        <header
+            className="
                 fixed
                 left-0
                 right-0
@@ -25,34 +29,34 @@ const DashboardNavbar = () => {
                 z-50
                 h-16
                 border-b
-                border-black/10
-                bg-[#FAF9F7]/95
+                border-[#6E473B]/15
+                bg-[#E1D4C2]/95
                 backdrop-blur-md
                 dark:border-white/10
-                dark:bg-[#18181B]/95
+                dark:bg-[#1F1712]/95
                 lg:left-64
             "
-    >
-      <div className="flex h-full items-center justify-between px-4 sm:px-6">
-        {/* Left */}
-        <div>
-          <p className="text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-            Dashboard
-          </p>
+        >
+            <div className="flex h-full items-center justify-between px-4 sm:px-6">
+                {/* Left */}
+                <div>
+                    <p className="hidden text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2] lg:block">
+                        Dashboard
+                    </p>
 
-          <p className="hidden text-[11px] text-[#1C1917]/60 dark:text-[#A1A1AA]/60 sm:block">
-            Manage your HandyHub account
-          </p>
-        </div>
+                    <p className="hidden text-[11px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60 lg:block">
+                        Manage your HandyHub account
+                    </p>
+                </div>
 
-        {/* Right */}
-        <div className="flex items-center gap-2 sm:gap-3">
-          <ThemeToggle />
+                {/* Right */}
+                <div className="flex items-center gap-2 sm:gap-3">
+                    <ThemeToggle />
 
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="
+                    <button
+                        type="button"
+                        aria-label="Notifications"
+                        className="
                             relative
                             flex
                             h-9
@@ -60,63 +64,63 @@ const DashboardNavbar = () => {
                             items-center
                             justify-center
                             rounded-lg
-                            text-[#F59E0B]
+                            text-[#6E473B]
                             transition-colors
-                            hover:bg-[#F59E0B]/10
-                            dark:text-[#FBBF24]
+                            hover:bg-[#6E473B]/10
+                            dark:text-[#A78D78]
                             dark:hover:bg-white/5
                         "
-          >
-            <FiBell size={18} />
+                    >
+                        <FiBell size={18} />
 
-            <span
-              className="
+                        <span
+                            className="
                                 absolute
                                 right-2
                                 top-2
                                 h-1.5
                                 w-1.5
                                 rounded-full
-                                bg-[#F59E0B]
-                                dark:bg-[#FBBF24]
+                                bg-[#6E473B]
+                                dark:bg-[#A78D78]
                             "
-            />
-          </button>
+                        />
+                    </button>
 
-          <div className="hidden h-7 w-px bg-black/10 sm:block dark:bg-white/10" />
+                    <div className="hidden h-7 w-px bg-[#6E473B]/15 sm:block dark:bg-white/10" />
 
-          <div className="flex items-center gap-2.5">
-            <div
-              className="
+                    <div className="flex items-center gap-2.5">
+                        <div
+                            className="
                                 flex
                                 h-9
                                 w-9
                                 items-center
                                 justify-center
                                 rounded-full
-                                bg-[#22C55E]
+                                bg-[#6E473B]
                                 text-sm
                                 font-semibold
-                                text-[#18181B]
+                                text-[#E1D4C2]
                             "
-            >
-              {userName.charAt(0).toUpperCase()}
-            </div>
+                        >
+                            {userName.charAt(0).toUpperCase()}
+                        </div>
 
-            <div className="hidden sm:block">
-              <p className="max-w-32 truncate text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                {userName}
-              </p>
+                        <div className="hidden sm:block">
+                            <p className="max-w-32 truncate text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2]">
+                                {userName}
+                            </p>
 
-              <p className="text-[11px] capitalize text-[#1C1917]/60 dark:text-[#A1A1AA]/60">
-                {roleLabel}
-              </p>
+                            <p className="text-[11px] capitalize text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                                {roleLabel}
+                            </p>
+                        </div>
+                    </div>
+                </div>
             </div>
-          </div>
-        </div>
-      </div>
-    </header>
-  );
+        </header>
+    );
 };
 
 export default DashboardNavbar;

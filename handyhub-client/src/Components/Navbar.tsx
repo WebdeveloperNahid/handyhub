@@ -25,7 +25,11 @@ export default function Navbar() {
     return "/dashboard/user";
   })();
 
-  if (pathname.includes('dashboard') || pathname.includes('signin') || pathname.includes('signup')) {
+  if (
+    pathname.includes("dashboard") ||
+    pathname.includes("signin") ||
+    pathname.includes("signup")
+  ) {
     return null;
   }
 
@@ -36,11 +40,11 @@ export default function Navbar() {
   };
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#291C0E]/95 backdrop-blur transition-colors">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-[#18181B]/95 backdrop-blur transition-colors">
       <div className="mx-auto flex h-16 max-w-6xl sm:px-6 px-4 items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2">
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6E473B] text-[#E1D4C2]">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#22C55E] text-[#18181B]">
             <svg
               width="18"
               height="18"
@@ -55,7 +59,7 @@ export default function Navbar() {
             </svg>
           </span>
 
-          <span className="text-lg font-semibold tracking-tight text-[#E1D4C2]">
+          <span className="text-lg font-semibold tracking-tight text-[#F4F4F5]">
             HandyHub
           </span>
         </Link>
@@ -69,10 +73,11 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative py-1 text-sm font-medium transition-colors hover:text-[#A78D78] ${isActive
-                  ? "border-b-2 border-[#A78D78] text-[#E1D4C2]"
-                  : "text-[#BEB5A9]"
-                  }`}
+                className={`relative py-1 text-sm font-medium transition-colors hover:text-[#FBBF24] ${
+                  isActive
+                    ? "border-b-2 border-[#FBBF24] text-[#F4F4F5]"
+                    : "text-[#A1A1AA]"
+                }`}
               >
                 {link.label}
               </Link>
@@ -86,10 +91,11 @@ export default function Navbar() {
               return (
                 <Link
                   href={dashboardHref}
-                  className={`relative py-1 text-sm font-medium transition-colors hover:text-[#A78D78] ${isDashboardActive
-                    ? "border-b-2 border-[#A78D78] text-[#E1D4C2]"
-                    : "text-[#BEB5A9]"
-                    }`}
+                  className={`relative py-1 text-sm font-medium transition-colors hover:text-[#FBBF24] ${
+                    isDashboardActive
+                      ? "border-b-2 border-[#FBBF24] text-[#F4F4F5]"
+                      : "text-[#A1A1AA]"
+                  }`}
                 >
                   Dashboard
                 </Link>
@@ -106,7 +112,7 @@ export default function Navbar() {
           ) : session?.user ? (
             <button
               onClick={handleLogout}
-              className="rounded-md border border-[#BEB5A9]/40 px-4 py-2 text-sm font-medium text-[#E1D4C2] transition-colors hover:border-[#A78D78] hover:bg-[#6E473B] hover:text-[#E1D4C2]"
+              className="rounded-md border border-[#A1A1AA]/40 px-4 py-2 text-sm font-medium text-[#F4F4F5] transition-colors hover:border-[#FBBF24] hover:bg-[#FBBF24] hover:text-[#18181B]"
             >
               Log Out
             </button>
@@ -114,17 +120,16 @@ export default function Navbar() {
             <>
               <Link
                 href="/signin"
-                className={`text-sm font-medium transition-colors hover:text-[#A78D78] ${pathname === "/signin"
-                  ? "text-[#E1D4C2]"
-                  : "text-[#BEB5A9]"
-                  }`}
+                className={`text-sm font-medium transition-colors hover:text-[#FBBF24] ${
+                  pathname === "/signin" ? "text-[#F4F4F5]" : "text-[#A1A1AA]"
+                }`}
               >
                 Login
               </Link>
 
               <Link
                 href="/signup"
-                className="rounded-md bg-[#6E473B] px-4 py-2 text-sm font-medium text-[#E1D4C2] transition-colors hover:bg-[#A78D78] hover:text-[#291C0E]"
+                className="rounded-md bg-[#22C55E] px-4 py-2 text-sm font-medium text-[#18181B] transition-colors hover:bg-[#FBBF24] hover:text-[#18181B]"
               >
                 Signup
               </Link>
@@ -138,7 +143,7 @@ export default function Navbar() {
 
           <button
             onClick={() => setIsMenuOpen((v) => !v)}
-            className="flex h-9 w-9 items-center justify-center rounded-md text-[#E1D4C2] transition-colors hover:bg-[#6E473B]"
+            className="flex h-9 w-9 items-center justify-center rounded-md text-[#F4F4F5] transition-colors hover:bg-white/10"
             aria-label="Toggle menu"
           >
             {isMenuOpen ? <FiX size={22} /> : <FiMenu size={22} />}
@@ -148,7 +153,7 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {isMenuOpen && (
-        <div className="border-t border-white/10 bg-[#291C0E] px-4 py-4 md:hidden">
+        <div className="border-t border-white/10 bg-[#18181B] px-4 py-4 md:hidden">
           <nav className="flex flex-col gap-4">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -158,10 +163,9 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-sm font-medium transition-colors hover:text-[#A78D78] ${isActive
-                    ? "text-[#E1D4C2]"
-                    : "text-[#BEB5A9]"
-                    }`}
+                  className={`text-sm font-medium transition-colors hover:text-[#FBBF24] ${
+                    isActive ? "text-[#F4F4F5]" : "text-[#A1A1AA]"
+                  }`}
                 >
                   {link.label}
                 </Link>
@@ -176,10 +180,9 @@ export default function Navbar() {
                   <Link
                     href={dashboardHref}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`text-sm font-medium transition-colors hover:text-[#A78D78] ${isDashboardActive
-                      ? "text-[#E1D4C2]"
-                      : "text-[#BEB5A9]"
-                      }`}
+                    className={`text-sm font-medium transition-colors hover:text-[#FBBF24] ${
+                      isDashboardActive ? "text-[#F4F4F5]" : "text-[#A1A1AA]"
+                    }`}
                   >
                     Dashboard
                   </Link>
@@ -194,7 +197,7 @@ export default function Navbar() {
                   setIsMenuOpen(false);
                   handleLogout();
                 }}
-                className="rounded-md border border-[#BEB5A9]/40 px-4 py-2 text-center text-sm font-medium text-[#E1D4C2] transition-colors hover:border-[#A78D78] hover:bg-[#6E473B]"
+                className="rounded-md border border-[#A1A1AA]/40 px-4 py-2 text-center text-sm font-medium text-[#F4F4F5] transition-colors hover:border-[#FBBF24] hover:bg-[#FBBF24] hover:text-[#18181B]"
               >
                 Log Out
               </button>
@@ -203,7 +206,7 @@ export default function Navbar() {
                 <Link
                   href="/signin"
                   onClick={() => setIsMenuOpen(false)}
-                  className="rounded-md border border-[#BEB5A9]/40 px-4 py-2 text-center text-sm font-medium text-[#E1D4C2] transition-colors hover:border-[#A78D78] hover:bg-[#6E473B]"
+                  className="rounded-md border border-[#A1A1AA]/40 px-4 py-2 text-center text-sm font-medium text-[#F4F4F5] transition-colors hover:border-[#FBBF24] hover:bg-[#FBBF24] hover:text-[#18181B]"
                 >
                   Login
                 </Link>
@@ -211,7 +214,7 @@ export default function Navbar() {
                 <Link
                   href="/signup"
                   onClick={() => setIsMenuOpen(false)}
-                  className="rounded-md bg-[#6E473B] px-4 py-2 text-center text-sm font-medium text-[#E1D4C2] transition-colors hover:bg-[#A78D78] hover:text-[#291C0E]"
+                  className="rounded-md bg-[#22C55E] px-4 py-2 text-center text-sm font-medium text-[#18181B] transition-colors hover:bg-[#FBBF24] hover:text-[#18181B]"
                 >
                   Signup
                 </Link>
@@ -223,4 +226,3 @@ export default function Navbar() {
     </header>
   );
 }
-

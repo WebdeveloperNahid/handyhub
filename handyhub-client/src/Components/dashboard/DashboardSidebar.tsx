@@ -30,9 +30,7 @@ export function DashboardSidebar() {
 
   const { data: session, isPending } = authClient.useSession();
 
-  const role = !isPending
-    ? (session?.user as { role?: string })?.role
-    : null;
+  const role = !isPending ? (session?.user as { role?: string })?.role : null;
 
   const userItems: NavItem[] = [
     {
@@ -156,23 +154,24 @@ export function DashboardSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-              ? "bg-[#6E473B]/10 text-[#6E473B] dark:bg-[#A78D78]/10 dark:text-[#A78D78]"
-              : "text-[#6E473B]/75 hover:bg-[#6E473B]/5 hover:text-[#291C0E] dark:text-[#C5B8AA]/70 dark:hover:bg-white/5 dark:hover:text-[#E1D4C2]"
-              }`}
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-[#F59E0B]/10 text-[#F59E0B] dark:bg-[#FBBF24]/10 dark:text-[#FBBF24]"
+                : "text-[#1C1917]/70 hover:bg-black/5 hover:text-[#1C1917] dark:text-[#A1A1AA]/70 dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
+            }`}
           >
             <span
-              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#6E473B] transition-opacity dark:bg-[#A78D78] ${isActive
-                ? "opacity-100"
-                : "opacity-0"
-                }`}
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#F59E0B] transition-opacity dark:bg-[#FBBF24] ${
+                isActive ? "opacity-100" : "opacity-0"
+              }`}
             />
 
             <item.icon
-              className={`size-4 ${isActive
-                ? "text-[#6E473B] dark:text-[#A78D78]"
-                : "text-[#6E473B]/50 dark:text-[#C5B8AA]/50"
-                }`}
+              className={`size-4 ${
+                isActive
+                  ? "text-[#F59E0B] dark:text-[#FBBF24]"
+                  : "text-[#1C1917]/50 dark:text-[#A1A1AA]/50"
+              }`}
             />
 
             {item.label}
@@ -185,21 +184,16 @@ export function DashboardSidebar() {
   const NavContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <Link
-        href="/"
-        className="mb-8 flex items-center px-3"
-      >
-        <span className="text-xl font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+      <Link href="/" className="mb-8 flex items-center px-3">
+        <span className="text-xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
           Handy
-          <span className="text-[#6E473B] dark:text-[#A78D78]">
-            Hub
-          </span>
+          <span className="text-[#F59E0B] dark:text-[#FBBF24]">Hub</span>
         </span>
       </Link>
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6E473B]/45 dark:text-[#C5B8AA]/40">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1C1917]/45 dark:text-[#A1A1AA]/40">
           {roleLabel}
         </p>
 
@@ -207,17 +201,16 @@ export function DashboardSidebar() {
       </div>
 
       {/* Logout */}
-      <div className="mt-4 border-t border-[#6E473B]/10 pt-4 dark:border-white/10">
+      <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
         <button
           type="button"
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#6E473B]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#C5B8AA]/70 dark:hover:text-red-400"
+          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#1C1917]/70 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA]/70 dark:hover:text-red-400"
         >
           <FiLogOut
             size={16}
             className="transition-transform duration-200 group-hover:translate-x-0.5"
           />
-
           Logout
         </button>
       </div>
@@ -234,12 +227,12 @@ export function DashboardSidebar() {
             h-screen
             w-full
             border-r
-            border-[#6E473B]/15
-            bg-[#E8DDCE]
+            border-black/10
+            bg-white
             px-3
             py-5
             dark:border-white/10
-            dark:bg-[#181411]
+            dark:bg-[#18181B]
           "
       >
         {NavContent}
@@ -249,10 +242,10 @@ export function DashboardSidebar() {
       <div className="fixed left-4 top-20 z-50 lg:hidden">
         <Drawer>
           <Button
-            className="h-10 w-10 min-w-10 rounded-xl border border-[#6E473B]/15 bg-[#E8DDCE] p-0 shadow-md dark:border-white/10 dark:bg-[#241B17]"
+            className="h-10 w-10 min-w-10 rounded-xl border border-black/10 bg-white p-0 shadow-md dark:border-white/10 dark:bg-[#202023]"
             variant="secondary"
           >
-            <TfiMenuAlt className="size-5 text-[#6E473B] dark:text-[#A78D78]" />
+            <TfiMenuAlt className="size-5 text-[#F59E0B] dark:text-[#FBBF24]" />
           </Button>
 
           <Drawer.Backdrop>
@@ -261,12 +254,12 @@ export function DashboardSidebar() {
                 <Drawer.CloseTrigger />
 
                 <Drawer.Header>
-                  <Drawer.Heading className="text-[#291C0E] dark:text-[#E1D4C2]">
+                  <Drawer.Heading className="text-[#1C1917] dark:text-[#F4F4F5]">
                     HandyHub
                   </Drawer.Heading>
                 </Drawer.Header>
 
-                <Drawer.Body className="bg-[#E8DDCE] dark:bg-[#181411]">
+                <Drawer.Body className="bg-white dark:bg-[#18181B]">
                   {NavContent}
                 </Drawer.Body>
               </Drawer.Dialog>

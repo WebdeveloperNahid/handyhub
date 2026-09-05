@@ -1,20 +1,24 @@
-'use client'
+"use client";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 export default function Footer() {
   const pathName = usePathname();
-  if (pathName.includes('dashboard') || pathName.includes('signin') || pathName.includes('signup')) {
-        return null;
-    }
+  if (
+    pathName.includes("dashboard") ||
+    pathName.includes("signin") ||
+    pathName.includes("signup")
+  ) {
+    return null;
+  }
   return (
-    <footer className="bg-[#291C0E] text-[#E1D4C2]">
+    <footer className="bg-[#18181B] text-[#F4F4F5]">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6">
         <div className="grid gap-10 md:grid-cols-4">
           {/* Brand */}
           <div className="md:col-span-2">
             <Link href="/" className="flex items-center gap-2">
-              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#6E473B] text-[#E1D4C2]">
+              <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#22C55E] text-[#18181B]">
                 <svg
                   width="18"
                   height="18"
@@ -34,7 +38,7 @@ export default function Footer() {
               </span>
             </Link>
 
-            <p className="mt-4 max-w-md text-sm leading-6 text-[#BEB5A9]">
+            <p className="mt-4 max-w-md text-sm leading-6 text-[#A1A1AA]">
               Find trusted local services and connect with reliable
               professionals for your everyday needs.
             </p>
@@ -42,7 +46,7 @@ export default function Footer() {
 
           {/* Quick Links */}
           <div>
-            <h3 className="text-sm font-semibold text-[#E1D4C2]">
+            <h3 className="text-sm font-semibold text-[#F4F4F5]">
               Quick Links
             </h3>
 
@@ -50,7 +54,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/"
-                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                  className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
                 >
                   Home
                 </Link>
@@ -59,7 +63,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/explore"
-                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                  className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
                 >
                   Browse Services
                 </Link>
@@ -68,7 +72,7 @@ export default function Footer() {
               <li>
                 <Link
                   href="/signin"
-                  className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                  className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
                 >
                   Login
                 </Link>
@@ -78,55 +82,53 @@ export default function Footer() {
 
           {/* Services */}
           <div>
-            <h3 className="text-sm font-semibold text-[#E1D4C2]">
-              Services
-            </h3>
+            <h3 className="text-sm font-semibold text-[#F4F4F5]">Services</h3>
 
             <ul className="mt-4 space-y-3 text-sm">
               <li>
-                <span className="text-[#BEB5A9]">Home Cleaning</span>
+                <span className="text-[#A1A1AA]">Home Cleaning</span>
               </li>
 
               <li>
-                <span className="text-[#BEB5A9]">AC Repair</span>
+                <span className="text-[#A1A1AA]">AC Repair</span>
               </li>
 
               <li>
-                <span className="text-[#BEB5A9]">Plumbing</span>
+                <span className="text-[#A1A1AA]">Plumbing</span>
               </li>
 
               <li>
-                <span className="text-[#BEB5A9]">Electrical</span>
+                <span className="text-[#A1A1AA]">Electrical</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* Bottom */}
-        <div className="mt-10 border-t border-[#BEB5A9]/20 pt-6">
+        <div className="mt-10 border-t border-white/10 pt-6">
           <div className="flex flex-col items-center justify-between gap-3 text-sm sm:flex-row">
-            <p className="text-[#BEB5A9]">
+            <p className="text-[#A1A1AA]">
               © 2026 HandyHub. All rights reserved.
             </p>
 
             <div className="flex gap-5">
               <Link
                 href="/privacy"
-                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
               >
                 Privacy
               </Link>
 
               <Link
                 href="/terms"
-                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
               >
                 Terms
               </Link>
 
               <Link
                 href="/contact"
-                className="text-[#BEB5A9] transition-colors hover:text-[#A78D78]"
+                className="text-[#A1A1AA] transition-colors hover:text-[#FBBF24]"
               >
                 Contact
               </Link>

@@ -40,11 +40,11 @@ const DashboardNavbar = () => {
             <div className="flex h-full items-center justify-between px-4 sm:px-6">
                 {/* Left */}
                 <div>
-                    <p className="text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2]">
+                    <p className="hidden text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2] lg:block">
                         Dashboard
                     </p>
 
-                    <p className="hidden text-[11px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60 sm:block">
+                    <p className="hidden text-[11px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60 lg:block">
                         Manage your HandyHub account
                     </p>
                 </div>

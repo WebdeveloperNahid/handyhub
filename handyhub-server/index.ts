@@ -2,11 +2,8 @@
 const dns = require('node:dns');
 dns.setServers(['1.1.1.1', '1.0.0.1']); 
 
-// import express, { NextFunction, Request, Response } from "express";
-// import { Collection, MongoClient, ObjectId } from "mongodb";
-// =======
 import express, { Request, Response } from "express";
-// >>>>>>> 208af3e125730330a0d72bb1ba4785ed08f7d1b8
+
 import cors from "cors";
 import dotenv from "dotenv";
 

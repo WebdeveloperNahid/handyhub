@@ -25,7 +25,7 @@ export default function Navbar() {
     return "/dashboard/user";
   })();
 
-  if (pathname.includes('dashboard') || pathname.includes('signin') || pathname.includes('signup')) {
+  if (pathname.includes("dashboard") || pathname.includes("signin") || pathname.includes("signup")) {
     return null;
   }
 
@@ -55,7 +55,7 @@ export default function Navbar() {
             </svg>
           </span>
 
-          <span className="text-lg font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]  ">
+          <span className="text-lg font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
             HandyHub
           </span>
         </Link>
@@ -108,7 +108,7 @@ export default function Navbar() {
           ) : session?.user ? (
             <button
               onClick={handleLogout}
-              className="rounded-md border border-black/10 px-4 py-2 text-sm font-medium text-[#1C1917] transition-colors hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:text-[#F4F4F5] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
+              className="rounded-md border border-red-500/30 px-4 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-600 hover:text-white dark:border-red-500/40 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
             >
               Log Out
             </button>
@@ -199,7 +199,7 @@ export default function Navbar() {
                   setIsMenuOpen(false);
                   handleLogout();
                 }}
-                className="rounded-md border border-black/10 px-4 py-2 text-center text-sm font-medium text-[#1C1917] transition-colors hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:text-[#F4F4F5] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
+                className="rounded-md border border-red-500/30 px-4 py-2 text-center text-sm font-medium text-red-600 transition-colors hover:bg-red-600 hover:text-white dark:border-red-500/40 dark:text-red-400 dark:hover:bg-red-600 dark:hover:text-white"
               >
                 Log Out
               </button>

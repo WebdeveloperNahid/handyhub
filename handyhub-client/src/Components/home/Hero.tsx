@@ -88,7 +88,7 @@ export default function Hero() {
     const Icon = slide.icon;
 
     return (
-        <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#E1D4C2] text-[#291C0E] transition-colors duration-500 dark:bg-[#1F1712] dark:text-[#E1D4C2]">
+        <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#FAF9F7] text-[#1C1917] transition-colors duration-500 dark:bg-[#18181B] dark:text-[#F4F4F5]">
             {/* Background blobs */}
             <motion.div
                 animate={{
@@ -100,7 +100,7 @@ export default function Hero() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-[#6E473B]/10 blur-3xl dark:bg-[#A78D78]/10"
+                className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-[#15803D]/10 blur-3xl dark:bg-[#22C55E]/10"
             />
 
             <motion.div
@@ -113,7 +113,7 @@ export default function Hero() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-[#A78D78]/15 blur-3xl dark:bg-[#6E473B]/15"
+                className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-[#F59E0B]/15 blur-3xl dark:bg-[#FBBF24]/15"
             />
 
             {/* Decorative dots */}
@@ -124,7 +124,7 @@ export default function Hero() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute left-[12%] top-[22%] h-2 w-2 rounded-full bg-[#6E473B]/40 dark:bg-[#A78D78]/40"
+                className="absolute left-[12%] top-[22%] h-2 w-2 rounded-full bg-[#15803D]/40 dark:bg-[#22C55E]/40"
             />
 
             <motion.div
@@ -135,7 +135,7 @@ export default function Hero() {
                     ease: "easeInOut",
                     delay: 1,
                 }}
-                className="absolute right-[15%] top-[18%] h-3 w-3 rounded-full bg-[#A78D78]/40"
+                className="absolute right-[15%] top-[18%] h-3 w-3 rounded-full bg-[#F59E0B]/40"
             />
 
             <div className="relative z-10  flex min-h-[calc(100vh-4rem)] mx-auto max-w-6xl items-center px-5 py-20 sm:px-8 lg:px-10">
@@ -153,8 +153,8 @@ export default function Hero() {
                             }}
                         >
                             {/* Badge */}
-                            <span className="inline-flex items-center gap-2 rounded-full border border-[#6E473B]/20 bg-white/30 px-4 py-2 text-xs font-semibold tracking-wider text-[#6E473B] backdrop-blur-sm dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78]">
-                                <span className="h-1.5 w-1.5 rounded-full bg-[#6E473B] dark:bg-[#A78D78]" />
+                            <span className="inline-flex items-center gap-2 rounded-full border border-[#15803D]/20 bg-white/30 px-4 py-2 text-xs font-semibold tracking-wider text-[#15803D] backdrop-blur-sm dark:border-[#22C55E]/20 dark:bg-[#27272A]/60 dark:text-[#22C55E]">
+                                <span className="h-1.5 w-1.5 rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
                                 {slide.badge}
                             </span>
 
@@ -162,13 +162,13 @@ export default function Hero() {
                             <h1 className="mt-6 max-w-2xl text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
                                 {slide.title}
                                 <br />
-                                <span className="text-[#6E473B] dark:text-[#A78D78]">
+                                <span className="text-[#15803D] dark:text-[#22C55E]">
                                     {slide.highlight}
                                 </span>
                             </h1>
 
                             {/* Description */}
-                            <p className="mt-6 max-w-xl text-base leading-7 text-[#6E473B] sm:text-lg dark:text-[#C5B8AA]">
+                            <p className="mt-6 max-w-xl text-base leading-7 text-[#1C1917]/70 sm:text-lg dark:text-[#A1A1AA]">
                                 {slide.description}
                             </p>
 
@@ -176,7 +176,7 @@ export default function Hero() {
                             <div className="mt-8 flex flex-wrap items-center gap-4">
                                 <Link
                                     href="/all-services"
-                                    className="group inline-flex items-center gap-2 rounded-xl bg-[#6E473B] px-6 py-3.5 text-sm font-semibold text-[#E1D4C2] shadow-lg shadow-[#6E473B]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#A78D78] hover:text-[#291C0E] hover:shadow-xl"
+                                    className="group inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#15803D]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#116830] hover:shadow-xl dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A]"
                                 >
                                     {slide.button}
 
@@ -186,7 +186,7 @@ export default function Hero() {
                                     />
                                 </Link>
 
-                                <span className="text-sm text-[#6E473B]/70 dark:text-[#C5B8AA]/70">
+                                <span className="text-sm text-[#1C1917]/50 dark:text-[#A1A1AA]/70">
                                     Trusted • Simple • Convenient
                                 </span>
                             </div>
@@ -205,7 +205,7 @@ export default function Hero() {
                                 repeat: Infinity,
                                 ease: "easeInOut",
                             }}
-                            className="absolute h-72 w-72 rounded-full bg-[#A78D78]/20 blur-3xl sm:h-96 sm:w-96"
+                            className="absolute h-72 w-72 rounded-full bg-[#F59E0B]/20 blur-3xl sm:h-96 sm:w-96"
                         />
 
                         <AnimatePresence mode="wait">
@@ -221,11 +221,11 @@ export default function Hero() {
                                 className="relative w-full max-w-md"
                             >
                                 {/* Main Card */}
-                                <div className="relative overflow-hidden rounded-[2rem] border border-[#6E473B]/15 bg-white/40 p-5 shadow-2xl backdrop-blur-xl dark:border-[#A78D78]/15 dark:bg-[#2D211A]/75">
+                                <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white/40 p-5 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/75">
                                     {/* Header */}
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#6E473B] text-[#E1D4C2] dark:bg-[#A78D78] dark:text-[#291C0E]">
+                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
                                                 <Icon size={20} />
                                             </div>
 
@@ -233,14 +233,14 @@ export default function Hero() {
                                                 <p className="text-sm font-semibold">
                                                     HandyHub
                                                 </p>
-                                                <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                                                <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                                                     Service marketplace
                                                 </p>
                                             </div>
                                         </div>
 
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#A78D78]/20">
-                                            <span className="h-2 w-2 rounded-full bg-[#6E473B] dark:bg-[#A78D78]" />
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F59E0B]/20">
+                                            <span className="h-2 w-2 rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
                                         </div>
                                     </div>
 
@@ -261,13 +261,13 @@ export default function Hero() {
                                         repeat: Infinity,
                                         ease: "easeInOut",
                                     }}
-                                    className="absolute -right-5 top-20 rounded-2xl border border-[#6E473B]/15 bg-white/70 p-3 shadow-xl backdrop-blur-xl dark:border-[#A78D78]/15 dark:bg-[#382820]/90"
+                                    className="absolute -right-5 top-20 rounded-2xl border border-black/10 bg-white/70 p-3 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/90"
                                 >
                                     <div className="flex items-center gap-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#A78D78]/20">
+                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#15803D]/15 dark:bg-[#22C55E]/15">
                                             <FiCheck
                                                 size={15}
-                                                className="text-[#6E473B] dark:text-[#A78D78]"
+                                                className="text-[#15803D] dark:text-[#22C55E]"
                                             />
                                         </div>
 
@@ -275,7 +275,7 @@ export default function Hero() {
                                             <p className="text-xs font-semibold">
                                                 All set!
                                             </p>
-                                            <p className="text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                                            <p className="text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
                                                 Service confirmed
                                             </p>
                                         </div>
@@ -291,7 +291,7 @@ export default function Hero() {
                     <button
                         onClick={prevSlide}
                         aria-label="Previous slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#6E473B]/20 bg-white/30 text-[#6E473B] backdrop-blur-sm transition-all hover:bg-[#6E473B] hover:text-[#E1D4C2] dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78] dark:hover:bg-[#A78D78] dark:hover:text-[#291C0E]"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/30 text-[#15803D] backdrop-blur-sm transition-all hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:bg-[#27272A]/60 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
                     >
                         <FiArrowLeft size={16} />
                     </button>
@@ -304,8 +304,8 @@ export default function Hero() {
                                 onClick={() => setCurrent(index)}
                                 aria-label={`Go to slide ${index + 1}`}
                                 className={`h-1.5 rounded-full transition-all duration-500 ${current === index
-                                    ? "w-8 bg-[#6E473B] dark:bg-[#A78D78]"
-                                    : "w-1.5 bg-[#6E473B]/30 dark:bg-[#A78D78]/30"
+                                    ? "w-8 bg-[#15803D] dark:bg-[#22C55E]"
+                                    : "w-1.5 bg-[#1C1917]/20 dark:bg-[#A1A1AA]/30"
                                     }`}
                             />
                         ))}
@@ -314,7 +314,7 @@ export default function Hero() {
                     <button
                         onClick={nextSlide}
                         aria-label="Next slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#6E473B]/20 bg-white/30 text-[#6E473B] backdrop-blur-sm transition-all hover:bg-[#6E473B] hover:text-[#E1D4C2] dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78] dark:hover:bg-[#A78D78] dark:hover:text-[#291C0E]"
+                        className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/30 text-[#15803D] backdrop-blur-sm transition-all hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:bg-[#27272A]/60 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
                     >
                         <FiArrowRight size={16} />
                     </button>
@@ -337,46 +337,46 @@ function ProviderVisual() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute left-4 top-6 w-[260px] rounded-2xl border border-[#6E473B]/10 bg-white/90 p-5 shadow-xl backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#30221C]"
+                className="absolute left-4 top-6 w-[260px] rounded-2xl border border-black/10 bg-white/90 p-5 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
             >
                 {/* Profile header */}
                 <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#291C0E] dark:bg-[#A78D78]">
+                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#15803D] dark:bg-[#22C55E]">
                         <FiUsers
                             size={21}
-                            className="text-[#E1D4C2] dark:text-[#291C0E]"
+                            className="text-white dark:text-[#18181B]"
                         />
                     </div>
 
                     <div>
-                        <p className="text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2]">
+                        <p className="text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
                             Rahim Ahmed
                         </p>
 
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             Home Repair Specialist
                         </p>
                     </div>
 
-                    <div className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-[#A78D78]/15">
+                    <div className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-[#F59E0B]/15">
                         <FiCheck
                             size={13}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
+                            className="text-[#15803D] dark:text-[#22C55E]"
                         />
                     </div>
                 </div>
 
                 {/* Rating */}
-                <div className="mt-5 flex items-center justify-between border-t border-[#6E473B]/10 pt-4 dark:border-[#A78D78]/10">
+                <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 dark:border-white/10">
                     <div>
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             Rating
                         </p>
 
                         <div className="mt-1 flex items-center gap-1">
                             <FiStar
                                 size={13}
-                                className="fill-current text-[#A78D78]"
+                                className="fill-current text-[#F59E0B] dark:text-[#FBBF24]"
                             />
                             <span className="text-sm font-semibold">
                                 4.9
@@ -385,7 +385,7 @@ function ProviderVisual() {
                     </div>
 
                     <div>
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             Completed
                         </p>
 
@@ -405,21 +405,21 @@ function ProviderVisual() {
                     ease: "easeInOut",
                     delay: 0.3,
                 }}
-                className="absolute bottom-5 right-0 w-[210px] rounded-2xl border border-[#6E473B]/10 bg-white/95 p-4 shadow-lg backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#382820]"
+                className="absolute bottom-5 right-0 w-[210px] rounded-2xl border border-black/10 bg-white/95 p-4 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
             >
                 <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                    <span className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                         New request
                     </span>
 
-                    <span className="h-2 w-2 rounded-full bg-[#A78D78]" />
+                    <span className="h-2 w-2 rounded-full bg-[#F59E0B] dark:bg-[#FBBF24]" />
                 </div>
 
                 <div className="mt-3 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#A78D78]/15">
+                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F59E0B]/15">
                         <FiTool
                             size={17}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
+                            className="text-[#15803D] dark:text-[#22C55E]"
                         />
                     </div>
 
@@ -428,7 +428,7 @@ function ProviderVisual() {
                             Plumbing Service
                         </p>
 
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             Today · 10:30 AM
                         </p>
                     </div>
@@ -443,18 +443,18 @@ function ProviderVisual() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute bottom-0 left-1 rounded-xl border border-[#6E473B]/10 bg-white/90 px-3 py-2 shadow-md backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#30221C]"
+                className="absolute bottom-0 left-1 rounded-xl border border-black/10 bg-white/90 px-3 py-2 shadow-md backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
             >
                 <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#A78D78]/15">
+                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#15803D]/15 dark:bg-[#22C55E]/15">
                         <FiShield
                             size={13}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
+                            className="text-[#15803D] dark:text-[#22C55E]"
                         />
                     </div>
 
                     <div>
-                        <p className="text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             HandyHub
                         </p>
 
@@ -507,9 +507,9 @@ function ServicesVisual() {
                             y: -5,
                             scale: 1.02,
                         }}
-                        className="group rounded-2xl border border-[#6E473B]/10 bg-white/50 p-5 backdrop-blur-sm transition-colors dark:border-[#A78D78]/10 dark:bg-[#382820]/70"
+                        className="group rounded-2xl border border-black/10 bg-white/50 p-5 backdrop-blur-sm transition-colors dark:border-white/10 dark:bg-[#27272A]/70"
                     >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#6E473B]/10 text-[#6E473B] transition-colors group-hover:bg-[#6E473B] group-hover:text-[#E1D4C2] dark:bg-[#A78D78]/10 dark:text-[#A78D78] dark:group-hover:bg-[#A78D78] dark:group-hover:text-[#291C0E]">
+                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#15803D]/10 text-[#15803D] transition-colors group-hover:bg-[#15803D] group-hover:text-white dark:bg-[#22C55E]/10 dark:text-[#22C55E] dark:group-hover:bg-[#22C55E] dark:group-hover:text-[#18181B]">
                             <ServiceIcon size={21} />
                         </div>
 
@@ -517,7 +517,7 @@ function ServicesVisual() {
                             {service.name}
                         </p>
 
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <div className="mt-2 flex items-center gap-1.5 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             <FiCheck size={12} />
                             Available
                         </div>
@@ -542,10 +542,10 @@ function TrustVisual() {
                 }}
                 className="absolute left-1/2 top-2 flex -translate-x-1/2 flex-col items-center"
             >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#6E473B] shadow-xl dark:bg-[#A78D78]">
+                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#15803D] shadow-xl dark:bg-[#22C55E]">
                     <FiUsers
                         size={38}
-                        className="text-[#E1D4C2] dark:text-[#291C0E]"
+                        className="text-white dark:text-[#18181B]"
                     />
                 </div>
 
@@ -558,7 +558,7 @@ function TrustVisual() {
                         <FiStar
                             key={star}
                             size={13}
-                            className="fill-current text-[#A78D78]"
+                            className="fill-current text-[#F59E0B] dark:text-[#FBBF24]"
                         />
                     ))}
 
@@ -576,10 +576,10 @@ function TrustVisual() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute bottom-5 left-0 rounded-2xl bg-white/80 p-4 shadow-lg backdrop-blur-md dark:bg-[#382820]"
+                className="absolute bottom-5 left-0 rounded-2xl bg-white/80 p-4 shadow-lg backdrop-blur-md dark:bg-[#27272A]"
             >
                 <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#A78D78]/20">
+                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F59E0B]/20">
                         <FiCheck size={15} />
                     </div>
 
@@ -588,7 +588,7 @@ function TrustVisual() {
                             156 completed jobs
                         </p>
 
-                        <p className="mt-1 text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                        <p className="mt-1 text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
                             Verified professional
                         </p>
                     </div>
@@ -603,7 +603,7 @@ function TrustVisual() {
                     repeat: Infinity,
                     ease: "easeInOut",
                 }}
-                className="absolute bottom-10 right-0 rounded-2xl bg-[#291C0E] p-4 text-[#E1D4C2] shadow-lg dark:bg-[#A78D78] dark:text-[#291C0E]"
+                className="absolute bottom-10 right-0 rounded-2xl bg-[#15803D] p-4 text-white shadow-lg dark:bg-[#22C55E] dark:text-[#18181B]"
             >
                 <div className="flex items-center gap-1">
                     <FiStar
@@ -661,9 +661,9 @@ function BookingVisual() {
                             delay: index * 0.15,
                             duration: 0.5,
                         }}
-                        className="flex items-center gap-4 rounded-2xl border border-[#6E473B]/10 bg-white/50 p-3 dark:border-[#A78D78]/10 dark:bg-[#382820]/70"
+                        className="flex items-center gap-4 rounded-2xl border border-black/10 bg-white/50 p-3 dark:border-white/10 dark:bg-[#27272A]/70"
                     >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#6E473B] text-[#E1D4C2] dark:bg-[#A78D78] dark:text-[#291C0E]">
+                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
                             <StepIcon size={18} />
                         </div>
 
@@ -672,7 +672,7 @@ function BookingVisual() {
                                 {step.title}
                             </p>
 
-                            <p className="mt-0.5 text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
+                            <p className="mt-0.5 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
                                 {step.description}
                             </p>
                         </div>
@@ -682,7 +682,7 @@ function BookingVisual() {
                                 initial={{ scale: 0 }}
                                 animate={{ scale: 1 }}
                                 transition={{ delay: 0.7 }}
-                                className="ml-auto flex h-7 w-7 items-center justify-center rounded-full bg-[#A78D78]/20"
+                                className="ml-auto flex h-7 w-7 items-center justify-center rounded-full bg-[#15803D]/20 dark:bg-[#22C55E]/20"
                             >
                                 <FiCheck size={14} />
                             </motion.div>

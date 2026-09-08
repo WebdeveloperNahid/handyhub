@@ -144,7 +144,7 @@ export function DashboardSidebar() {
   };
 
   const renderLinks = (list: NavItem[]) => (
-    <nav className="flex flex-col gap-1">
+    <nav className="flex flex-col gap-1.5">
       {list.map((item) => {
         const isActive =
           pathname === item.href ||
@@ -157,23 +157,25 @@ export function DashboardSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-              ? "bg-[#6E473B]/10 text-[#6E473B] dark:bg-[#A78D78]/10 dark:text-[#A78D78]"
-              : "text-[#6E473B]/75 hover:bg-[#6E473B]/5 hover:text-[#291C0E] dark:text-[#C5B8AA]/70 dark:hover:bg-white/5 dark:hover:text-[#E1D4C2]"
-              }`}
+            className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 ${
+              isActive
+                ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]"
+                : "text-[#44403C] hover:bg-[#15803D]/10 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
+            }`}
           >
+            {/* Active Indicator Line */}
             <span
-              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#6E473B] transition-opacity dark:bg-[#A78D78] ${isActive
-                ? "opacity-100"
-                : "opacity-0"
-                }`}
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-[#15803D] transition-opacity dark:bg-[#22C55E] ${
+                isActive ? "opacity-100" : "opacity-0"
+              }`}
             />
 
             <item.icon
-              className={`size-4 ${isActive
-                ? "text-[#6E473B] dark:text-[#A78D78]"
-                : "text-[#6E473B]/50 dark:text-[#C5B8AA]/50"
-                }`}
+              className={`size-4 shrink-0 transition-colors ${
+                isActive
+                  ? "text-[#15803D] dark:text-[#22C55E]"
+                  : "text-[#78716C] group-hover:text-[#15803D] dark:text-[#A1A1AA] dark:group-hover:text-[#F4F4F5]"
+              }`}
             />
 
             {item.label}
@@ -186,21 +188,16 @@ export function DashboardSidebar() {
   const NavContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <Link
-        href="/"
-        className="mb-8 flex items-center px-3"
-      >
-        <span className="text-xl font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+      <Link href="/" className="mb-8 flex items-center px-3">
+        <span className="text-xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
           Handy
-          <span className="text-[#6E473B] dark:text-[#A78D78]">
-            Hub
-          </span>
+          <span className="text-[#15803D] dark:text-[#22C55E]">Hub</span>
         </span>
       </Link>
 
-      {/* Navigation */}
+      {/* Navigation Links */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6E473B]/45 dark:text-[#C5B8AA]/40">
+        <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#78716C] dark:text-[#A1A1AA]">
           {roleLabel}
         </p>
 
@@ -208,17 +205,16 @@ export function DashboardSidebar() {
       </div>
 
       {/* Logout */}
-      <div className="mt-4 border-t border-[#6E473B]/10 pt-4 dark:border-white/10">
+      <div className="mt-4 border-t border-[#1C1917]/10 pt-4 dark:border-white/10">
         <button
           type="button"
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#6E473B]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#C5B8AA]/70 dark:hover:text-red-400"
+          className="group flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-[#44403C] transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA] dark:hover:bg-red-500/10 dark:hover:text-red-400"
         >
           <FiLogOut
             size={16}
-            className="transition-transform duration-200 group-hover:translate-x-0.5"
+            className="text-[#78716C] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-red-600 dark:text-[#A1A1AA] dark:group-hover:text-red-400"
           />
-
           Logout
         </button>
       </div>
@@ -237,52 +233,57 @@ export function DashboardSidebar() {
           hidden
           h-screen
           w-64
-          lg:block
           border-r
-          border-[#6E473B]/15
-          bg-[#cec1b1]
+          border-[#1C1917]/10
+          bg-[#FAF9F7]
           px-3
           py-5
+          shadow-sm
           dark:border-white/10
-          dark:bg-[#181411]
+          dark:bg-[#18181B]
+          lg:block
         "
       >
         {NavContent}
       </aside>
-      
-      {/* Mobile Menu */}
-      <div className="fixed left-4 top-3 z-60 lg:hidden">
+
+      {/* Mobile Menu Trigger & Drawer */}
+      <div className="fixed left-4 top-3 z-50 lg:hidden">
         <Drawer
           isOpen={isDrawerOpen}
           onOpenChange={setIsDrawerOpen}
         >
-          {/* Toggle Button */}
+          {/* Mobile Menu Button */}
           {!isDrawerOpen && (
             <Button
+              type="button"
+              onClick={() => setIsDrawerOpen(true)}
+              aria-label="Open Navigation Menu"
               className="
-                h-11
-                w-11
-                min-w-11
+                flex
+                h-10
+                w-10
+                min-w-10
+                items-center
+                justify-center
                 rounded-xl
                 border
-                border-[#6E473B]/20
-                bg-[#BEB5A9]
+                border-[#1C1917]/10
+                bg-[#FAF9F7]
                 p-0
-                shadow-lg
-                shadow-[#291C0E]/10
+                shadow-md
                 transition-all
                 duration-200
-                hover:bg-[#A78D78]
+                hover:bg-[#15803D]/10
                 active:scale-95
                 dark:border-white/10
-                dark:bg-[#241B17]
+                dark:bg-[#18181B]
               "
               variant="secondary"
             >
-              <TfiMenuAlt className="size-5 text-[#291C0E] dark:text-[#E1D4C2]" />
+              <TfiMenuAlt className="size-5 text-[#1C1917] dark:text-[#F4F4F5]" />
             </Button>
           )}
-
 
           <Drawer.Backdrop>
             <Drawer.Content
@@ -291,24 +292,23 @@ export function DashboardSidebar() {
             >
               <Drawer.Dialog
                 className="
-            overflow-hidden
-            bg-[#E1D4C2]
-            shadow-2xl
-            shadow-[#291C0E]/20
-            dark:bg-[#181411]
-          "
+                  overflow-hidden
+                  bg-[#FAF9F7]
+                  shadow-2xl
+                  dark:bg-[#18181B]
+                "
               >
                 {/* Drawer Header */}
                 <Drawer.Header
                   className="
-              border-b
-              border-[#6E473B]/15
-              bg-[#BEB5A9]
-              px-5
-              py-4
-              dark:border-white/10
-              dark:bg-[#241B17]
-            "
+                    border-b
+                    border-[#1C1917]/10
+                    bg-[#FAF9F7]
+                    px-5
+                    py-4
+                    dark:border-white/10
+                    dark:bg-[#18181B]
+                  "
                 >
                   <div className="flex w-full items-center justify-between">
                     <Link
@@ -317,31 +317,33 @@ export function DashboardSidebar() {
                     >
                       <span
                         className="
-                    flex
-                    h-9
-                    w-9
-                    items-center
-                    justify-center
-                    rounded-xl
-                    bg-[#6E473B]
-                    text-sm
-                    font-bold
-                    text-[#E1D4C2]
-                    shadow-sm
-                  "
+                          flex
+                          h-9
+                          w-9
+                          items-center
+                          justify-center
+                          rounded-xl
+                          bg-[#15803D]
+                          text-sm
+                          font-bold
+                          text-white
+                          shadow-sm
+                          dark:bg-[#22C55E]
+                          dark:text-[#18181B]
+                        "
                       >
                         HH
                       </span>
 
                       <div className="flex flex-col leading-none">
-                        <span className="text-lg font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+                        <span className="text-lg font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
                           Handy
-                          <span className="text-[#6E473B] dark:text-[#A78D78]">
+                          <span className="text-[#15803D] dark:text-[#22C55E]">
                             Hub
                           </span>
                         </span>
 
-                        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#6E473B]/60 dark:text-[#A78D78]/60">
+                        <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#78716C] dark:text-[#A1A1AA]">
                           {roleLabel}
                         </span>
                       </div>
@@ -349,14 +351,16 @@ export function DashboardSidebar() {
 
                     <Drawer.CloseTrigger
                       className="
-                  rounded-lg
-                  text-[#6E473B]
-                  transition-colors
-                  hover:bg-[#6E473B]/10
-                  hover:text-[#291C0E]
-                  dark:text-[#A78D78]
-                  dark:hover:bg-white/5
-                "
+                        rounded-lg
+                        p-1.5
+                        text-[#44403C]
+                        transition-colors
+                        hover:bg-[#15803D]/10
+                        hover:text-[#15803D]
+                        dark:text-[#A1A1AA]
+                        dark:hover:bg-white/5
+                        dark:hover:text-[#22C55E]
+                      "
                     />
                   </div>
                 </Drawer.Header>
@@ -364,22 +368,19 @@ export function DashboardSidebar() {
                 {/* Drawer Body */}
                 <Drawer.Body
                   className="
-              bg-[#E1D4C2]
-              px-3
-              py-5
-              dark:bg-[#181411]
-            "
+                    bg-[#FAF9F7]
+                    px-3
+                    py-5
+                    dark:bg-[#18181B]
+                  "
                 >
                   <div className="flex min-h-full flex-col">
-
-                    {/* Navigation Label */}
                     <div className="mb-3 px-2">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6E473B]/55 dark:text-[#A78D78]/55">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#78716C] dark:text-[#A1A1AA]">
                         Navigation
                       </p>
                     </div>
 
-                    {/* Navigation Links */}
                     <nav className="flex flex-col gap-1.5">
                       {items.map((item) => {
                         const isActive =
@@ -393,56 +394,54 @@ export function DashboardSidebar() {
                           <Link
                             key={item.href}
                             href={item.href}
+                            onClick={() => setIsDrawerOpen(false)}
                             className={`
-                        group
-                        relative
-                        flex
-                        items-center
-                        gap-3
-                        rounded-xl
-                        px-3.5
-                        py-3
-                        text-sm
-                        font-medium
-                        transition-all
-                        duration-200
-
-                        ${isActive
-                                ? "bg-[#6E473B] text-[#E1D4C2] shadow-md shadow-[#291C0E]/10"
-                                : "text-[#291C0E]/75 hover:bg-[#BEB5A9] hover:text-[#291C0E] dark:text-[#E1D4C2]/70 dark:hover:bg-[#241B17] dark:hover:text-[#E1D4C2]"
+                              group
+                              relative
+                              flex
+                              items-center
+                              gap-3
+                              rounded-xl
+                              px-3.5
+                              py-2.5
+                              text-sm
+                              font-semibold
+                              transition-all
+                              duration-200
+                              ${
+                                isActive
+                                  ? "bg-[#15803D] text-white shadow-md dark:bg-[#22C55E] dark:text-[#18181B]"
+                                  : "text-[#44403C] hover:bg-[#15803D]/10 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
                               }
-                      `}
+                            `}
                           >
-                            {/* Active Indicator */}
-                            {isActive && (
-                              <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#A78D78]" />
-                            )}
-
                             <span
                               className={`
-                          flex
-                          h-8
-                          w-8
-                          shrink-0
-                          items-center
-                          justify-center
-                          rounded-lg
-                          transition-all
-                          duration-200
-                          ${isActive
-                                  ? "bg-[#E1D4C2]/15"
-                                  : "bg-[#BEB5A9]/70 group-hover:bg-[#A78D78]/40"
+                                flex
+                                h-8
+                                w-8
+                                shrink-0
+                                items-center
+                                justify-center
+                                rounded-lg
+                                transition-all
+                                duration-200
+                                ${
+                                  isActive
+                                    ? "bg-white/20 dark:bg-black/10"
+                                    : "bg-[#1C1917]/5 group-hover:bg-[#15803D]/10 dark:bg-white/5"
                                 }
-                        `}
+                              `}
                             >
                               <item.icon
                                 className={`
-                            size-4
-                            ${isActive
-                                    ? "text-[#E1D4C2]"
-                                    : "text-[#6E473B]"
+                                  size-4
+                                  ${
+                                    isActive
+                                      ? "text-white dark:text-[#18181B]"
+                                      : "text-[#15803D] dark:text-[#22C55E]"
                                   }
-                          `}
+                                `}
                               />
                             </span>
 
@@ -452,50 +451,50 @@ export function DashboardSidebar() {
                       })}
                     </nav>
 
-                    {/* Bottom Section */}
                     <div className="mt-auto pt-8">
-                      <div className="mb-4 border-t border-[#6E473B]/15 dark:border-white/10" />
+                      <div className="mb-4 border-t border-[#1C1917]/10 dark:border-white/10" />
 
                       <button
                         type="button"
                         onClick={handleLogout}
                         className="
-                    group
-                    flex
-                    w-full
-                    items-center
-                    gap-3
-                    rounded-xl
-                    px-3.5
-                    py-3
-                    text-sm
-                    font-medium
-                    text-[#6E473B]
-                    transition-all
-                    duration-200
-                    hover:bg-[#6E473B]/10
-                    hover:text-[#291C0E]
-                    dark:text-[#A78D78]
-                    dark:hover:bg-white/5
-                    dark:hover:text-[#E1D4C2]
-                  "
+                          group
+                          flex
+                          w-full
+                          items-center
+                          gap-3
+                          rounded-xl
+                          px-3.5
+                          py-2.5
+                          text-sm
+                          font-semibold
+                          text-[#44403C]
+                          transition-all
+                          duration-200
+                          hover:bg-red-500/10
+                          hover:text-red-600
+                          dark:text-[#A1A1AA]
+                          dark:hover:bg-red-500/10
+                          dark:hover:text-red-400
+                        "
                       >
                         <span
                           className="
-                      flex
-                      h-8
-                      w-8
-                      items-center
-                      justify-center
-                      rounded-lg
-                      bg-[#BEB5A9]/70
-                      transition-colors
-                      group-hover:bg-[#A78D78]/40
-                    "
+                            flex
+                            h-8
+                            w-8
+                            items-center
+                            justify-center
+                            rounded-lg
+                            bg-[#1C1917]/5
+                            transition-colors
+                            group-hover:bg-red-500/10
+                            dark:bg-white/5
+                          "
                         >
                           <FiLogOut
                             size={15}
-                            className="transition-transform duration-200 group-hover:translate-x-0.5"
+                            className="text-[#78716C] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-red-600 dark:text-[#A1A1AA] dark:group-hover:text-red-400"
                           />
                         </span>
 

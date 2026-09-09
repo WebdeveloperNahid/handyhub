@@ -36,103 +36,36 @@ export function DashboardSidebar() {
     : null;
 
   const userItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/user",
-    },
-    {
-      icon: ListCheck,
-      label: "My Requests",
-      href: "/dashboard/user/my-requests",
-    },
-    {
-      icon: Heart,
-      label: "Saved Providers",
-      href: "/dashboard/user/saved-providers",
-    },
-    {
-      icon: Boxes3,
-      label: "Browse Services",
-      href: "/all-services",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/user" },
+    { icon: ListCheck, label: "My Requests", href: "/dashboard/user/my-requests" },
+    { icon: Heart, label: "Saved Providers", href: "/dashboard/user/saved-providers" },
+    { icon: Boxes3, label: "Browse Services", href: "/all-services" },
   ];
 
   const providerItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/provider",
-    },
-    {
-      icon: Briefcase,
-      label: "My Services",
-      href: "/dashboard/provider/my-services",
-    },
-    {
-      icon: Plus,
-      label: "Add Service",
-      href: "/dashboard/provider/add-service",
-    },
-    {
-      icon: Calendar,
-      label: "Availability",
-      href: "/dashboard/provider/availability",
-    },
-    {
-      icon: ListCheck,
-      label: "Incoming Requests",
-      href: "/dashboard/provider/incoming-requests",
-    },
-    {
-      icon: Briefcase,
-      label: "Active Jobs",
-      href: "/dashboard/provider/active-jobs",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/provider" },
+    { icon: Briefcase, label: "My Services", href: "/dashboard/provider/my-services" },
+    { icon: Plus, label: "Add Service", href: "/dashboard/provider/add-service" },
+    { icon: Calendar, label: "Availability", href: "/dashboard/provider/availability" },
+    { icon: ListCheck, label: "Incoming Requests", href: "/dashboard/provider/incoming-requests" },
+    { icon: Briefcase, label: "Active Jobs", href: "/dashboard/provider/active-jobs" },
   ];
 
   const adminItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/admin",
-    },
-    {
-      icon: Person,
-      label: "Manage Users",
-      href: "/dashboard/admin/manage-users",
-    },
-    {
-      icon: Person,
-      label: "Manage Providers",
-      href: "/dashboard/admin/manage-providers",
-    },
-    {
-      icon: Boxes3,
-      label: "Manage Categories",
-      href: "/dashboard/admin/manage-categories",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/admin" },
+    { icon: Person, label: "Manage Users", href: "/dashboard/admin/manage-users" },
+    { icon: Person, label: "Manage Providers", href: "/dashboard/admin/manage-providers" },
+    { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
   ];
 
   const getNavDetails = () => {
     if (role === "admin") {
-      return {
-        items: adminItems,
-        label: "Admin Panel",
-      };
+      return { items: adminItems, label: "Admin Panel" };
     }
-
     if (role === "provider") {
-      return {
-        items: providerItems,
-        label: "Provider Panel",
-      };
+      return { items: providerItems, label: "Provider Panel" };
     }
-
-    return {
-      items: userItems,
-      label: "Customer Panel",
-    };
+    return { items: userItems, label: "Customer Panel" };
   };
 
   const { items, label: roleLabel } = getNavDetails();
@@ -144,7 +77,7 @@ export function DashboardSidebar() {
   };
 
   const renderLinks = (list: NavItem[]) => (
-    <nav className="flex flex-col gap-1.5">
+    <nav className="flex flex-col gap-1">
       {list.map((item) => {
         const isActive =
           pathname === item.href ||
@@ -157,25 +90,21 @@ export function DashboardSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className={`group relative flex items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold transition-all duration-200 ${
-              isActive
-                ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]"
-                : "text-[#44403C] hover:bg-[#15803D]/10 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
-            }`}
-          >
-            {/* Active Indicator Line */}
-            <span
-              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-r-full bg-[#15803D] transition-opacity dark:bg-[#22C55E] ${
-                isActive ? "opacity-100" : "opacity-0"
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
+              ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]"
+              : "text-[#1C1917]/75 hover:bg-[#15803D]/5 hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
               }`}
+          >
+            <span
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#15803D] transition-opacity dark:bg-[#22C55E] ${isActive ? "opacity-100" : "opacity-0"
+                }`}
             />
 
             <item.icon
-              className={`size-4 shrink-0 transition-colors ${
-                isActive
-                  ? "text-[#15803D] dark:text-[#22C55E]"
-                  : "text-[#78716C] group-hover:text-[#15803D] dark:text-[#A1A1AA] dark:group-hover:text-[#F4F4F5]"
-              }`}
+              className={`size-4 ${isActive
+                ? "text-[#15803D] dark:text-[#22C55E]"
+                : "text-[#1C1917]/50 dark:text-[#A1A1AA]/60"
+                }`}
             />
 
             {item.label}
@@ -195,9 +124,9 @@ export function DashboardSidebar() {
         </span>
       </Link>
 
-      {/* Navigation Links */}
+      {/* Navigation */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <p className="mb-3 px-3 text-[11px] font-bold uppercase tracking-[0.16em] text-[#78716C] dark:text-[#A1A1AA]">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1C1917]/45 dark:text-[#A1A1AA]/50">
           {roleLabel}
         </p>
 
@@ -205,15 +134,15 @@ export function DashboardSidebar() {
       </div>
 
       {/* Logout */}
-      <div className="mt-4 border-t border-[#1C1917]/10 pt-4 dark:border-white/10">
+      <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
         <button
           type="button"
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-3.5 py-2.5 text-sm font-semibold text-[#44403C] transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA] dark:hover:bg-red-500/10 dark:hover:text-red-400"
+          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#1C1917]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA] dark:hover:text-red-400"
         >
           <FiLogOut
             size={16}
-            className="text-[#78716C] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-red-600 dark:text-[#A1A1AA] dark:group-hover:text-red-400"
+            className="transition-transform duration-200 group-hover:translate-x-0.5"
           />
           Logout
         </button>
@@ -233,51 +162,42 @@ export function DashboardSidebar() {
           hidden
           h-screen
           w-64
+          lg:block
           border-r
-          border-[#1C1917]/10
-          bg-[#FAF9F7]
+          border-black/10
+          bg-white
           px-3
           py-5
-          shadow-sm
           dark:border-white/10
           dark:bg-[#18181B]
-          lg:block
         "
       >
         {NavContent}
       </aside>
 
-      {/* Mobile Menu Trigger & Drawer */}
-      <div className="fixed left-4 top-3 z-50 lg:hidden">
-        <Drawer
-          isOpen={isDrawerOpen}
-          onOpenChange={setIsDrawerOpen}
-        >
-          {/* Mobile Menu Button */}
+      {/* Mobile Menu */}
+      <div className="fixed left-4 top-3 z-60 lg:hidden">
+        <Drawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+          {/* Toggle Button */}
           {!isDrawerOpen && (
             <Button
-              type="button"
-              onClick={() => setIsDrawerOpen(true)}
-              aria-label="Open Navigation Menu"
               className="
-                flex
-                h-10
-                w-10
-                min-w-10
-                items-center
-                justify-center
+                h-11
+                w-11
+                min-w-11
                 rounded-xl
                 border
-                border-[#1C1917]/10
-                bg-[#FAF9F7]
+                border-black/10
+                bg-white
                 p-0
-                shadow-md
+                shadow-lg
+                shadow-black/10
                 transition-all
                 duration-200
-                hover:bg-[#15803D]/10
+                hover:bg-[#FAF9F7]
                 active:scale-95
                 dark:border-white/10
-                dark:bg-[#18181B]
+                dark:bg-[#27272A]
               "
               variant="secondary"
             >
@@ -286,51 +206,46 @@ export function DashboardSidebar() {
           )}
 
           <Drawer.Backdrop>
-            <Drawer.Content
-              placement="left"
-              className="w-[290px] max-w-[85vw]"
-            >
+            <Drawer.Content placement="left" className="w-[290px] max-w-[85vw]">
               <Drawer.Dialog
                 className="
-                  overflow-hidden
-                  bg-[#FAF9F7]
-                  shadow-2xl
-                  dark:bg-[#18181B]
-                "
+            overflow-hidden
+            bg-white
+            shadow-2xl
+            shadow-black/20
+            dark:bg-[#18181B]
+          "
               >
                 {/* Drawer Header */}
                 <Drawer.Header
                   className="
-                    border-b
-                    border-[#1C1917]/10
-                    bg-[#FAF9F7]
-                    px-5
-                    py-4
-                    dark:border-white/10
-                    dark:bg-[#18181B]
-                  "
+              border-b
+              border-black/10
+              bg-white
+              px-5
+              py-4
+              dark:border-white/10
+              dark:bg-[#27272A]
+            "
                 >
                   <div className="flex w-full items-center justify-between">
-                    <Link
-                      href="/"
-                      className="flex items-center gap-2.5"
-                    >
+                    <Link href="/" className="flex items-center gap-2.5">
                       <span
                         className="
-                          flex
-                          h-9
-                          w-9
-                          items-center
-                          justify-center
-                          rounded-xl
-                          bg-[#15803D]
-                          text-sm
-                          font-bold
-                          text-white
-                          shadow-sm
-                          dark:bg-[#22C55E]
-                          dark:text-[#18181B]
-                        "
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-[#15803D]
+                    text-sm
+                    font-bold
+                    text-white
+                    shadow-sm
+                    dark:bg-[#22C55E]
+                    dark:text-[#18181B]
+                  "
                       >
                         HH
                       </span>
@@ -343,7 +258,7 @@ export function DashboardSidebar() {
                           </span>
                         </span>
 
-                        <span className="mt-1 text-[10px] font-bold uppercase tracking-[0.16em] text-[#78716C] dark:text-[#A1A1AA]">
+                        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#15803D]/70 dark:text-[#22C55E]/70">
                           {roleLabel}
                         </span>
                       </div>
@@ -351,16 +266,14 @@ export function DashboardSidebar() {
 
                     <Drawer.CloseTrigger
                       className="
-                        rounded-lg
-                        p-1.5
-                        text-[#44403C]
-                        transition-colors
-                        hover:bg-[#15803D]/10
-                        hover:text-[#15803D]
-                        dark:text-[#A1A1AA]
-                        dark:hover:bg-white/5
-                        dark:hover:text-[#22C55E]
-                      "
+                  rounded-lg
+                  text-[#1C1917]
+                  transition-colors
+                  hover:bg-black/5
+                  hover:text-[#1C1917]
+                  dark:text-[#A1A1AA]
+                  dark:hover:bg-white/5
+                "
                     />
                   </div>
                 </Drawer.Header>
@@ -368,19 +281,21 @@ export function DashboardSidebar() {
                 {/* Drawer Body */}
                 <Drawer.Body
                   className="
-                    bg-[#FAF9F7]
-                    px-3
-                    py-5
-                    dark:bg-[#18181B]
-                  "
+              bg-white
+              px-3
+              py-5
+              dark:bg-[#18181B]
+            "
                 >
                   <div className="flex min-h-full flex-col">
+                    {/* Navigation Label */}
                     <div className="mb-3 px-2">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#78716C] dark:text-[#A1A1AA]">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1C1917]/55 dark:text-[#A1A1AA]/60">
                         Navigation
                       </p>
                     </div>
 
+                    {/* Navigation Links */}
                     <nav className="flex flex-col gap-1.5">
                       {items.map((item) => {
                         const isActive =
@@ -394,54 +309,56 @@ export function DashboardSidebar() {
                           <Link
                             key={item.href}
                             href={item.href}
-                            onClick={() => setIsDrawerOpen(false)}
                             className={`
-                              group
-                              relative
-                              flex
-                              items-center
-                              gap-3
-                              rounded-xl
-                              px-3.5
-                              py-2.5
-                              text-sm
-                              font-semibold
-                              transition-all
-                              duration-200
-                              ${
-                                isActive
-                                  ? "bg-[#15803D] text-white shadow-md dark:bg-[#22C55E] dark:text-[#18181B]"
-                                  : "text-[#44403C] hover:bg-[#15803D]/10 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
+                        group
+                        relative
+                        flex
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3.5
+                        py-3
+                        text-sm
+                        font-medium
+                        transition-all
+                        duration-200
+
+                        ${isActive
+                                ? "bg-[#15803D] text-white shadow-md shadow-black/10 dark:bg-[#22C55E] dark:text-[#18181B]"
+                                : "text-[#1C1917]/75 hover:bg-[#FAF9F7] hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-[#27272A] dark:hover:text-[#F4F4F5]"
                               }
-                            `}
+                      `}
                           >
+                            {/* Active Indicator */}
+                            {isActive && (
+                              <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#F59E0B] dark:bg-[#FBBF24]" />
+                            )}
+
                             <span
                               className={`
-                                flex
-                                h-8
-                                w-8
-                                shrink-0
-                                items-center
-                                justify-center
-                                rounded-lg
-                                transition-all
-                                duration-200
-                                ${
-                                  isActive
-                                    ? "bg-white/20 dark:bg-black/10"
-                                    : "bg-[#1C1917]/5 group-hover:bg-[#15803D]/10 dark:bg-white/5"
+                          flex
+                          h-8
+                          w-8
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-lg
+                          transition-all
+                          duration-200
+                          ${isActive
+                                  ? "bg-white/15"
+                                  : "bg-[#FAF9F7] group-hover:bg-[#15803D]/10 dark:bg-[#27272A] dark:group-hover:bg-white/10"
                                 }
-                              `}
+                        `}
                             >
                               <item.icon
                                 className={`
-                                  size-4
-                                  ${
-                                    isActive
-                                      ? "text-white dark:text-[#18181B]"
-                                      : "text-[#15803D] dark:text-[#22C55E]"
+                            size-4
+                            ${isActive
+                                    ? "text-white dark:text-[#18181B]"
+                                    : "text-[#15803D] dark:text-[#22C55E]"
                                   }
-                                `}
+                          `}
                               />
                             </span>
 
@@ -451,50 +368,51 @@ export function DashboardSidebar() {
                       })}
                     </nav>
 
+                    {/* Bottom Section */}
                     <div className="mt-auto pt-8">
-                      <div className="mb-4 border-t border-[#1C1917]/10 dark:border-white/10" />
+                      <div className="mb-4 border-t border-black/10 dark:border-white/10" />
 
                       <button
                         type="button"
                         onClick={handleLogout}
                         className="
-                          group
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          rounded-xl
-                          px-3.5
-                          py-2.5
-                          text-sm
-                          font-semibold
-                          text-[#44403C]
-                          transition-all
-                          duration-200
-                          hover:bg-red-500/10
-                          hover:text-red-600
-                          dark:text-[#A1A1AA]
-                          dark:hover:bg-red-500/10
-                          dark:hover:text-red-400
-                        "
+                    group
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-3.5
+                    py-3
+                    text-sm
+                    font-medium
+                    text-[#1C1917]/75
+                    transition-all
+                    duration-200
+                    hover:bg-red-500/10
+                    hover:text-red-600
+                    dark:text-[#A1A1AA]
+                    dark:hover:bg-red-500/10
+                    dark:hover:text-red-400
+                  "
                       >
                         <span
                           className="
-                            flex
-                            h-8
-                            w-8
-                            items-center
-                            justify-center
-                            rounded-lg
-                            bg-[#1C1917]/5
-                            transition-colors
-                            group-hover:bg-red-500/10
-                            dark:bg-white/5
-                          "
+                      flex
+                      h-8
+                      w-8
+                      items-center
+                      justify-center
+                      rounded-lg
+                      bg-[#FAF9F7]
+                      transition-colors
+                      group-hover:bg-red-500/10
+                      dark:bg-[#27272A]
+                    "
                         >
                           <FiLogOut
                             size={15}
-                            className="text-[#78716C] transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-red-600 dark:text-[#A1A1AA] dark:group-hover:text-red-400"
+                            className="transition-transform duration-200 group-hover:translate-x-0.5"
                           />
                         </span>
 

@@ -11,9 +11,8 @@ export default function ContactPage() {
   };
 
   return (
-    <main className="min-h-screen bg-white px-4 py-16 text-[#291C0E] transition-colors duration-300 dark:bg-[#1F1712] dark:text-[#E1D4C2] sm:px-6">
+    <main className="min-h-screen bg-[#FAF9F7] px-4 py-16 text-[#1C1917] transition-colors duration-300 dark:bg-[#18181B] dark:text-[#F4F4F5] sm:px-6">
       <div className="mx-auto max-w-5xl">
-
         {/* Header */}
         <motion.div
           initial={{ opacity: 0, y: -25 }}
@@ -21,69 +20,50 @@ export default function ContactPage() {
           transition={{ duration: 0.6 }}
           className="text-center"
         >
-          <h1 className="text-3xl font-bold sm:text-4xl">
-            Get in Touch
-          </h1>
+          <h1 className="text-3xl font-bold sm:text-4xl">Get in Touch</h1>
 
-          <p className="mx-auto mt-3 max-w-2xl text-[#6E473B] dark:text-[#C5B8AA]">
-            Have a question, feedback, or need help? We would love to hear
-            from you.
+          <p className="mx-auto mt-3 max-w-2xl text-[#1C1917]/70 dark:text-[#A1A1AA]">
+            Have a question, feedback, or need help? We would love to hear from
+            you.
           </p>
         </motion.div>
 
         <div className="mt-12 grid gap-8 md:grid-cols-2">
-
           {/* Contact Information */}
           <motion.div
             initial={{ opacity: 0, x: -40 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.15 }}
-            className="rounded-2xl bg-[#291C0E] p-8 text-[#E1D4C2] shadow-lg dark:bg-[#2D211A]"
+            className="rounded-2xl bg-[#18181B] p-8 text-white shadow-lg dark:bg-[#27272A]"
           >
-            <h2 className="text-2xl font-semibold">
-              Contact HandyHub
-            </h2>
+            <h2 className="text-2xl font-semibold">Contact HandyHub</h2>
 
-            <p className="mt-3 leading-7 text-[#BEB5A9]">
+            <p className="mt-3 leading-7 text-[#A1A1AA]">
               Our team is here to help with questions, feedback, and
               platform-related support.
             </p>
 
             <div className="mt-8 space-y-6">
-
               {/* Email */}
               <div>
-                <p className="text-sm text-[#A78D78]">
-                  Email
-                </p>
+                <p className="text-sm font-medium text-[#22C55E]">Email</p>
 
-                <p className="mt-1">
-                  support@handyhub.com
-                </p>
+                <p className="mt-1 text-[#F4F4F5]">support@handyhub.com</p>
               </div>
 
               {/* Phone */}
               <div>
-                <p className="text-sm text-[#A78D78]">
-                  Phone
-                </p>
+                <p className="text-sm font-medium text-[#22C55E]">Phone</p>
 
-                <p className="mt-1">
-                  +880 1XXX-XXXXXX
-                </p>
+                <p className="mt-1 text-[#F4F4F5]">+880 1XXX-XXXXXX</p>
               </div>
 
               {/* Location */}
               <div>
-                <p className="text-sm text-[#A78D78]">
-                  Location
-                </p>
+                <p className="text-sm font-medium text-[#22C55E]">Location</p>
 
-                <p className="mt-1">
-                  Bangladesh
-                </p>
+                <p className="mt-1 text-[#F4F4F5]">Bangladesh</p>
               </div>
-
             </div>
           </motion.div>
 
@@ -93,17 +73,16 @@ export default function ContactPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay: 0.25 }}
             onSubmit={handleSubmit}
-            className="rounded-2xl border border-[#BEB5A9]/40 bg-[#E1D4C2]/40 p-8 shadow-sm transition-colors dark:border-[#A78D78]/30 dark:bg-[#2D211A]"
+            className="rounded-2xl border border-black/10 bg-white p-8 shadow-sm transition-colors dark:border-white/10 dark:bg-[#27272A]"
           >
-            <h2 className="text-2xl font-semibold">
+            <h2 className="text-2xl font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
               Send us a message
             </h2>
 
             <div className="mt-6 space-y-5">
-
               {/* Name */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]">
                   Name
                 </label>
 
@@ -111,13 +90,13 @@ export default function ContactPage() {
                   type="text"
                   required
                   placeholder="Your name"
-                  className="w-full rounded-lg border border-[#BEB5A9] bg-white px-4 py-3 text-[#291C0E] outline-none transition placeholder:text-[#6E473B]/60 focus:border-[#6E473B] dark:border-[#A78D78]/40 dark:bg-[#382820] dark:text-[#E1D4C2] dark:placeholder:text-[#C5B8AA]/60 dark:focus:border-[#A78D78]"
+                  className="w-full rounded-lg border border-black/10 bg-[#FAF9F7] px-4 py-3 text-[#1C1917] outline-none transition placeholder:text-[#1C1917]/50 focus:border-[#15803D] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/60 dark:focus:border-[#22C55E]"
                 />
               </div>
 
               {/* Email */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]">
                   Email
                 </label>
 
@@ -125,13 +104,13 @@ export default function ContactPage() {
                   type="email"
                   required
                   placeholder="you@example.com"
-                  className="w-full rounded-lg border border-[#BEB5A9] bg-white px-4 py-3 text-[#291C0E] outline-none transition placeholder:text-[#6E473B]/60 focus:border-[#6E473B] dark:border-[#A78D78]/40 dark:bg-[#382820] dark:text-[#E1D4C2] dark:placeholder:text-[#C5B8AA]/60 dark:focus:border-[#A78D78]"
+                  className="w-full rounded-lg border border-black/10 bg-[#FAF9F7] px-4 py-3 text-[#1C1917] outline-none transition placeholder:text-[#1C1917]/50 focus:border-[#15803D] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/60 dark:focus:border-[#22C55E]"
                 />
               </div>
 
               {/* Message */}
               <div>
-                <label className="mb-2 block text-sm font-medium">
+                <label className="mb-2 block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]">
                   Message
                 </label>
 
@@ -139,7 +118,7 @@ export default function ContactPage() {
                   required
                   rows={5}
                   placeholder="Write your message..."
-                  className="w-full resize-none rounded-lg border border-[#BEB5A9] bg-white px-4 py-3 text-[#291C0E] outline-none transition placeholder:text-[#6E473B]/60 focus:border-[#6E473B] dark:border-[#A78D78]/40 dark:bg-[#382820] dark:text-[#E1D4C2] dark:placeholder:text-[#C5B8AA]/60 dark:focus:border-[#A78D78]"
+                  className="w-full resize-none rounded-lg border border-black/10 bg-[#FAF9F7] px-4 py-3 text-[#1C1917] outline-none transition placeholder:text-[#1C1917]/50 focus:border-[#15803D] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/60 dark:focus:border-[#22C55E]"
                 />
               </div>
 
@@ -148,14 +127,12 @@ export default function ContactPage() {
                 type="submit"
                 whileHover={{ scale: 1.02 }}
                 whileTap={{ scale: 0.98 }}
-                className="w-full rounded-lg bg-[#6E473B] px-5 py-3 font-medium text-[#E1D4C2] transition-colors hover:bg-[#A78D78] hover:text-[#291C0E] dark:bg-[#A78D78] dark:text-[#291C0E] dark:hover:bg-[#C5B8AA]"
+                className="w-full rounded-lg bg-[#15803D] px-5 py-3 font-medium text-white transition-colors hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
               >
                 Send Message
               </motion.button>
-
             </div>
           </motion.form>
-
         </div>
       </div>
     </main>

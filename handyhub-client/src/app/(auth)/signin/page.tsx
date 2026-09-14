@@ -12,11 +12,14 @@ import {
   FiEyeOff,
   FiTool,
   FiCheck,
+  FiUser,
+  FiBriefcase,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { authClient } from "@/lib/auth-client";
+
 import backgroundImage from "@/assets/images/login_bg.png";
 import cardImage from "@/assets/images/login.png";
+import { authClient } from "@/lib/auth-client";
 
 interface FormState {
   email: string;
@@ -49,6 +52,22 @@ export default function LoginPage() {
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleDemoFill = (role: "user" | "provider") => {
+    setErrors({});
+    setSubmitError("");
+    if (role === "user") {
+      setForm({
+        email: "user@demo.com",
+        password: "12345678password",
+      });
+    } else {
+      setForm({
+        email: "provider@demo.com",
+        password: "12345678password",
+      });
+    }
   };
 
   const validate = (): boolean => {
@@ -88,9 +107,6 @@ export default function LoginPage() {
         return;
       }
 
-      // window.location.href এর বদলে router.push — client-side navigation,
-      // full page reload হয় না, তাই অনেক দ্রুত।
-      // router.refresh() Navbar-এর session state সাথে সাথে আপডেট করে দেয়।
       router.push("/");
       router.refresh();
     } catch {
@@ -100,9 +116,13 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: better-auth google social signIn call goes here
-    console.log("Google login clicked");
+  const handleGoogleLogin = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+    });
+    if (error) {
+      console.error("Google sign-in failed:", error.message);
+    }
   };
 
   return (
@@ -143,6 +163,30 @@ export default function LoginPage() {
               Create one
             </Link>
           </p>
+
+          {/* Quick Demo Credentials Buttons */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <Button
+              type="button"
+              onPress={() => handleDemoFill("user")}
+              variant="outline"
+              className="w-full bg-emerald-50 border-emerald-200 text-[#15803D] hover:bg-emerald-100 font-medium text-xs sm:text-sm"
+              size="md"
+            >
+              <FiUser className="mr-1 sm:mr-1.5" />
+              Demo User
+            </Button>
+            <Button
+              type="button"
+              onPress={() => handleDemoFill("provider")}
+              variant="outline"
+              className="w-full bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100 font-medium text-xs sm:text-sm"
+              size="md"
+            >
+              <FiBriefcase className="mr-1 sm:mr-1.5" />
+              Demo Provider
+            </Button>
+          </div>
 
           <Button
             onPress={handleGoogleLogin}

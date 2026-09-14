@@ -36,103 +36,36 @@ export function DashboardSidebar() {
     : null;
 
   const userItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/user",
-    },
-    {
-      icon: ListCheck,
-      label: "My Requests",
-      href: "/dashboard/user/my-requests",
-    },
-    {
-      icon: Heart,
-      label: "Saved Providers",
-      href: "/dashboard/user/saved-providers",
-    },
-    {
-      icon: Boxes3,
-      label: "Browse Services",
-      href: "/all-services",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/user" },
+    { icon: ListCheck, label: "My Requests", href: "/dashboard/user/my-requests" },
+    { icon: Heart, label: "Saved Providers", href: "/dashboard/user/saved-providers" },
+    { icon: Boxes3, label: "Browse Services", href: "/all-services" },
   ];
 
   const providerItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/provider",
-    },
-    {
-      icon: Briefcase,
-      label: "My Services",
-      href: "/dashboard/provider/my-services",
-    },
-    {
-      icon: Plus,
-      label: "Add Service",
-      href: "/dashboard/provider/add-service",
-    },
-    {
-      icon: Calendar,
-      label: "Availability",
-      href: "/dashboard/provider/availability",
-    },
-    {
-      icon: ListCheck,
-      label: "Incoming Requests",
-      href: "/dashboard/provider/incoming-requests",
-    },
-    {
-      icon: Briefcase,
-      label: "Active Jobs",
-      href: "/dashboard/provider/active-jobs",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/provider" },
+    { icon: Briefcase, label: "My Services", href: "/dashboard/provider/my-services" },
+    { icon: Plus, label: "Add Service", href: "/dashboard/provider/add-service" },
+    { icon: Calendar, label: "Availability", href: "/dashboard/provider/availability" },
+    { icon: ListCheck, label: "Incoming Requests", href: "/dashboard/provider/incoming-requests" },
+    { icon: Briefcase, label: "Active Jobs", href: "/dashboard/provider/active-jobs" },
   ];
 
   const adminItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/admin",
-    },
-    {
-      icon: Person,
-      label: "Manage Users",
-      href: "/dashboard/admin/manage-users",
-    },
-    {
-      icon: Person,
-      label: "Manage Providers",
-      href: "/dashboard/admin/manage-providers",
-    },
-    {
-      icon: Boxes3,
-      label: "Manage Categories",
-      href: "/dashboard/admin/manage-categories",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/admin" },
+    { icon: Person, label: "Manage Users", href: "/dashboard/admin/manage-users" },
+    { icon: Person, label: "Manage Providers", href: "/dashboard/admin/manage-providers" },
+    { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
   ];
 
   const getNavDetails = () => {
     if (role === "admin") {
-      return {
-        items: adminItems,
-        label: "Admin Panel",
-      };
+      return { items: adminItems, label: "Admin Panel" };
     }
-
     if (role === "provider") {
-      return {
-        items: providerItems,
-        label: "Provider Panel",
-      };
+      return { items: providerItems, label: "Provider Panel" };
     }
-
-    return {
-      items: userItems,
-      label: "Customer Panel",
-    };
+    return { items: userItems, label: "Customer Panel" };
   };
 
   const { items, label: roleLabel } = getNavDetails();
@@ -158,21 +91,19 @@ export function DashboardSidebar() {
             key={item.href}
             href={item.href}
             className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-              ? "bg-[#6E473B]/10 text-[#6E473B] dark:bg-[#A78D78]/10 dark:text-[#A78D78]"
-              : "text-[#6E473B]/75 hover:bg-[#6E473B]/5 hover:text-[#291C0E] dark:text-[#C5B8AA]/70 dark:hover:bg-white/5 dark:hover:text-[#E1D4C2]"
+              ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]"
+              : "text-[#1C1917]/75 hover:bg-[#15803D]/5 hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
               }`}
           >
             <span
-              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#6E473B] transition-opacity dark:bg-[#A78D78] ${isActive
-                ? "opacity-100"
-                : "opacity-0"
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#15803D] transition-opacity dark:bg-[#22C55E] ${isActive ? "opacity-100" : "opacity-0"
                 }`}
             />
 
             <item.icon
               className={`size-4 ${isActive
-                ? "text-[#6E473B] dark:text-[#A78D78]"
-                : "text-[#6E473B]/50 dark:text-[#C5B8AA]/50"
+                ? "text-[#15803D] dark:text-[#22C55E]"
+                : "text-[#1C1917]/50 dark:text-[#A1A1AA]/60"
                 }`}
             />
 
@@ -186,21 +117,16 @@ export function DashboardSidebar() {
   const NavContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <Link
-        href="/"
-        className="mb-8 flex items-center px-3"
-      >
-        <span className="text-xl font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+      <Link href="/" className="mb-8 flex items-center px-3">
+        <span className="text-xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
           Handy
-          <span className="text-[#6E473B] dark:text-[#A78D78]">
-            Hub
-          </span>
+          <span className="text-[#15803D] dark:text-[#22C55E]">Hub</span>
         </span>
       </Link>
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6E473B]/45 dark:text-[#C5B8AA]/40">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1C1917]/45 dark:text-[#A1A1AA]/50">
           {roleLabel}
         </p>
 
@@ -208,17 +134,16 @@ export function DashboardSidebar() {
       </div>
 
       {/* Logout */}
-      <div className="mt-4 border-t border-[#6E473B]/10 pt-4 dark:border-white/10">
+      <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
         <button
           type="button"
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#6E473B]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#C5B8AA]/70 dark:hover:text-red-400"
+          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#1C1917]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA] dark:hover:text-red-400"
         >
           <FiLogOut
             size={16}
             className="transition-transform duration-200 group-hover:translate-x-0.5"
           />
-
           Logout
         </button>
       </div>
@@ -239,23 +164,20 @@ export function DashboardSidebar() {
           w-64
           lg:block
           border-r
-          border-[#6E473B]/15
-          bg-[#cec1b1]
+          border-black/10
+          bg-white
           px-3
           py-5
           dark:border-white/10
-          dark:bg-[#181411]
+          dark:bg-[#18181B]
         "
       >
         {NavContent}
       </aside>
-      
+
       {/* Mobile Menu */}
       <div className="fixed left-4 top-3 z-60 lg:hidden">
-        <Drawer
-          isOpen={isDrawerOpen}
-          onOpenChange={setIsDrawerOpen}
-        >
+        <Drawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
           {/* Toggle Button */}
           {!isDrawerOpen && (
             <Button
@@ -265,56 +187,49 @@ export function DashboardSidebar() {
                 min-w-11
                 rounded-xl
                 border
-                border-[#6E473B]/20
-                bg-[#BEB5A9]
+                border-black/10
+                bg-white
                 p-0
                 shadow-lg
-                shadow-[#291C0E]/10
+                shadow-black/10
                 transition-all
                 duration-200
-                hover:bg-[#A78D78]
+                hover:bg-[#FAF9F7]
                 active:scale-95
                 dark:border-white/10
-                dark:bg-[#241B17]
+                dark:bg-[#27272A]
               "
               variant="secondary"
             >
-              <TfiMenuAlt className="size-5 text-[#291C0E] dark:text-[#E1D4C2]" />
+              <TfiMenuAlt className="size-5 text-[#1C1917] dark:text-[#F4F4F5]" />
             </Button>
           )}
 
-
           <Drawer.Backdrop>
-            <Drawer.Content
-              placement="left"
-              className="w-[290px] max-w-[85vw]"
-            >
+            <Drawer.Content placement="left" className="w-[290px] max-w-[85vw]">
               <Drawer.Dialog
                 className="
             overflow-hidden
-            bg-[#E1D4C2]
+            bg-white
             shadow-2xl
-            shadow-[#291C0E]/20
-            dark:bg-[#181411]
+            shadow-black/20
+            dark:bg-[#18181B]
           "
               >
                 {/* Drawer Header */}
                 <Drawer.Header
                   className="
               border-b
-              border-[#6E473B]/15
-              bg-[#BEB5A9]
+              border-black/10
+              bg-white
               px-5
               py-4
               dark:border-white/10
-              dark:bg-[#241B17]
+              dark:bg-[#27272A]
             "
                 >
                   <div className="flex w-full items-center justify-between">
-                    <Link
-                      href="/"
-                      className="flex items-center gap-2.5"
-                    >
+                    <Link href="/" className="flex items-center gap-2.5">
                       <span
                         className="
                     flex
@@ -323,25 +238,27 @@ export function DashboardSidebar() {
                     items-center
                     justify-center
                     rounded-xl
-                    bg-[#6E473B]
+                    bg-[#15803D]
                     text-sm
                     font-bold
-                    text-[#E1D4C2]
+                    text-white
                     shadow-sm
+                    dark:bg-[#22C55E]
+                    dark:text-[#18181B]
                   "
                       >
                         HH
                       </span>
 
                       <div className="flex flex-col leading-none">
-                        <span className="text-lg font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+                        <span className="text-lg font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
                           Handy
-                          <span className="text-[#6E473B] dark:text-[#A78D78]">
+                          <span className="text-[#15803D] dark:text-[#22C55E]">
                             Hub
                           </span>
                         </span>
 
-                        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#6E473B]/60 dark:text-[#A78D78]/60">
+                        <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#15803D]/70 dark:text-[#22C55E]/70">
                           {roleLabel}
                         </span>
                       </div>
@@ -350,11 +267,11 @@ export function DashboardSidebar() {
                     <Drawer.CloseTrigger
                       className="
                   rounded-lg
-                  text-[#6E473B]
+                  text-[#1C1917]
                   transition-colors
-                  hover:bg-[#6E473B]/10
-                  hover:text-[#291C0E]
-                  dark:text-[#A78D78]
+                  hover:bg-black/5
+                  hover:text-[#1C1917]
+                  dark:text-[#A1A1AA]
                   dark:hover:bg-white/5
                 "
                     />
@@ -364,17 +281,16 @@ export function DashboardSidebar() {
                 {/* Drawer Body */}
                 <Drawer.Body
                   className="
-              bg-[#E1D4C2]
+              bg-white
               px-3
               py-5
-              dark:bg-[#181411]
+              dark:bg-[#18181B]
             "
                 >
                   <div className="flex min-h-full flex-col">
-
                     {/* Navigation Label */}
                     <div className="mb-3 px-2">
-                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#6E473B]/55 dark:text-[#A78D78]/55">
+                      <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1C1917]/55 dark:text-[#A1A1AA]/60">
                         Navigation
                       </p>
                     </div>
@@ -408,14 +324,14 @@ export function DashboardSidebar() {
                         duration-200
 
                         ${isActive
-                                ? "bg-[#6E473B] text-[#E1D4C2] shadow-md shadow-[#291C0E]/10"
-                                : "text-[#291C0E]/75 hover:bg-[#BEB5A9] hover:text-[#291C0E] dark:text-[#E1D4C2]/70 dark:hover:bg-[#241B17] dark:hover:text-[#E1D4C2]"
+                                ? "bg-[#15803D] text-white shadow-md shadow-black/10 dark:bg-[#22C55E] dark:text-[#18181B]"
+                                : "text-[#1C1917]/75 hover:bg-[#FAF9F7] hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-[#27272A] dark:hover:text-[#F4F4F5]"
                               }
                       `}
                           >
                             {/* Active Indicator */}
                             {isActive && (
-                              <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#A78D78]" />
+                              <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#F59E0B] dark:bg-[#FBBF24]" />
                             )}
 
                             <span
@@ -430,8 +346,8 @@ export function DashboardSidebar() {
                           transition-all
                           duration-200
                           ${isActive
-                                  ? "bg-[#E1D4C2]/15"
-                                  : "bg-[#BEB5A9]/70 group-hover:bg-[#A78D78]/40"
+                                  ? "bg-white/15"
+                                  : "bg-[#FAF9F7] group-hover:bg-[#15803D]/10 dark:bg-[#27272A] dark:group-hover:bg-white/10"
                                 }
                         `}
                             >
@@ -439,8 +355,8 @@ export function DashboardSidebar() {
                                 className={`
                             size-4
                             ${isActive
-                                    ? "text-[#E1D4C2]"
-                                    : "text-[#6E473B]"
+                                    ? "text-white dark:text-[#18181B]"
+                                    : "text-[#15803D] dark:text-[#22C55E]"
                                   }
                           `}
                               />
@@ -454,7 +370,7 @@ export function DashboardSidebar() {
 
                     {/* Bottom Section */}
                     <div className="mt-auto pt-8">
-                      <div className="mb-4 border-t border-[#6E473B]/15 dark:border-white/10" />
+                      <div className="mb-4 border-t border-black/10 dark:border-white/10" />
 
                       <button
                         type="button"
@@ -470,14 +386,14 @@ export function DashboardSidebar() {
                     py-3
                     text-sm
                     font-medium
-                    text-[#6E473B]
+                    text-[#1C1917]/75
                     transition-all
                     duration-200
-                    hover:bg-[#6E473B]/10
-                    hover:text-[#291C0E]
-                    dark:text-[#A78D78]
-                    dark:hover:bg-white/5
-                    dark:hover:text-[#E1D4C2]
+                    hover:bg-red-500/10
+                    hover:text-red-600
+                    dark:text-[#A1A1AA]
+                    dark:hover:bg-red-500/10
+                    dark:hover:text-red-400
                   "
                       >
                         <span
@@ -488,9 +404,10 @@ export function DashboardSidebar() {
                       items-center
                       justify-center
                       rounded-lg
-                      bg-[#BEB5A9]/70
+                      bg-[#FAF9F7]
                       transition-colors
-                      group-hover:bg-[#A78D78]/40
+                      group-hover:bg-red-500/10
+                      dark:bg-[#27272A]
                     "
                         >
                           <FiLogOut

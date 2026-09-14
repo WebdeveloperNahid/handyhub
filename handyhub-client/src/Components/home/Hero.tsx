@@ -1,695 +1,933 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ElementType } from "react";
 import Link from "next/link";
 import { AnimatePresence, motion } from "framer-motion";
+
 import {
-    FiArrowLeft,
-    FiArrowRight,
-    FiCheck,
-    FiHome,
-    FiStar,
-    FiTool,
-    FiUsers,
-    FiDroplet,
-    FiZap,
-    FiWind,
-    FiEdit3,
-    FiShield,
-    FiCalendar,
-    FiClock,
+  FiArrowLeft,
+  FiArrowRight,
+  FiCheck,
+  FiDroplet,
+  FiGrid,
+  FiHome,
+  FiMapPin,
+  FiPrinter,
+  FiShield,
+  FiStar,
+  FiTool,
+  FiWind,
+  FiZap,
 } from "react-icons/fi";
 
-const slides = [
-    {
-        id: 1,
-        badge: "HANDYHUB • EVERYDAY SERVICES",
-        title: "Need a hand?",
-        highlight: "Find the right one.",
-        description:
-            "Connect with trusted professionals for the services your everyday life needs.",
-        button: "Browse Services",
-        icon: FiTool,
-        type: "provider",
-    },
-    {
-        id: 2,
-        badge: "HOME • REPAIR • CARE",
-        title: "Your home,",
-        highlight: "taken care of.",
-        description:
-            "From plumbing and electrical work to cleaning and repairs, get the help you need.",
-        button: "Explore Services",
-        icon: FiHome,
-        type: "services",
-    },
-    {
-        id: 3,
-        badge: "TRUSTED PROFESSIONALS",
-        title: "Skills you need.",
-        highlight: "People you can trust.",
-        description:
-            "Discover skilled service providers and choose with confidence through ratings and reviews.",
-        button: "Meet Service Providers",
-        icon: FiUsers,
-        type: "trust",
-    },
-    {
-        id: 4,
-        badge: "SIMPLE • FAST • CONVENIENT",
-        title: "From request",
-        highlight: "to done.",
-        description:
-            "Find a service, connect with a professional, and get your task completed without the hassle.",
-        button: "Get Started",
-        icon: FiCheck,
-        type: "booking",
-    },
+interface HeroSlide {
+  id: number;
+  image: string;
+  category: string;
+  title: string;
+  highlight: string;
+  description: string;
+  button: string;
+  service: string;
+  icon: ElementType;
+  rating: string;
+}
+
+/* =========================================================
+   HANDYHUB SERVICES
+========================================================= */
+
+const slides: HeroSlide[] = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=2200&q=90",
+    category: "ELECTRICAL SERVICE",
+    title: "Electrical work,",
+    highlight: "done safely.",
+    description:
+      "Find trusted local electricians for wiring, switches, lights, installations, repairs and everyday electrical work.",
+    button: "Find Electricians",
+    service: "Electrical",
+    icon: FiZap,
+    rating: "4.9",
+  },
+
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=2200&q=90",
+    category: "HOME CLEANING",
+    title: "A cleaner home,",
+    highlight: "a better feeling.",
+    description:
+      "Book reliable home cleaners for deep cleaning, regular cleaning, kitchens, bedrooms and complete home care.",
+    button: "Find Home Cleaners",
+    service: "Home Cleaning",
+    icon: FiHome,
+    rating: "4.8",
+  },
+
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=2200&q=90",
+    category: "FRIDGE & APPLIANCE REPAIR",
+    title: "Fridge not cooling?",
+    highlight: "Get it fixed fast.",
+    description:
+      "Connect with local technicians for refrigerator repair, cooling problems, appliance maintenance and installation.",
+    button: "Find Fridge Experts",
+    service: "Fridge Repair",
+    icon: FiTool,
+    rating: "4.9",
+  },
+
+  {
+    id: 4,
+    image:
+      "https://static.vecteezy.com/system/resources/thumbnails/074/237/150/small/professional-air-conditioner-installation-and-maintenance-by-technician-in-uniform-photo.jpg",
+    category: "AC SERVICE & REPAIR",
+    title: "AC not cooling?",
+    highlight: "Let's get it sorted.",
+    description:
+      "Find skilled AC professionals for servicing, gas refill, repair, maintenance and complete cooling solutions.",
+    button: "Find AC Services",
+    service: "AC Repair",
+    icon: FiWind,
+    rating: "4.9",
+  },
+
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=2200&q=90",
+    category: "TANK & PIPELINE",
+    title: "Water problems?",
+    highlight: "We've got the help.",
+    description:
+      "Find experienced professionals for water tanks, pipelines, leakage, fittings, pumps and household plumbing work.",
+    button: "Find Pipeline Experts",
+    service: "Tank & Pipeline",
+    icon: FiDroplet,
+    rating: "4.9",
+  },
+
+  {
+    id: 6,
+    image:
+      "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=2200&q=90",
+    category: "PRINTER & OFFICE REPAIR",
+    title: "Printer trouble?",
+    highlight: "Keep work moving.",
+    description:
+      "Get local technicians for printer setup, repair, maintenance, cartridge problems and office equipment support.",
+    button: "Find Printer Experts",
+    service: "Printer Repair",
+    icon: FiPrinter,
+    rating: "4.8",
+  },
+
+  {
+    id: 7,
+    image:
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2200&q=90",
+    category: "ARCHITECT & BUILDING",
+    title: "Planning to build?",
+    highlight: "Start with a better design.",
+    description:
+      "Connect with architects and building professionals for home design, planning, renovation and construction support.",
+    button: "Find Architects",
+    service: "Architect & Building",
+    icon: FiHome,
+    rating: "4.9",
+  },
+
+  {
+    id: 8,
+    image:
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2200&q=90",
+    category: "TILES • MASONRY • DOORS",
+    title: "Upgrade your space,",
+    highlight: "beautifully.",
+    description:
+      "Find skilled professionals for tiles, masonry, doors, windows, glass work, frames and modern home finishing.",
+    button: "Find Home Experts",
+    service: "Tiles & Doors",
+    icon: FiGrid,
+    rating: "4.9",
+  },
 ];
 
+/* =========================================================
+   HERO
+========================================================= */
+
 export default function Hero() {
-    const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-    const nextSlide = () => {
-        setCurrent((prev) => (prev + 1) % slides.length);
-    };
+  const slide = slides[current];
+  const Icon = slide.icon;
 
-    const prevSlide = () => {
-        setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
-    };
+  /* =======================================================
+     AUTO SLIDER — 3 SECONDS
+  ======================================================= */
 
-    useEffect(() => {
-        const interval = setInterval(nextSlide, 6000);
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, 3000);
 
-        return () => clearInterval(interval);
-    }, []);
+    return () => clearInterval(timer);
+  }, []);
 
-    const slide = slides[current];
-    const Icon = slide.icon;
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % slides.length);
+  };
 
-    return (
-        <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#FAF9F7] text-[#1C1917] transition-colors duration-500 dark:bg-[#18181B] dark:text-[#F4F4F5]">
-            {/* Background blobs */}
-            <motion.div
-                animate={{
-                    x: [0, 30, 0],
-                    y: [0, -20, 0],
-                }}
-                transition={{
-                    duration: 9,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-[#15803D]/10 blur-3xl dark:bg-[#22C55E]/10"
-            />
+  const previousSlide = () => {
+    setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+  };
 
-            <motion.div
-                animate={{
-                    x: [0, -25, 0],
-                    y: [0, 25, 0],
-                }}
-                transition={{
-                    duration: 11,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-[#F59E0B]/15 blur-3xl dark:bg-[#FBBF24]/15"
-            />
+  return (
+    <section
+      className="
+        relative
+        min-h-[calc(100svh-4rem)]
+        w-full
+        overflow-hidden
+        bg-[#dce7e1]
+        text-white
+      "
+    >
+      {/* =====================================================
+          BACKGROUND IMAGE
+          
+          IMPORTANT:
+          Black overlay intentionally kept VERY LOW.
+      ===================================================== */}
 
-            {/* Decorative dots */}
-            <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-[12%] top-[22%] h-2 w-2 rounded-full bg-[#15803D]/40 dark:bg-[#22C55E]/40"
-            />
+      <div className="absolute inset-0">
+        <AnimatePresence initial={false} mode="sync">
+          <motion.div
+            key={slide.id}
+            initial={{
+              opacity: 0,
+              scale: 1.025,
+            }}
+            animate={{
+              opacity: 1,
+              scale: 1,
+            }}
+            exit={{
+              opacity: 0,
+              scale: 1,
+            }}
+            transition={{
+              duration: 0.65,
+              ease: "easeInOut",
+            }}
+            className="absolute inset-0 bg-cover bg-center"
+            style={{
+              backgroundImage: `url("${slide.image}")`,
+            }}
+          />
+        </AnimatePresence>
 
-            <motion.div
-                animate={{ y: [0, 15, 0] }}
-                transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1,
-                }}
-                className="absolute right-[15%] top-[18%] h-3 w-3 rounded-full bg-[#F59E0B]/40"
-            />
+        {/* =================================================
+            VERY LIGHT IMAGE OVERLAY
+            আগের black darkness অনেক কমানো হয়েছে
+        ================================================= */}
 
-            <div className="relative z-10  flex min-h-[calc(100vh-4rem)] mx-auto max-w-6xl items-center px-5 py-20 sm:px-8 lg:px-10">
-                <div className="grid w-full items-center gap-14 lg:grid-cols-2 lg:gap-20">
-                    {/* LEFT */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={slide.id}
-                            initial={{ opacity: 0, x: -35 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 35 }}
-                            transition={{
-                                duration: 0.7,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
-                            {/* Badge */}
-                            <span className="inline-flex items-center gap-2 rounded-full border border-[#15803D]/20 bg-white/30 px-4 py-2 text-xs font-semibold tracking-wider text-[#15803D] backdrop-blur-sm dark:border-[#22C55E]/20 dark:bg-[#27272A]/60 dark:text-[#22C55E]">
-                                <span className="h-1.5 w-1.5 rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
-                                {slide.badge}
-                            </span>
+        <div className="absolute inset-0 bg-black/[0.025]" />
 
-                            {/* Heading */}
-                            <h1 className="mt-6 max-w-2xl text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-                                {slide.title}
-                                <br />
-                                <span className="text-[#15803D] dark:text-[#22C55E]">
-                                    {slide.highlight}
-                                </span>
-                            </h1>
+        {/* Text readability only */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/20 via-black/[0.07] to-transparent" />
 
-                            {/* Description */}
-                            <p className="mt-6 max-w-xl text-base leading-7 text-[#1C1917]/70 sm:text-lg dark:text-[#A1A1AA]">
-                                {slide.description}
-                            </p>
+        {/* Bottom subtle readability */}
+        <div className="absolute inset-x-0 bottom-0 h-48 bg-gradient-to-t from-black/20 via-black/[0.04] to-transparent" />
 
-                            {/* CTA */}
-                            <div className="mt-8 flex flex-wrap items-center gap-4">
-                                <Link
-                                    href="/all-services"
-                                    className="group inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-6 py-3.5 text-sm font-semibold text-white shadow-lg shadow-[#15803D]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#116830] hover:shadow-xl dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A]"
-                                >
-                                    {slide.button}
+        {/* Very subtle fresh green tint */}
+        <div className="pointer-events-none absolute inset-0 bg-[#789f89]/[0.025]" />
+      </div>
 
-                                    <FiArrowRight
-                                        size={17}
-                                        className="transition-transform duration-300 group-hover:translate-x-1"
-                                    />
-                                </Link>
+      {/* =====================================================
+          MAIN CONTENT
+      ===================================================== */}
 
-                                <span className="text-sm text-[#1C1917]/50 dark:text-[#A1A1AA]/70">
-                                    Trusted • Simple • Convenient
-                                </span>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
+      <div
+        className="
+          relative
+          z-10
+          mx-auto
+          flex
+          min-h-[calc(100svh-4rem)]
+          max-w-[1500px]
+          items-center
+          px-5
+          pb-36
+          pt-24
+          sm:px-8
+          sm:pb-40
+          sm:pt-28
+          lg:px-12
+          lg:pb-44
+        "
+      >
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id}
+            initial={{
+              opacity: 0,
+              x: -22,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            exit={{
+              opacity: 0,
+              x: 18,
+            }}
+            transition={{
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="w-full max-w-3xl"
+          >
+            {/* =================================================
+                CATEGORY
+            ================================================= */}
 
-                    {/* RIGHT VISUAL */}
-                    <div className="relative flex min-h-[400px] items-center justify-center">
-                        {/* Glow */}
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.05, 1],
-                            }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                            className="absolute h-72 w-72 rounded-full bg-[#F59E0B]/20 blur-3xl sm:h-96 sm:w-96"
-                        />
+            <div
+              className="
+                mb-5
+                inline-flex
+                items-center
+                gap-2
+                rounded-full
+                border
+                border-white/35
+                bg-white/[0.10]
+                px-3.5
+                py-2
+                shadow-lg
+                backdrop-blur-md
+                sm:mb-6
+                sm:px-4
+              "
+            >
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d7eadf]/50" />
 
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={slide.id}
-                                initial={{ opacity: 0, x: 35, scale: 0.94 }}
-                                animate={{ opacity: 1, x: 0, scale: 1 }}
-                                exit={{ opacity: 0, x: -35, scale: 0.94 }}
-                                transition={{
-                                    duration: 0.8,
-                                    ease: [0.22, 1, 0.36, 1],
-                                }}
-                                className="relative w-full max-w-md"
-                            >
-                                {/* Main Card */}
-                                <div className="relative overflow-hidden rounded-[2rem] border border-black/10 bg-white/40 p-5 shadow-2xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/75">
-                                    {/* Header */}
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
-                                                <Icon size={20} />
-                                            </div>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d9eee2]" />
+              </span>
 
-                                            <div>
-                                                <p className="text-sm font-semibold">
-                                                    HandyHub
-                                                </p>
-                                                <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                                                    Service marketplace
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#F59E0B]/20">
-                                            <span className="h-2 w-2 rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
-                                        </div>
-                                    </div>
-
-                                    {/* Slide Visual */}
-                                    <div className="mt-6">
-                                        {slide.type === "provider" && <ProviderVisual />}
-                                        {slide.type === "services" && <ServicesVisual />}
-                                        {slide.type === "trust" && <TrustVisual />}
-                                        {slide.type === "booking" && <BookingVisual />}
-                                    </div>
-                                </div>
-
-                                {/* Floating Notification */}
-                                <motion.div
-                                    animate={{ y: [0, -10, 0] }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                    }}
-                                    className="absolute -right-5 top-20 rounded-2xl border border-black/10 bg-white/70 p-3 shadow-xl backdrop-blur-xl dark:border-white/10 dark:bg-[#27272A]/90"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#15803D]/15 dark:bg-[#22C55E]/15">
-                                            <FiCheck
-                                                size={15}
-                                                className="text-[#15803D] dark:text-[#22C55E]"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs font-semibold">
-                                                All set!
-                                            </p>
-                                            <p className="text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                                                Service confirmed
-                                            </p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* Slider Controls */}
-                <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-5">
-                    <button
-                        onClick={prevSlide}
-                        aria-label="Previous slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/30 text-[#15803D] backdrop-blur-sm transition-all hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:bg-[#27272A]/60 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
-                    >
-                        <FiArrowLeft size={16} />
-                    </button>
-
-                    {/* Dots */}
-                    <div className="flex items-center gap-2">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrent(index)}
-                                aria-label={`Go to slide ${index + 1}`}
-                                className={`h-1.5 rounded-full transition-all duration-500 ${current === index
-                                    ? "w-8 bg-[#15803D] dark:bg-[#22C55E]"
-                                    : "w-1.5 bg-[#1C1917]/20 dark:bg-[#A1A1AA]/30"
-                                    }`}
-                            />
-                        ))}
-                    </div>
-
-                    <button
-                        onClick={nextSlide}
-                        aria-label="Next slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-black/10 bg-white/30 text-[#15803D] backdrop-blur-sm transition-all hover:bg-[#15803D] hover:text-white dark:border-white/10 dark:bg-[#27272A]/60 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
-                    >
-                        <FiArrowRight size={16} />
-                    </button>
-                </div>
+              <span className="text-[9px] font-bold tracking-[0.17em] text-white sm:text-[11px]">
+                {slide.category}
+              </span>
             </div>
-        </section>
-    );
-}
 
+            {/* =================================================
+                TITLE
+            ================================================= */}
 
-/* Provider Visual                */
-function ProviderVisual() {
-    return (
-        <div className="relative min-h-[300px] w-full">
-            {/* Main profile card */}
-            <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-4 top-6 w-[260px] rounded-2xl border border-black/10 bg-white/90 p-5 shadow-xl backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
+            <h1
+              className="
+                max-w-4xl
+                text-[2.65rem]
+                font-black
+                leading-[0.98]
+                tracking-[-0.045em]
+                text-white
+                drop-shadow-[0_2px_8px_rgba(0,0,0,0.20)]
+                sm:text-6xl
+                md:text-7xl
+                lg:text-[5rem]
+                xl:text-[5.5rem]
+              "
             >
-                {/* Profile header */}
-                <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#15803D] dark:bg-[#22C55E]">
-                        <FiUsers
-                            size={21}
-                            className="text-white dark:text-[#18181B]"
-                        />
-                    </div>
+              {slide.title}
 
-                    <div>
-                        <p className="text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                            Rahim Ahmed
-                        </p>
+              <br />
 
-                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            Home Repair Specialist
-                        </p>
-                    </div>
+              {/* Soft green — not strong green */}
+              <span className="text-[#d5e9dc]">{slide.highlight}</span>
+            </h1>
 
-                    <div className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-[#F59E0B]/15">
-                        <FiCheck
-                            size={13}
-                            className="text-[#15803D] dark:text-[#22C55E]"
-                        />
-                    </div>
-                </div>
+            {/* =================================================
+                DESCRIPTION
+            ================================================= */}
 
-                {/* Rating */}
-                <div className="mt-5 flex items-center justify-between border-t border-black/10 pt-4 dark:border-white/10">
-                    <div>
-                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            Rating
-                        </p>
-
-                        <div className="mt-1 flex items-center gap-1">
-                            <FiStar
-                                size={13}
-                                className="fill-current text-[#F59E0B] dark:text-[#FBBF24]"
-                            />
-                            <span className="text-sm font-semibold">
-                                4.9
-                            </span>
-                        </div>
-                    </div>
-
-                    <div>
-                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            Completed
-                        </p>
-
-                        <p className="mt-1 text-sm font-semibold">
-                            120+ jobs
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Service request card */}
-            <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.3,
-                }}
-                className="absolute bottom-5 right-0 w-[210px] rounded-2xl border border-black/10 bg-white/95 p-4 shadow-lg backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
+            <p
+              className="
+                mt-5
+                max-w-2xl
+                text-sm
+                leading-7
+                text-white
+                drop-shadow-[0_1px_5px_rgba(0,0,0,0.25)]
+                sm:mt-6
+                sm:text-base
+                sm:leading-8
+                lg:text-lg
+              "
             >
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                        New request
-                    </span>
+              {slide.description}
+            </p>
 
-                    <span className="h-2 w-2 rounded-full bg-[#F59E0B] dark:bg-[#FBBF24]" />
-                </div>
+            {/* =================================================
+                BUTTON
+            ================================================= */}
 
-                <div className="mt-3 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#F59E0B]/15">
-                        <FiTool
-                            size={17}
-                            className="text-[#15803D] dark:text-[#22C55E]"
-                        />
-                    </div>
+            <div className="mt-7 flex flex-col gap-4 sm:mt-8 sm:flex-row sm:items-center">
+              <Link
+                href="/all-services"
+                className="
+                  group
+                  inline-flex
+                  w-fit
+                  items-center
+                  justify-center
+                  gap-3
+                  rounded-xl
+                  bg-white
+                  px-6
+                  py-3.5
+                  text-sm
+                  font-bold
+                  text-[#26352d]
+                  shadow-xl
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:bg-[#f8fbf9]
+                  hover:shadow-2xl
+                "
+              >
+                {slide.button}
 
-                    <div>
-                        <p className="text-sm font-semibold">
-                            Plumbing Service
-                        </p>
+                <FiArrowRight
+                  size={17}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Link>
 
-                        <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            Today · 10:30 AM
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+              <div className="flex items-center gap-2 text-sm text-white drop-shadow-sm">
+                <FiCheck size={16} className="text-[#e0f0e5]" />
+                Trusted local professionals
+              </div>
+            </div>
 
-            {/* Verified floating badge */}
-            <motion.div
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-0 left-1 rounded-xl border border-black/10 bg-white/90 px-3 py-2 shadow-md backdrop-blur-md dark:border-white/10 dark:bg-[#27272A]"
+            {/* =================================================
+                TRUST INFORMATION
+            ================================================= */}
+
+            <div
+              className="
+                mt-7
+                flex
+                flex-wrap
+                items-center
+                gap-x-5
+                gap-y-3
+                text-xs
+                text-white
+                drop-shadow-sm
+                sm:mt-8
+                sm:text-sm
+              "
             >
-                <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#15803D]/15 dark:bg-[#22C55E]/15">
-                        <FiShield
-                            size={13}
-                            className="text-[#15803D] dark:text-[#22C55E]"
-                        />
-                    </div>
+              <span className="flex items-center gap-2">
+                <FiMapPin size={15} />
+                Local service providers
+              </span>
 
-                    <div>
-                        <p className="text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            HandyHub
-                        </p>
+              <span className="hidden h-4 w-px bg-white/35 sm:block" />
 
-                        <p className="text-xs font-semibold">
-                            Verified Provider
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-        </div>
-    );
-}
+              <span className="flex items-center gap-2">
+                <FiStar size={15} className="fill-[#f6e3a6] text-[#f6e3a6]" />
+                {slide.rating} trusted rating
+              </span>
 
-/* Services Visual                */
-function ServicesVisual() {
-    const services = [
-        {
-            icon: FiDroplet,
-            name: "Plumbing",
-        },
-        {
-            icon: FiZap,
-            name: "Electrical",
-        },
-        {
-            icon: FiWind,
-            name: "Cleaning",
-        },
-        {
-            icon: FiEdit3,
-            name: "Painting",
-        },
-    ];
+              <span className="hidden h-4 w-px bg-white/35 sm:block" />
 
-    return (
-        <div className="grid grid-cols-2 gap-3">
-            {services.map((service, index) => {
-                const ServiceIcon = service.icon;
+              <span className="flex items-center gap-2">
+                <FiShield size={15} />
+                Reliable service
+              </span>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-                return (
+      {/* =====================================================
+          PREVIOUS BUTTON
+      ===================================================== */}
+
+      <motion.button
+        type="button"
+        whileHover={{
+          scale: 1.06,
+        }}
+        whileTap={{
+          scale: 0.92,
+        }}
+        onClick={previousSlide}
+        aria-label="Previous service"
+        className="
+          absolute
+          left-2
+          top-1/2
+          z-30
+          flex
+          h-9
+          w-9
+          -translate-y-1/2
+          items-center
+          justify-center
+          rounded-full
+          border
+          border-white/45
+          bg-white/[0.10]
+          text-white
+          shadow-lg
+          backdrop-blur-md
+          transition-all
+          hover:bg-white/[0.18]
+          sm:left-5
+          sm:h-12
+          sm:w-12
+          lg:h-14
+          lg:w-14
+        "
+      >
+        <FiArrowLeft size={18} />
+      </motion.button>
+
+      {/* =====================================================
+          NEXT BUTTON
+      ===================================================== */}
+
+      <motion.button
+        type="button"
+        whileHover={{
+          scale: 1.06,
+        }}
+        whileTap={{
+          scale: 0.92,
+        }}
+        onClick={nextSlide}
+        aria-label="Next service"
+        className="
+          absolute
+          right-2
+          top-1/2
+          z-30
+          flex
+          h-9
+          w-9
+          -translate-y-1/2
+          items-center
+          justify-center
+          rounded-full
+          border
+          border-white/45
+          bg-white/[0.10]
+          text-white
+          shadow-lg
+          backdrop-blur-md
+          transition-all
+          hover:bg-white/[0.18]
+          sm:right-5
+          sm:h-12
+          sm:w-12
+          lg:h-14
+          lg:w-14
+        "
+      >
+        <FiArrowRight size={18} />
+      </motion.button>
+
+      {/* =====================================================
+          MOBILE THUMBNAILS
+          
+          IMPORTANT:
+          - Only 3 thumbnails visible
+          - No horizontal overflow
+          - Active thumbnail stays in center
+          - Cards are responsive
+      ===================================================== */}
+
+      <div
+        className="
+          absolute
+          bottom-5
+          left-0
+          right-0
+          z-40
+          px-4
+          sm:hidden
+        "
+      >
+        <div
+          className="
+            mx-auto
+            w-full
+            max-w-[430px]
+            overflow-hidden
+            rounded-2xl
+            bg-black/[0.08]
+            p-1.5
+            backdrop-blur-md
+          "
+        >
+          <div className="grid grid-cols-3 gap-1.5">
+            {[0, 1, 2].map((position) => {
+              /*
+                Circular calculation ensures:
+                8 -> 1 -> 2
+                1 -> 2 -> 3
+                etc.
+              */
+
+              const index =
+                (current - 1 + position + slides.length) % slides.length;
+
+              const item = slides[index];
+              const ItemIcon = item.icon;
+              const isActive = index === current;
+
+              return (
+                <motion.button
+                  key={`${item.id}-${position}`}
+                  type="button"
+                  onClick={() => setCurrent(index)}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.96,
+                  }}
+                  animate={{
+                    opacity: isActive ? 1 : 0.78,
+                    scale: isActive ? 1 : 0.97,
+                  }}
+                  transition={{
+                    duration: 0.25,
+                  }}
+                  aria-label={`View ${item.service}`}
+                  className="
+                    relative
+                    h-[62px]
+                    w-full
+                    min-w-0
+                    overflow-hidden
+                    rounded-xl
+                    border
+                    border-white/25
+                    shadow-lg
+                  "
+                >
+                  {/* Image */}
+
+                  <div
+                    className="absolute inset-0 bg-cover bg-center"
+                    style={{
+                      backgroundImage: `url("${item.image}")`,
+                    }}
+                  />
+
+                  {/* Small readability overlay */}
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/45 via-transparent to-transparent" />
+
+                  {/* Active subtle glass */}
+
+                  {isActive && (
+                    <div className="absolute inset-0 bg-white/[0.07]" />
+                  )}
+
+                  {/* Icon */}
+
+                  <div
+                    className={`
+                      absolute
+                      left-2
+                      top-2
+                      flex
+                      h-6
+                      w-6
+                      items-center
+                      justify-center
+                      rounded-lg
+                      backdrop-blur-md
+                      ${
+                        isActive
+                          ? "bg-white/25 text-white"
+                          : "bg-black/15 text-white"
+                      }
+                    `}
+                  >
+                    <ItemIcon size={12} />
+                  </div>
+
+                  {/* Name */}
+
+                  <div className="absolute bottom-0 left-0 right-0 p-1.5">
+                    <p className="truncate text-left text-[8px] font-bold leading-tight text-white">
+                      {item.service}
+                    </p>
+                  </div>
+
+                  {/* Active border */}
+
+                  {isActive && (
                     <motion.div
-                        key={service.name}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        transition={{
-                            delay: index * 0.1,
-                            duration: 0.5,
-                        }}
-                        whileHover={{
-                            y: -5,
-                            scale: 1.02,
-                        }}
-                        className="group rounded-2xl border border-black/10 bg-white/50 p-5 backdrop-blur-sm transition-colors dark:border-white/10 dark:bg-[#27272A]/70"
-                    >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#15803D]/10 text-[#15803D] transition-colors group-hover:bg-[#15803D] group-hover:text-white dark:bg-[#22C55E]/10 dark:text-[#22C55E] dark:group-hover:bg-[#22C55E] dark:group-hover:text-[#18181B]">
-                            <ServiceIcon size={21} />
-                        </div>
-
-                        <p className="mt-4 text-sm font-semibold">
-                            {service.name}
-                        </p>
-
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            <FiCheck size={12} />
-                            Available
-                        </div>
-                    </motion.div>
-                );
-            })}
-        </div>
-    );
-}
-
-/* Trust Visual                   */
-function TrustVisual() {
-    return (
-        <div className="relative min-h-[270px]">
-            {/* Main provider */}
-            <motion.div
-                animate={{ y: [0, -7, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-1/2 top-2 flex -translate-x-1/2 flex-col items-center"
-            >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#15803D] shadow-xl dark:bg-[#22C55E]">
-                    <FiUsers
-                        size={38}
-                        className="text-white dark:text-[#18181B]"
+                      layoutId="mobileActive"
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        rounded-xl
+                        border-2
+                        border-white/80
+                      "
                     />
-                </div>
+                  )}
 
-                <p className="mt-3 text-sm font-bold">
-                    Service Professional
-                </p>
+                  {/* 3 second progress */}
 
-                <div className="mt-2 flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <FiStar
-                            key={star}
-                            size={13}
-                            className="fill-current text-[#F59E0B] dark:text-[#FBBF24]"
-                        />
-                    ))}
-
-                    <span className="ml-1 text-xs font-semibold">
-                        4.9
-                    </span>
-                </div>
-            </motion.div>
-
-            {/* Completed jobs */}
-            <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-5 left-0 rounded-2xl bg-white/80 p-4 shadow-lg backdrop-blur-md dark:bg-[#27272A]"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#F59E0B]/20">
-                        <FiCheck size={15} />
-                    </div>
-
-                    <div>
-                        <p className="text-xs font-semibold">
-                            156 completed jobs
-                        </p>
-
-                        <p className="mt-1 text-[10px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            Verified professional
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Review */}
-            <motion.div
-                animate={{ x: [0, -5, 0] }}
-                transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-10 right-0 rounded-2xl bg-[#15803D] p-4 text-white shadow-lg dark:bg-[#22C55E] dark:text-[#18181B]"
-            >
-                <div className="flex items-center gap-1">
-                    <FiStar
-                        size={13}
-                        className="fill-current"
-                    />
-
-                    <span className="text-xs font-semibold">
-                        5.0 Rating
-                    </span>
-                </div>
-
-                <p className="mt-2 text-[10px] opacity-70">
-                    Excellent service!
-                </p>
-            </motion.div>
-        </div>
-    );
-}
-
-/* Booking Visual                 */
-function BookingVisual() {
-    const steps = [
-        {
-            number: "01",
-            title: "Request",
-            description: "Tell us what you need",
-            icon: FiTool,
-        },
-        {
-            number: "02",
-            title: "Connect",
-            description: "Find the right professional",
-            icon: FiUsers,
-        },
-        {
-            number: "03",
-            title: "Done",
-            description: "Get your task completed",
-            icon: FiCheck,
-        },
-    ];
-
-    return (
-        <div className="relative space-y-3">
-            {steps.map((step, index) => {
-                const StepIcon = step.icon;
-
-                return (
+                  {isActive && (
                     <motion.div
-                        key={step.number}
-                        initial={{ opacity: 0, x: 15 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                            delay: index * 0.15,
-                            duration: 0.5,
-                        }}
-                        className="flex items-center gap-4 rounded-2xl border border-black/10 bg-white/50 p-3 dark:border-white/10 dark:bg-[#27272A]/70"
-                    >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
-                            <StepIcon size={18} />
-                        </div>
-
-                        <div>
-                            <p className="text-sm font-semibold">
-                                {step.title}
-                            </p>
-
-                            <p className="mt-0.5 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                                {step.description}
-                            </p>
-                        </div>
-
-                        {index === steps.length - 1 && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.7 }}
-                                className="ml-auto flex h-7 w-7 items-center justify-center rounded-full bg-[#15803D]/20 dark:bg-[#22C55E]/20"
-                            >
-                                <FiCheck size={14} />
-                            </motion.div>
-                        )}
-                    </motion.div>
-                );
+                      key={`mobile-progress-${item.id}`}
+                      initial={{
+                        width: "0%",
+                      }}
+                      animate={{
+                        width: "100%",
+                      }}
+                      transition={{
+                        duration: 3,
+                        ease: "linear",
+                      }}
+                      className="
+                        absolute
+                        bottom-0
+                        left-0
+                        h-[2px]
+                        bg-[#d8e9de]
+                      "
+                    />
+                  )}
+                </motion.button>
+              );
             })}
+          </div>
         </div>
-    );
+      </div>
+
+      {/* =====================================================
+          TABLET + DESKTOP THUMBNAILS
+      ===================================================== */}
+
+      <div
+        className="
+          absolute
+          bottom-6
+          left-0
+          right-0
+          z-40
+          hidden
+          px-5
+          sm:block
+          lg:px-10
+        "
+      >
+        <div className="mx-auto max-w-[1450px]">
+          <div className="grid grid-cols-4 gap-2 md:grid-cols-8 md:gap-2.5">
+            {slides.map((item, index) => {
+              const ItemIcon = item.icon;
+              const isActive = current === index;
+
+              return (
+                <motion.button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setCurrent(index)}
+                  whileHover={{
+                    y: -3,
+                  }}
+                  whileTap={{
+                    scale: 0.97,
+                  }}
+                  aria-label={`View ${item.service}`}
+                  className={`
+                    group
+                    relative
+                    h-[65px]
+                    min-w-0
+                    overflow-hidden
+                    rounded-xl
+                    border
+                    shadow-lg
+                    transition-all
+                    duration-300
+                    md:h-[75px]
+                    md:rounded-2xl
+                    ${
+                      isActive
+                        ? "border-white/90 opacity-100"
+                        : "border-white/35 opacity-75 hover:opacity-100"
+                    }
+                  `}
+                >
+                  {/* Image */}
+
+                  <div
+                    className="
+                      absolute
+                      inset-0
+                      bg-cover
+                      bg-center
+                      transition-transform
+                      duration-500
+                      group-hover:scale-105
+                    "
+                    style={{
+                      backgroundImage: `url("${item.image}")`,
+                    }}
+                  />
+
+                  {/* Very light overlay */}
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent" />
+
+                  {/* Icon */}
+
+                  <div
+                    className={`
+                      absolute
+                      left-2
+                      top-2
+                      flex
+                      h-7
+                      w-7
+                      items-center
+                      justify-center
+                      rounded-lg
+                      backdrop-blur-md
+                      ${
+                        isActive
+                          ? "bg-white/25 text-white"
+                          : "bg-black/15 text-white"
+                      }
+                    `}
+                  >
+                    <ItemIcon size={13} />
+                  </div>
+
+                  {/* Text */}
+
+                  <div className="absolute bottom-0 left-0 right-0 p-2">
+                    <p className="truncate text-left text-[9px] font-bold text-white md:text-[10px]">
+                      {item.service}
+                    </p>
+                  </div>
+
+                  {/* Active border */}
+
+                  {isActive && (
+                    <motion.div
+                      layoutId="desktopActive"
+                      className="
+                        pointer-events-none
+                        absolute
+                        inset-0
+                        rounded-xl
+                        border-2
+                        border-white/85
+                        md:rounded-2xl
+                      "
+                    />
+                  )}
+
+                  {/* 3 second progress */}
+
+                  {isActive && (
+                    <motion.div
+                      key={`desktop-progress-${item.id}`}
+                      initial={{
+                        width: "0%",
+                      }}
+                      animate={{
+                        width: "100%",
+                      }}
+                      transition={{
+                        duration: 3,
+                        ease: "linear",
+                      }}
+                      className="
+                        absolute
+                        bottom-0
+                        left-0
+                        h-[2px]
+                        bg-[#d8e9de]
+                      "
+                    />
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+
+      {/* =====================================================
+          SLIDE NUMBER
+      ===================================================== */}
+
+      <div
+        className="
+          absolute
+          bottom-9
+          right-6
+          z-40
+          hidden
+          items-center
+          gap-2
+          text-xs
+          text-white/80
+          lg:flex
+        "
+      >
+        <span className="font-bold text-white">
+          {String(current + 1).padStart(2, "0")}
+        </span>
+
+        <span>/</span>
+
+        <span>{String(slides.length).padStart(2, "0")}</span>
+      </div>
+
+      {/* =====================================================
+          BOTTOM PROGRESS
+      ===================================================== */}
+
+      <div className="absolute bottom-0 left-0 right-0 z-50 h-[2px] bg-white/20">
+        <motion.div
+          key={`main-progress-${slide.id}`}
+          initial={{
+            width: "0%",
+          }}
+          animate={{
+            width: "100%",
+          }}
+          transition={{
+            duration: 3,
+            ease: "linear",
+          }}
+          className="h-full bg-white/75"
+        />
+      </div>
+    </section>
+  );
 }

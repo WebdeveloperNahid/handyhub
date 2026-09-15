@@ -14,7 +14,7 @@ interface User {
   updatedAt: string;
 }
 
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 10;
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -38,8 +38,26 @@ export default function ManageUsersPage() {
     if (!sortColumn) return users;
 
     return [...users].sort((a, b) => {
-      const comparison = String(a[sortColumn]).localeCompare(
-        String(b[sortColumn])
+      if (sortColumn === "role") {
+        const roleA = (a.role || "").trim().toLowerCase();
+        const roleB = (b.role || "").trim().toLowerCase();
+
+        if (roleA === "admin" && roleB !== "admin") return -1;
+        if (roleB === "admin" && roleA !== "admin") return 1;
+        if (roleA === "admin" && roleB === "admin") return 0;
+
+        if (roleA === "provider" && roleB === "user") {
+          return sortDirection === "ascending" ? -1 : 1;
+        }
+        if (roleA === "user" && roleB === "provider") {
+          return sortDirection === "ascending" ? 1 : -1;
+        }
+
+        return roleA.localeCompare(roleB);
+      }
+
+      const comparison = String(a[sortColumn] ?? "").localeCompare(
+        String(b[sortColumn] ?? "")
       );
 
       return sortDirection === "ascending" ? comparison : -comparison;

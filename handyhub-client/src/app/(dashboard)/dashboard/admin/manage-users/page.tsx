@@ -25,14 +25,7 @@ export default function ManageUsersPage() {
   >("ascending");
 
   useEffect(() => {
-    getUsers().then((result) => {
-      console.log("API result:", result);
-
-      if (!result.error) {
-        setUsers(result.data);
-      }
-    });
-  }, []);
+    getUsers().then((result) => {if (!result.error) { setUsers(result.data);}});}, []);
 
   const sortedUsers = useMemo(() => {
     if (!sortColumn) return users;
@@ -125,9 +118,7 @@ export default function ManageUsersPage() {
                   <Table.Cell>{user.name}</Table.Cell>
                   <Table.Cell>{user.email}</Table.Cell>
 
-                  <Table.Cell>
-                    <Chip size="sm" variant="soft"> {user.role} </Chip>
-                  </Table.Cell>
+                  <Table.Cell><Chip size="sm" variant="soft"> {user.role} </Chip></Table.Cell>
 
                   <Table.Cell>
                     <Chip color={user.emailVerified ? "success" : "danger"} size="sm" variant="soft">
@@ -149,11 +140,8 @@ export default function ManageUsersPage() {
             <Pagination.Content>
               <Pagination.Item>
                 <Pagination.Previous isDisabled={page === 1}
-                  onPress={() => setPage(page - 1)}
-                >
-                  <Pagination.PreviousIcon />
-                  Prev
-                </Pagination.Previous>
+                  onPress={() => setPage(page - 1)}>
+                  <Pagination.PreviousIcon /> Prev</Pagination.Previous>
               </Pagination.Item>
 
               {Array.from(
@@ -161,20 +149,14 @@ export default function ManageUsersPage() {
                 (_, index) => index + 1
               ).map((pageNumber) => (
                 <Pagination.Item key={pageNumber}>
-                  <Pagination.Link
-                    isActive={pageNumber === page}
-                    onPress={() => setPage(pageNumber)}
-                  >
+                  <Pagination.Link  isActive={pageNumber === page} onPress={() => setPage(pageNumber)}>
                     {pageNumber}
                   </Pagination.Link>
                 </Pagination.Item>
               ))}
 
               <Pagination.Item>
-                <Pagination.Next
-                  isDisabled={page === pageCount}
-                  onPress={() => setPage(page + 1)}
-                >
+                <Pagination.Next isDisabled={page === pageCount} onPress={() => setPage(page + 1)}>
                   Next
                   <Pagination.NextIcon />
                 </Pagination.Next>

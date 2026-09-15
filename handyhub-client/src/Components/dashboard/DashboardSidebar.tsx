@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type ComponentType, type SVGProps } from "react";
+import { useState, useEffect, type ComponentType, type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -13,7 +13,7 @@ import {
   Briefcase,
   Boxes3,
 } from "@gravity-ui/icons";
-import { Button, Drawer } from "@heroui/react";
+import { Drawer } from "@heroui/react";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { FiLogOut } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
@@ -28,6 +28,23 @@ export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // Track dark mode from the html element's class (class-based toggle)
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const check = () => setIsDark(html.classList.contains("dark"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Explicit colors based on isDark — prevents HeroUI/OS dark-mode CSS from conflicting
+  const drawerBg = isDark ? "#18181B" : "#ffffff";
+  const drawerHeaderBg = isDark ? "#27272A" : "#ffffff";
+  const drawerBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+  const drawerBodyBg = isDark ? "#18181B" : "#ffffff";
 
   const { data: session, isPending } = authClient.useSession();
 
@@ -175,58 +192,42 @@ export function DashboardSidebar() {
         {NavContent}
       </aside>
 
-      {/* Mobile Menu */}
-      <div className="fixed left-4 top-3 z-60 lg:hidden">
-        <Drawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-          {/* Toggle Button */}
-          {!isDrawerOpen && (
-            <Button
-              className="
-                h-11
-                w-11
-                min-w-11
-                rounded-xl
-                border
-                border-black/10
-                bg-white
-                p-0
-                shadow-lg
-                shadow-black/10
-                transition-all
-                duration-200
-                hover:bg-[#FAF9F7]
-                active:scale-95
-                dark:border-white/10
-                dark:bg-[#27272A]
-              "
-              variant="secondary"
-            >
-              <TfiMenuAlt className="size-5 text-[#1C1917] dark:text-[#F4F4F5]" />
-            </Button>
-          )}
+      {/* Mobile Menu — Hamburger button OUTSIDE Drawer to prevent click blocking */}
+      <button
+        type="button"
+        aria-label="Open navigation menu"
+        onClick={() => setIsDrawerOpen(true)}
+        style={{
+          backgroundColor: isDark ? "#27272A" : "#ffffff",
+          borderColor: drawerBorder,
+          color: isDark ? "#F4F4F5" : "#1C1917",
+        }}
+        className={[
+          "fixed left-4 top-3 z-[60] lg:hidden",
+          "flex h-11 w-11 items-center justify-center",
+          "rounded-xl border shadow-md shadow-black/5",
+          "transition-all duration-200 active:scale-95",
+          isDrawerOpen ? "pointer-events-none opacity-0" : "pointer-events-auto opacity-100",
+        ].join(" ")}
+      >
+        <TfiMenuAlt className="size-5" />
+      </button>
 
-          <Drawer.Backdrop>
-            <Drawer.Content placement="left" className="w-[290px] max-w-[85vw]">
+      {/* Mobile Drawer */}
+      <Drawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <Drawer.Backdrop>
+          <Drawer.Content placement="left" className="w-[290px] max-w-[85vw]">
               <Drawer.Dialog
-                className="
-            overflow-hidden
-            bg-white
-            shadow-2xl
-            shadow-black/20
-            dark:bg-[#18181B]
-          "
+                className="overflow-hidden shadow-2xl shadow-black/20"
+                style={{ backgroundColor: drawerBg }}
               >
                 {/* Drawer Header */}
                 <Drawer.Header
-                  className="
-              border-b
-              border-black/10
-              bg-white
-              px-5
-              py-4
-              dark:border-white/10
-              dark:bg-[#27272A]
-            "
+                  className="border-b px-5 py-4"
+                  style={{
+                    backgroundColor: drawerHeaderBg,
+                    borderColor: drawerBorder,
+                  }}
                 >
                   <div className="flex w-full items-center justify-between">
                     <Link href="/" className="flex items-center gap-2.5">
@@ -280,12 +281,8 @@ export function DashboardSidebar() {
 
                 {/* Drawer Body */}
                 <Drawer.Body
-                  className="
-              bg-white
-              px-3
-              py-5
-              dark:bg-[#18181B]
-            "
+                  className="px-3 py-5"
+                  style={{ backgroundColor: drawerBodyBg }}
                 >
                   <div className="flex min-h-full flex-col">
                     {/* Navigation Label */}
@@ -425,7 +422,6 @@ export function DashboardSidebar() {
             </Drawer.Content>
           </Drawer.Backdrop>
         </Drawer>
-      </div>
     </>
   );
 }

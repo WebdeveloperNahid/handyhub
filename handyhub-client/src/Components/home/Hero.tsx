@@ -37,8 +37,6 @@ interface HeroSlide {
 /* =========================================
    AUTOPLAY DURATION
    3 seconds
-========================================= */
-const SLIDE_DURATION_MS = 3000;
 
 const slides: HeroSlide[] = [
   {
@@ -161,6 +159,10 @@ const slides: HeroSlide[] = [
     rating: "4.9",
   },
 ];
+
+/* =========================================================
+   HERO
+========================================================= */
 
 export default function Hero() {
   const [current, setCurrent] = useState(0);

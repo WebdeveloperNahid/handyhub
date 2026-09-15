@@ -8,7 +8,7 @@ type DashboardLayoutProps = {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-[#E1D4C2] dark:bg-[#1F1712]">
+    <div className="min-h-screen bg-[#FAF9F7] dark:bg-[#18181B]">
       <DashboardSidebar />
 
       <div className="min-h-screen lg:ml-64">

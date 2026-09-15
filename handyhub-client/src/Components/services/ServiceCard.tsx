@@ -71,7 +71,7 @@ const ServiceCard = ({ services }: ServiceCardProps) => {
                 whileHover={{ y: -5 }}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FAF9F7] transition-all duration-300 hover:border-[#15803D]/40 hover:shadow-xl dark:border-white/10 dark:bg-[#18181B] dark:hover:border-[#22C55E]/40"
               >
-                {/* Card visual header */}
+                {/* Card visual header — intentionally dark accent in both modes */}
                 <div className="relative flex h-40 items-center justify-center bg-[#18181B] dark:bg-[#27272A]">
                   <div className="absolute -right-10 -top-10 h-32 w-32 rounded-full border border-white/10" />
 
@@ -85,6 +85,7 @@ const ServiceCard = ({ services }: ServiceCardProps) => {
                     {service.category}
                   </span>
                 </div>
+
 
                 {/* Card content */}
                 <div className="flex flex-1 flex-col p-5">

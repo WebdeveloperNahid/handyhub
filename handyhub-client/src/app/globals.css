@@ -1,6 +1,12 @@
 @import "tailwindcss";
 @import "@heroui/styles";
 
+/* ✅ Tell Tailwind v4 to use CLASS-based dark mode (not OS media query).
+   This makes all dark: classes only activate when .dark is on <html>,
+   which is controlled by the theme toggle — NOT the OS setting. */
+@variant dark (&:where(.dark, .dark *));
+
+
 body {
   background-color: #faf9f7;
 }

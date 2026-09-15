@@ -1,121 +1,69 @@
-
 "use client";
 
-import {Chip, Pagination, Table} from "@heroui/react";
-import {useMemo, useState} from "react";
-
-
+import { Chip, Pagination, Table } from "@heroui/react";
+import { useEffect, useMemo, useState } from "react";
+import { getUsers } from "@/app/api/admin_api/GetAllUser";
 
 interface User {
-  id: number;
+  _id: string;
   name: string;
   role: string;
-  status: "Active" | "Inactive" | "On Leave";
   email: string;
+  emailVerified: boolean;
+  createdAt: string;
+  updatedAt: string;
 }
 
-const statusColorMap: Record<
-  User["status"],
-  "success" | "danger" | "warning"
-> = {
-  Active: "success",
-  Inactive: "danger",
-  "On Leave": "warning",
-};
-
-const users: User[] = [
-  {
-    id: 1,
-    name: "Kate Moore",
-    role: "CEO",
-    status: "Active",
-    email: "kate@acme.com",
-  },
-  {
-    id: 2,
-    name: "John Smith",
-    role: "CTO",
-    status: "Active",
-    email: "john@acme.com",
-  },
-  {
-    id: 3,
-    name: "Sara Johnson",
-    role: "CMO",
-    status: "On Leave",
-    email: "sara@acme.com",
-  },
-  {
-    id: 4,
-    name: "Michael Brown",
-    role: "CFO",
-    status: "Active",
-    email: "michael@acme.com",
-  },
-  {
-    id: 5,
-    name: "Emily Davis",
-    role: "Product Manager",
-    status: "Inactive",
-    email: "emily@acme.com",
-  },
-  {
-    id: 6,
-    name: "Davis Wilson",
-    role: "Lead Designer",
-    status: "Active",
-    email: "davis@acme.com",
-  },
-  {
-    id: 7,
-    name: "Olivia Martinez",
-    role: "Frontend Engineer",
-    status: "Active",
-    email: "olivia@acme.com",
-  },
-  {
-    id: 8,
-    name: "James Taylor",
-    role: "Backend Engineer",
-    status: "Active",
-    email: "james@acme.com",
-  },
-];
-
-const PAGE_SIZE = 4;
+const PAGE_SIZE = 10;
 
 export default function ManageUsersPage() {
+  const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
-
-  const [sortColumn, setSortColumn] = useState<keyof User | null>(
-    null
-  );
-
+  const [sortColumn, setSortColumn] = useState<keyof User | null>(null);
   const [sortDirection, setSortDirection] = useState<
     "ascending" | "descending"
   >("ascending");
 
-  // Sorting
+  useEffect(() => {
+    getUsers().then((result) => {
+      console.log("API result:", result);
+
+      if (!result.error) {
+        setUsers(result.data);
+      }
+    });
+  }, []);
+
   const sortedUsers = useMemo(() => {
-    if (!sortColumn) {
-      return users;
-    }
+    if (!sortColumn) return users;
 
     return [...users].sort((a, b) => {
-      const aValue = a[sortColumn];
-      const bValue = b[sortColumn];
+      if (sortColumn === "role") {
+        const roleA = (a.role || "").trim().toLowerCase();
+        const roleB = (b.role || "").trim().toLowerCase();
 
-      const comparison = String(aValue).localeCompare(
-        String(bValue)
+        if (roleA === "admin" && roleB !== "admin") return -1;
+        if (roleB === "admin" && roleA !== "admin") return 1;
+        if (roleA === "admin" && roleB === "admin") return 0;
+
+        if (roleA === "provider" && roleB === "user") {
+          return sortDirection === "ascending" ? -1 : 1;
+        }
+        if (roleA === "user" && roleB === "provider") {
+          return sortDirection === "ascending" ? 1 : -1;
+        }
+
+        return roleA.localeCompare(roleB);
+      }
+
+      const comparison = String(a[sortColumn] ?? "").localeCompare(
+        String(b[sortColumn] ?? "")
       );
 
-      return sortDirection === "ascending"
-        ? comparison
-        : -comparison;
+      return sortDirection === "ascending" ? comparison : -comparison;
     });
-  }, [sortColumn, sortDirection]);
+  }, [users, sortColumn, sortDirection]);
 
-  // Pagination
   const pageCount = Math.ceil(sortedUsers.length / PAGE_SIZE);
 
   const paginatedUsers = sortedUsers.slice(
@@ -123,134 +71,68 @@ export default function ManageUsersPage() {
     page * PAGE_SIZE
   );
 
-  const start = (page - 1) * PAGE_SIZE + 1;
-
-  const end = Math.min(
-    page * PAGE_SIZE,
-    sortedUsers.length
-  );
-
-  // Sorting handler
-  const handleSort = (column: keyof User) => {
-    if (sortColumn === column) {
-      setSortDirection((current) =>
-        current === "ascending"
-          ? "descending"
-          : "ascending"
-      );
-    } else {
-      setSortColumn(column);
-      setSortDirection("ascending");
-    }
-
-    setPage(1);
-  };
+  const start = sortedUsers.length ? (page - 1) * PAGE_SIZE + 1 : 0;
+  const end = Math.min(page * PAGE_SIZE, sortedUsers.length);
 
   return (
     <div className="w-full">
       <Table>
         <Table.ScrollContainer>
-          <Table.Content
-            aria-label="Manage users table"
-            className="min-w-[600px]"
-            sortDescriptor={
-              sortColumn
-                ? {
-                    column: sortColumn,
-                    direction: sortDirection,
-                  }
-                : undefined
-            }
+          <Table.Content aria-label="Manage users table" className="min-w-[600px]" sortDescriptor={
+              sortColumn? {column: sortColumn,  direction: sortDirection,  }  : undefined}
             onSortChange={(descriptor) => {
-              const column = descriptor.column as keyof User;
-
-              setSortColumn(column);
+              setSortColumn(descriptor.column as keyof User);
               setSortDirection(descriptor.direction);
-
               setPage(1);
             }}
           >
             <Table.Header>
-              <Table.Column
-                id="name"
-                allowsSorting
-                isRowHeader
-              >
-                {({sortDirection}) => (
-                  <Table.SortableColumnHeader
-                    sortDirection={sortDirection}
-                  >
-                    Name
-                  </Table.SortableColumnHeader>
+              <Table.Column id="_id" allowsSorting isRowHeader>
+                {({ sortDirection }) => (
+                  <Table.SortableColumnHeader sortDirection={sortDirection}> ID</Table.SortableColumnHeader>
                 )}
               </Table.Column>
 
-              <Table.Column
-                id="role"
-                allowsSorting
-              >
-                {({sortDirection}) => (
-                  <Table.SortableColumnHeader
-                    sortDirection={sortDirection}
-                  >
-                    Role
-                  </Table.SortableColumnHeader>
+              <Table.Column id="name" allowsSorting>
+                {({ sortDirection }) => (
+                  <Table.SortableColumnHeader sortDirection={sortDirection}>  Name </Table.SortableColumnHeader>
                 )}
               </Table.Column>
 
-              <Table.Column
-                id="status"
-                allowsSorting
-              >
-                {({sortDirection}) => (
-                  <Table.SortableColumnHeader
-                    sortDirection={sortDirection}
-                  >
-                    Status
-                  </Table.SortableColumnHeader>
+              <Table.Column id="email" allowsSorting>
+                {({ sortDirection }) => (
+                  <Table.SortableColumnHeader sortDirection={sortDirection}> Email</Table.SortableColumnHeader>
                 )}
               </Table.Column>
 
-              <Table.Column
-                id="email"
-                allowsSorting
-              >
-                {({sortDirection}) => (
-                  <Table.SortableColumnHeader
-                    sortDirection={sortDirection}
-                  >
-                    Email
-                  </Table.SortableColumnHeader>
+              <Table.Column id="role" allowsSorting>
+                {({ sortDirection }) => (
+                  <Table.SortableColumnHeader sortDirection={sortDirection}> Role</Table.SortableColumnHeader>
+                )}
+              </Table.Column>
+
+              <Table.Column id="emailVerified" allowsSorting>
+                {({ sortDirection }) => (
+                  <Table.SortableColumnHeader sortDirection={sortDirection}>  Email Verified </Table.SortableColumnHeader>
                 )}
               </Table.Column>
             </Table.Header>
 
             <Table.Body>
               {paginatedUsers.map((user) => (
-                <Table.Row
-                  key={user.id}
-                  id={String(user.id)}
-                >
+                <Table.Row key={user._id} id={user._id}>
+                  <Table.Cell>{user._id}</Table.Cell>
+                  <Table.Cell>{user.name}</Table.Cell>
+                  <Table.Cell>{user.email}</Table.Cell>
+
                   <Table.Cell>
-                    {user.name}
+                    <Chip size="sm" variant="soft"> {user.role} </Chip>
                   </Table.Cell>
 
                   <Table.Cell>
-                    {user.role}
-                  </Table.Cell>
-
-                  <Table.Cell>
-                    <Chip
-                      color={statusColorMap[user.status]}
-                      size="sm"
-                      variant="soft"
-                    >
-                      {user.status}
+                    <Chip color={user.emailVerified ? "success" : "danger"} size="sm" variant="soft">
+                      {user.emailVerified ? "Verified" : "Not Verified"}
                     </Chip>
-                  </Table.Cell>
-
-                  <Table.Cell>
-                    {user.email}
                   </Table.Cell>
                 </Table.Row>
               ))}
@@ -266,8 +148,7 @@ export default function ManageUsersPage() {
 
             <Pagination.Content>
               <Pagination.Item>
-                <Pagination.Previous
-                  isDisabled={page === 1}
+                <Pagination.Previous isDisabled={page === 1}
                   onPress={() => setPage(page - 1)}
                 >
                   <Pagination.PreviousIcon />
@@ -276,7 +157,7 @@ export default function ManageUsersPage() {
               </Pagination.Item>
 
               {Array.from(
-                {length: pageCount},
+                { length: pageCount },
                 (_, index) => index + 1
               ).map((pageNumber) => (
                 <Pagination.Item key={pageNumber}>
@@ -305,4 +186,3 @@ export default function ManageUsersPage() {
     </div>
   );
 }
-

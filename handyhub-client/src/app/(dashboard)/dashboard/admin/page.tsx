@@ -1,6 +1,9 @@
-import React from 'react';
 
-const page = () => {
+
+
+
+const page = async() => {
+    
     return (
         <div>
             <h1> hi this is admin page</h1>

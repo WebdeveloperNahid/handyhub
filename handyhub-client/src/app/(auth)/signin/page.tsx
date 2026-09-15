@@ -295,12 +295,12 @@ export default function LoginPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />
 
-          <div className="relative z-10 flex items-center gap-2 text-white">
+          <Link href="/" className="relative z-10 flex items-center gap-2 text-white">
             <FiTool className="text-xl md:text-2xl" />
             <span className="text-lg md:text-xl font-semibold tracking-tight">
               HandyHub
             </span>
-          </div>
+          </Link>
 
           <div className="relative z-10 space-y-4 md:space-y-5">
             <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">

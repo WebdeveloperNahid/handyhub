@@ -27,7 +27,7 @@ export async function connectToMongoDB(): Promise<void> {
   connectionPromise = (async () => {
     try {
       await client.connect();
-      database = client.db("handyhub");
+      database = client.db(process.env.DB_NAME || "handyhub_db");
 
       userCollection = database.collection("user");
       sessionCollection = database.collection("session");

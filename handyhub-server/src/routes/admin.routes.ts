@@ -4,11 +4,12 @@ import { verifyAdmin, verifyToken } from "../middleware/auth.middleware";
 
 const router = Router();
 
-router.use(verifyToken, verifyAdmin);
-
+// GET all users from handyhub_db.user
 router.get("/users", AdminController.getAllUsers);
-router.patch("/users/:userId/role", AdminController.updateUserRole);
-router.get("/services", AdminController.getAllServices);
-router.get("/bookings", AdminController.getAllBookings);
+
+// Protected admin routes
+router.patch("/users/:userId/role", verifyToken, verifyAdmin, AdminController.updateUserRole);
+router.get("/services", verifyToken, verifyAdmin, AdminController.getAllServices);
+router.get("/bookings", verifyToken, verifyAdmin, AdminController.getAllBookings);
 
 export default router;

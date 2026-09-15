@@ -145,12 +145,15 @@ export default function LoginPage() {
       {/* Centered card */}
       <div className="w-full max-w-4xl max-h-[95vh] overflow-y-auto bg-[#FAF9F7] rounded-2xl sm:rounded-3xl shadow-2xl grid grid-cols-1 md:grid-cols-2">
         {/* Left: Form panel */}
+
         <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10 md:order-1">
-          <div className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917]">
+          <Link
+            href={"/"}
+            className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917] cursor-pointer w-fit"
+          >
             <FiTool className="text-2xl text-[#15803D]" />
             <span className="text-xl font-semibold">HandyHub</span>
-          </div>
-
+          </Link>
           <h2 className="text-xl sm:text-2xl font-semibold text-[#1C1917] mb-1">
             Log in
           </h2>
@@ -292,12 +295,12 @@ export default function LoginPage() {
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />
 
-          <div className="relative z-10 flex items-center gap-2 text-white">
+          <Link href="/" className="relative z-10 flex items-center gap-2 text-white">
             <FiTool className="text-xl md:text-2xl" />
             <span className="text-lg md:text-xl font-semibold tracking-tight">
               HandyHub
             </span>
-          </div>
+          </Link>
 
           <div className="relative z-10 space-y-4 md:space-y-5">
             <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">

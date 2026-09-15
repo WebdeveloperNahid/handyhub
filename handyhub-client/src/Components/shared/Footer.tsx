@@ -13,6 +13,7 @@ import {
     FiArrowUpRight,
     FiTool,
 } from "react-icons/fi";
+import { usePathname } from "next/navigation";
 
 const services = [
     "Plumbing",
@@ -66,6 +67,11 @@ const socialLinks = [
 ];
 
 export default function Footer() {
+    const pathname = usePathname();
+
+    if (pathname.includes("dashboard") || pathname.includes("signin") || pathname.includes("signup")) {
+        return null;
+    }
     return (
         <footer
             className="

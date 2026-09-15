@@ -37,6 +37,8 @@ interface HeroSlide {
 /* =========================================
    AUTOPLAY DURATION
    3 seconds
+   ========================================= */
+const SLIDE_DURATION_MS = 3000;
 
 const slides: HeroSlide[] = [
   {

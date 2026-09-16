@@ -14,6 +14,7 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
   const user = session?.user;
   const role = (user as { role?: string })?.role;
 
+  console.log(user?.image)
   const roleLabel =
     role === "admin"
       ? "Admin"
@@ -129,22 +130,32 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
           <div className="flex items-center gap-2.5">
             <div
               className="
-                flex
-                h-9
-                w-9
-                items-center
-                justify-center
-                rounded-full
-                bg-[#15803D]
-                text-sm
-                font-semibold
-                text-white
-                shadow-sm
-                dark:bg-[#22C55E]
-                dark:text-[#18181B]
-              "
+    flex
+    h-9
+    w-9
+    shrink-0
+    items-center
+    justify-center
+    overflow-hidden
+    rounded-full
+    bg-[#15803D]
+    text-sm
+    font-semibold
+    text-white
+    shadow-sm
+    dark:bg-[#22C55E]
+    dark:text-[#18181B]
+  "
             >
-              {userName.charAt(0).toUpperCase()}
+              {user?.image ? (
+                <img
+                  src={user.image}
+                  alt={userName}
+                  className="block h-full w-full rounded-full object-cover"
+                />
+              ) : (
+                userName.charAt(0).toUpperCase()
+              )}
             </div>
 
             <div className="hidden sm:block">

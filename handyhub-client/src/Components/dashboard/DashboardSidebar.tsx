@@ -17,6 +17,7 @@ import { Drawer } from "@heroui/react";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { FiLogOut } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
+import { LuCircleUserRound, LuUserRound } from "react-icons/lu";
 
 type NavItem = {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
@@ -57,6 +58,7 @@ export function DashboardSidebar() {
     { icon: ListCheck, label: "My Requests", href: "/dashboard/user/my-requests" },
     { icon: Heart, label: "Saved Providers", href: "/dashboard/user/saved-providers" },
     { icon: Boxes3, label: "Browse Services", href: "/all-services" },
+    { icon: LuCircleUserRound, label: "Profile", href: "/dashboard/user/profile" },
   ];
 
   const providerItems: NavItem[] = [

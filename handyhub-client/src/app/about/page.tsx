@@ -48,8 +48,6 @@ const AboutUsPage = () => {
                 dark:bg-[#151618] dark:text-[#F9FAFB]
             "
         >
-            {/* ================= BACKGROUND GLOWS ================= */}
-
             <div
                 className="
                     pointer-events-none absolute -left-40 top-20 -z-10
@@ -58,7 +56,6 @@ const AboutUsPage = () => {
                     dark:bg-[#22C55E]/[0.035]
                 "
             />
-
             <div
                 className="
                     pointer-events-none absolute -right-40 top-[45%] -z-10
@@ -67,11 +64,7 @@ const AboutUsPage = () => {
                     dark:bg-[#F59E0B]/[0.03]
                 "
             />
-
             <div className="mx-auto max-w-6xl px-4 py-20 sm:py-24">
-
-                {/* ================= HERO ================= */}
-
                 <motion.section
                     initial={{ opacity: 0, y: 25 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -79,7 +72,6 @@ const AboutUsPage = () => {
                     className="grid items-center gap-12 lg:grid-cols-[1.1fr_0.9fr]"
                 >
                     {/* Left */}
-
                     <div>
                         <div className="mb-5 flex items-center gap-3">
                             <span
@@ -101,7 +93,6 @@ const AboutUsPage = () => {
                                 About HandyHub
                             </p>
                         </div>
-
                         <h1
                             className="
                                 !m-0 max-w-3xl
@@ -117,7 +108,6 @@ const AboutUsPage = () => {
                                 {" "}easier.
                             </span>
                         </h1>
-
                         <p
                             className="
                                 !m-0 mt-6 max-w-2xl
@@ -133,7 +123,6 @@ const AboutUsPage = () => {
                             maintenance, we make it easier to find the right
                             help when you need it.
                         </p>
-
                         <div className="mt-8 flex flex-wrap gap-3">
                             <Link
                                 href="/all-services"
@@ -151,7 +140,6 @@ const AboutUsPage = () => {
                                 "
                             >
                                 Explore Services
-
                                 <FiArrowUpRight
                                     size={17}
                                     className="
@@ -161,7 +149,6 @@ const AboutUsPage = () => {
                                     "
                                 />
                             </Link>
-
                             <Link
                                 href="/contact"
                                 className="
@@ -184,9 +171,7 @@ const AboutUsPage = () => {
                             </Link>
                         </div>
                     </div>
-
                     {/* Right visual card */}
-
                     <motion.div
                         initial={{ opacity: 0, scale: 0.95 }}
                         animate={{ opacity: 1, scale: 1 }}
@@ -209,7 +194,6 @@ const AboutUsPage = () => {
                                 dark:bg-[#22C55E]/[0.08]
                             "
                         />
-
                         <div
                             className="
                                 relative flex h-14 w-14 items-center
@@ -224,7 +208,6 @@ const AboutUsPage = () => {
                         >
                             <FiUsers size={25} />
                         </div>
-
                         <h2
                             className="
                                 !m-0 mt-7 text-2xl font-bold
@@ -237,7 +220,6 @@ const AboutUsPage = () => {
                                 {" "}the right help.
                             </span>
                         </h2>
-
                         <p
                             className="
                                 !m-0 mt-4 text-sm leading-7
@@ -250,7 +232,6 @@ const AboutUsPage = () => {
                             service providers together through one simple
                             platform.
                         </p>
-
                         <div
                             className="
                                 mt-7 h-px w-full
@@ -258,13 +239,11 @@ const AboutUsPage = () => {
                                 dark:bg-white/[0.08]
                             "
                         />
-
                         <div className="mt-5 flex items-center gap-3">
                             <FiCheckCircle
                                 className="!text-[#15803D] dark:!text-[#22C55E]"
                                 size={18}
                             />
-
                             <span
                                 className="
                                     text-sm font-medium
@@ -277,8 +256,6 @@ const AboutUsPage = () => {
                         </div>
                     </motion.div>
                 </motion.section>
-
-                {/* ================= OUR STORY ================= */}
 
                 <motion.section
                     initial={{ opacity: 0, y: 25 }}
@@ -296,7 +273,6 @@ const AboutUsPage = () => {
                                     dark:bg-[#22C55E]
                                 "
                             />
-
                             <p
                                 className="
                                     !m-0 text-sm font-semibold uppercase
@@ -308,7 +284,6 @@ const AboutUsPage = () => {
                                 Our Story
                             </p>
                         </div>
-
                         <h2
                             className="
                                 !m-0 text-3xl font-bold tracking-tight
@@ -320,7 +295,6 @@ const AboutUsPage = () => {
                             A simpler way to get things done
                         </h2>
                     </div>
-
                     <div className="space-y-5">
                         <p
                             className="
@@ -336,7 +310,6 @@ const AboutUsPage = () => {
                             services and capable professionals together in one
                             place.
                         </p>
-
                         <p
                             className="
                                 !m-0 text-sm leading-7
@@ -351,9 +324,6 @@ const AboutUsPage = () => {
                         </p>
                     </div>
                 </motion.section>
-
-                {/* ================= VALUES ================= */}
-
                 <section className="mt-24">
                     <motion.div
                         initial={{ opacity: 0, y: 20 }}
@@ -382,7 +352,6 @@ const AboutUsPage = () => {
                                 What We Value
                             </p>
                         </div>
-
                         <h2
                             className="
                                 !m-0 text-3xl font-bold tracking-tight
@@ -393,7 +362,6 @@ const AboutUsPage = () => {
                         >
                             Built around people and reliability
                         </h2>
-
                         <p
                             className="
                                 !m-0 mt-4 text-sm leading-7
@@ -405,11 +373,9 @@ const AboutUsPage = () => {
                             services easier to discover and easier to use.
                         </p>
                     </motion.div>
-
                     <div className="grid gap-5 md:grid-cols-3">
                         {values.map((value, index) => {
                             const Icon = value.icon;
-
                             return (
                                 <motion.div
                                     key={value.title}
@@ -449,7 +415,6 @@ const AboutUsPage = () => {
                                             dark:bg-[#22C55E]
                                         "
                                     />
-
                                     <div
                                         className="
                                             flex h-12 w-12 items-center
@@ -470,7 +435,6 @@ const AboutUsPage = () => {
                                     >
                                         <Icon size={21} />
                                     </div>
-
                                     <h3
                                         className="
                                             !m-0 mt-7 text-lg font-semibold
@@ -480,7 +444,6 @@ const AboutUsPage = () => {
                                     >
                                         {value.title}
                                     </h3>
-
                                     <p
                                         className="
                                             !m-0 mt-2 text-sm leading-6
@@ -495,8 +458,6 @@ const AboutUsPage = () => {
                         })}
                     </div>
                 </section>
-
-                {/* ================= WHY HANDYHUB ================= */}
 
                 <motion.section
                     initial={{ opacity: 0, y: 25 }}
@@ -523,7 +484,6 @@ const AboutUsPage = () => {
                                     dark:bg-[#22C55E]
                                 "
                             />
-
                             <p
                                 className="
                                     !m-0 text-sm font-semibold uppercase
@@ -535,7 +495,6 @@ const AboutUsPage = () => {
                                 Why HandyHub
                             </p>
                         </div>
-
                         <h2
                             className="
                                 !m-0 text-3xl font-bold tracking-tight
@@ -549,7 +508,6 @@ const AboutUsPage = () => {
                                 {" "}in one place.
                             </span>
                         </h2>
-
                         <p
                             className="
                                 !m-0 mt-4 max-w-xl text-sm leading-7
@@ -562,7 +520,6 @@ const AboutUsPage = () => {
                             need without making the process complicated.
                         </p>
                     </div>
-
                     <div className="grid gap-4 sm:grid-cols-2">
                         {features.map((feature) => (
                             <div
@@ -583,7 +540,6 @@ const AboutUsPage = () => {
                                         dark:!text-[#22C55E]
                                     "
                                 />
-
                                 <span
                                     className="
                                         text-sm font-medium
@@ -597,8 +553,6 @@ const AboutUsPage = () => {
                         ))}
                     </div>
                 </motion.section>
-
-                {/* ================= CTA ================= */}
 
                 <motion.section
                     initial={{ opacity: 0, y: 20 }}
@@ -617,7 +571,6 @@ const AboutUsPage = () => {
                     >
                         Ready to find the right service?
                     </h2>
-
                     <p
                         className="
                             !m-0 mx-auto mt-4 max-w-xl text-sm leading-7
@@ -628,7 +581,6 @@ const AboutUsPage = () => {
                         Explore available services and connect with the right
                         professional for your needs.
                     </p>
-
                     <Link
                         href="/all-services"
                         className="
@@ -650,7 +602,6 @@ const AboutUsPage = () => {
                         "
                     >
                         Browse Services
-
                         <FiArrowUpRight
                             size={17}
                             className="

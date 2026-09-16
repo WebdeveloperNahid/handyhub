@@ -11,7 +11,7 @@ import authRoutes from "./src/routes/auth.routes";
 import customerRoutes from "./src/routes/customer.routes";
 import providerRoutes from "./src/routes/provider.routes";
 import adminRoutes from "./src/routes/admin.routes";
-
+import profileRoutes from "./src/routes/profile.routes";
 dotenv.config();
 console.log("Starting server...");
 
@@ -35,6 +35,9 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/provider", providerRoutes);
 app.use("/api/v1/admin", adminRoutes);
+
+// Profile update route
+app.use("/api/profile", profileRoutes);
 
 // Also mount root route aliases for convenience
 app.use("/auth", authRoutes);

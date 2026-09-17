@@ -9,7 +9,7 @@ interface DashboardNavbarProps {
 }
 
 const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
 
   const user = session?.user;
   const role = (user as { role?: string })?.role;
@@ -130,31 +130,35 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
           <div className="flex items-center gap-2.5">
             <div
               className="
-    flex
-    h-9
-    w-9
-    shrink-0
-    items-center
-    justify-center
-    overflow-hidden
-    rounded-full
-    bg-[#15803D]
-    text-sm
-    font-semibold
-    text-white
-    shadow-sm
-    dark:bg-[#22C55E]
-    dark:text-[#18181B]
-  "
+                        flex
+                        h-9
+                        w-9
+                        shrink-0
+                        items-center
+                        justify-center
+                        overflow-hidden
+                        rounded-full
+                        bg-[#15803D]
+                        text-sm
+                        font-semibold
+                        text-white
+                        shadow-sm
+                        dark:bg-[#22C55E]
+                        dark:text-[#18181B]
+                      "
             >
-              {user?.image ? (
+              {isPending ? (
+                <div className="h-full w-full animate-pulse rounded-full bg-[#E7E5E4] dark:bg-[#3F3F46]" />
+              ) : user?.image ? (
                 <img
-                  src={user.image}
-                  alt={userName}
+                  src={user?.image}
+                  alt={user?.name || "User"}
                   className="block h-full w-full rounded-full object-cover"
                 />
               ) : (
-                userName.charAt(0).toUpperCase()
+                <div className="flex h-full w-full items-center justify-center bg-[#15803D] text-sm font-semibold text-white dark:bg-[#22C55E] dark:text-[#18181B]">
+                  {(user?.name?.charAt(0) || "U").toUpperCase()}
+                </div>
               )}
             </div>
 

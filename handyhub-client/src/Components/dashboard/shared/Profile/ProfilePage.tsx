@@ -4,11 +4,12 @@ import { useEffect, useState } from "react";
 import { useSession } from "@/lib/auth-client";
 import toast from "react-hot-toast";
 import { imgUpload } from "@/lib/imageUpload";
-
+import { motion } from "framer-motion";
 import ProfileHeader from "./ProfileHeader";
 import ProfileAvatar from "./ProfileAvatar";
 import ProfileInfo from "./ProfileInfo";
 import ProfileEditForm from "./ProfileEditForm";
+import ProfileActivity from "./ProfileActivity";
 
 export default function ProfilePage() {
     const { data: session, isPending } = useSession();
@@ -26,22 +27,22 @@ export default function ProfilePage() {
     if (!mounted || isPending) {
         return (
             <main className="flex flex-1 items-center justify-center">
-    <div className="flex flex-col items-center gap-4">
-        <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#15803D]/10 dark:bg-[#22C55E]/10">
-            <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#15803D]/20 border-t-[#15803D] dark:border-[#22C55E]/20 dark:border-t-[#22C55E]" />
-        </div>
+                <div className="flex flex-col items-center gap-4">
+                    <div className="relative flex h-14 w-14 items-center justify-center rounded-2xl bg-[#15803D]/10 dark:bg-[#22C55E]/10">
+                        <div className="h-8 w-8 animate-spin rounded-full border-4 border-[#15803D]/20 border-t-[#15803D] dark:border-[#22C55E]/20 dark:border-t-[#22C55E]" />
+                    </div>
 
-        <div className="text-center">
-            <p className="text-sm font-semibold text-[#111827] dark:text-[#F4F4F5]">
-                HandyHub
-            </p>
+                    <div className="text-center">
+                        <p className="text-sm font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            HandyHub
+                        </p>
 
-            <p className="mt-1 text-xs text-[#6B7280] dark:text-[#A1A1AA]">
-                Getting your profile ready...
-            </p>
-        </div>
-    </div>
-</main>
+                        <p className="mt-1 text-xs text-[#6B7280] dark:text-[#A1A1AA]">
+                            Getting your profile ready...
+                        </p>
+                    </div>
+                </div>
+            </main>
         );
     }
 
@@ -153,50 +154,52 @@ export default function ProfilePage() {
         }
     };
 
-  return (
-    <main className="flex-1 px-4 py-8 md:px-6 md:py-10">
-        <div className="mx-auto max-w-4xl">
-            <ProfileHeader />
+    return (
+        <main className="flex-1 px-4 py-8 md:px-6 md:py-10">
+            <div className="mx-auto max-w-4xl">
+                <ProfileHeader />
 
-            <div
-                className="
+                <div
+                    className="
                     mt-8 overflow-hidden rounded-3xl
                     border border-black/[0.06]
                     bg-white shadow-sm
                     dark:border-white/[0.06]
                     dark:bg-[#1D1D1F]
                 "
-            >
-                <div className="p-6 md:p-8">
-                    <div className="flex flex-col gap-8 md:flex-row md:items-start">
-                        <ProfileAvatar
-                            user={user}
-                            preview={preview}
-                            isEditing={isEditing}
-                            onImageChange={setImageFile}
-                            setPreview={setPreview}
-                        />
+                >
+                    <div className="p-6 md:p-8">
+                        <div className="flex flex-col gap-8 md:flex-row md:items-start">
+                            <ProfileAvatar
+                                user={user}
+                                preview={preview}
+                                isEditing={isEditing}
+                                onImageChange={setImageFile}
+                                setPreview={setPreview}
+                            />
 
-                        <div className="min-w-0 flex-1">
-                            {isEditing ? (
-                                <ProfileEditForm
-                                    name={name}
-                                    setName={setName}
-                                    isSaving={isSaving}
-                                    onSave={handleSave}
-                                    onCancel={handleCancel}
-                                />
-                            ) : (
-                                <ProfileInfo
-                                    user={user}
-                                    onEdit={handleEdit}
-                                />
-                            )}
+                            <div className="min-w-0 flex-1">
+                                {isEditing ? (
+                                    <ProfileEditForm
+                                        name={name}
+                                        setName={setName}
+                                        isSaving={isSaving}
+                                        onSave={handleSave}
+                                        onCancel={handleCancel}
+                                    />
+                                ) : (
+                                    <ProfileInfo
+                                        user={user}
+                                        onEdit={handleEdit}
+                                    />
+                                )}
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </main>
-);
+            {/* Account Activity */}
+            <ProfileActivity />
+        </main>
+    );
 }

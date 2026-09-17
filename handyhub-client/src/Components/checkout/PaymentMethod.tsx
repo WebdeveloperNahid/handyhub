@@ -1,76 +1,74 @@
 "use client";
 
+"use client";
+
 import { useState } from "react";
+import { FiTruck, FiZap, FiCalendar } from "react-icons/fi";
 import {
-  FiCreditCard,
-  FiCheckCircle,
-  FiDollarSign,
-  FiSmartphone,
+  FiTruck as FiTruckIcon,
+  FiZap as FiZapIcon,
+  FiCalendar as FiCalendarIcon,
 } from "react-icons/fi";
 
-const paymentMethods = [
+const options = [
   {
-    id: "bkash",
-    name: "bKash",
-    desc: "Pay instantly via bKash",
-    badge: "Popular",
-    icon: FiSmartphone,
+    id: "standard",
+    title: "Standard Delivery",
+    desc: "Delivered in 2-3 Days",
+    price: "Free",
+    icon: FiTruckIcon,
   },
   {
-    id: "nagad",
-    name: "Nagad",
-    desc: "Fast payment via Nagad Wallet",
-    badge: "",
-    icon: FiSmartphone,
+    id: "express",
+    title: "Express / Immediate",
+    desc: "Within 24 hours",
+    price: "৳150",
+    icon: FiZapIcon,
   },
   {
-    id: "card",
-    name: "Credit / Debit Card",
-    desc: "Pay with Visa or MasterCard",
-    badge: "",
-    icon: FiCreditCard,
-  },
-  {
-    id: "cod",
-    name: "Cash on Service",
-    desc: "Pay after completion",
-    badge: "Safe",
-    icon: FiDollarSign,
+    id: "schedule",
+    title: "Scheduled Slot",
+    desc: "Pick your date & time",
+    price: "৳50",
+    icon: FiCalendarIcon,
   },
 ];
 
-export default function PaymentMethod({
-  onSelect,
-}: {
+// ✅ TypeScript props interface যোগ করা হলো
+interface DeliveryMethodProps {
   onSelect?: (id: string) => void;
-}) {
-  const [selected, setSelected] = useState("bkash");
+}
+
+export default function DeliveryMethod({ onSelect }: DeliveryMethodProps) {
+  const [selected, setSelected] = useState("standard");
 
   const handleSelect = (id: string) => {
     setSelected(id);
-    if (onSelect) onSelect(id);
+    if (onSelect) {
+      onSelect(id);
+    }
   };
 
   return (
     <div className="space-y-4">
       <h3 className="text-lg font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-        Select Payment Method
+        Select Delivery / Slot
       </h3>
-      <div className="grid gap-3 sm:grid-cols-2">
-        {paymentMethods.map((method) => {
-          const isSelected = selected === method.id;
-          const Icon = method.icon;
+      <div className="space-y-3">
+        {options.map((opt) => {
+          const Icon = opt.icon;
+          const isSelected = selected === opt.id;
           return (
             <div
-              key={method.id}
-              onClick={() => handleSelect(method.id)}
-              className={`relative flex cursor-pointer items-start justify-between rounded-2xl border p-4 transition-all duration-300 ${
+              key={opt.id}
+              onClick={() => handleSelect(opt.id)}
+              className={`flex cursor-pointer items-center justify-between rounded-2xl border p-4 transition-all duration-300 ${
                 isSelected
                   ? "border-[#15803D] bg-[#15803D]/5 shadow-sm dark:border-[#22C55E] dark:bg-[#22C55E]/10"
-                  : "border-black/10 bg-white hover:border-black/20 dark:border-white/10 dark:bg-[#27272A] dark:hover:border-white/20"
+                  : "border-black/10 bg-white hover:border-black/20 dark:border-white/10 dark:bg-[#27272A]"
               }`}
             >
-              <div className="flex items-start gap-3">
+              <div className="flex items-center gap-3">
                 <div
                   className={`rounded-xl p-2.5 ${
                     isSelected
@@ -80,26 +78,19 @@ export default function PaymentMethod({
                 >
                   <Icon size={20} />
                 </div>
-                <div className="space-y-1">
-                  <div className="flex items-center gap-2">
-                    <p className="font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                      {method.name}
-                    </p>
-                    {method.badge && (
-                      <span className="rounded-full bg-[#15803D]/10 px-2 py-0.5 text-[10px] font-semibold text-[#15803D] dark:bg-[#22C55E]/20 dark:text-[#22C55E]">
-                        {method.badge}
-                      </span>
-                    )}
-                  </div>
+                <div>
+                  <p className="text-sm font-bold text-[#1C1917] dark:text-[#F4F4F5]">
+                    {opt.title}
+                  </p>
                   <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    {method.desc}
+                    {opt.desc}
                   </p>
                 </div>
               </div>
 
-              {isSelected && (
-                <FiCheckCircle className="text-lg text-[#15803D] dark:text-[#22C55E]" />
-              )}
+              <span className="text-sm font-semibold text-[#15803D] dark:text-[#22C55E]">
+                {opt.price}
+              </span>
             </div>
           );
         })}

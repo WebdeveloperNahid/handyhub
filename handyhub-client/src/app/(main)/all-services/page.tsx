@@ -76,7 +76,7 @@ const services = [
   },
 ];
 
-const AllServices = () => {
+const AllServicesPage = () => {
   return (
     <main className="min-h-screen bg-[#FAF9F7] text-[#1C1917] transition-colors duration-300 dark:bg-[#18181B] dark:text-[#F4F4F5]">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
@@ -108,4 +108,4 @@ const AllServices = () => {
   );
 };
 
-export default AllServices;
+export default AllServicesPage;

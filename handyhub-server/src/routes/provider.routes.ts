@@ -8,7 +8,12 @@ router.use(verifyToken, verifyProvider);
 
 router.get("/services", ProviderController.getMyServices);
 router.post("/services", ProviderController.createService);
+// router.patch("/services/:serviceId", ProviderController.updateService);
+// router.delete("/services/:serviceId", ProviderController.deleteService);
 router.get("/bookings", ProviderController.getAssignedBookings);
-router.patch("/bookings/:bookingId/status", ProviderController.updateBookingStatus);
+router.patch(
+  "/bookings/:bookingId/status",
+  ProviderController.updateBookingStatus,
+);
 
 export default router;

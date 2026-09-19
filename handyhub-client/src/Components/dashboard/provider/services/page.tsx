@@ -32,9 +32,9 @@ const MyServicesPage = () => {
     null,
   );
 
-  const loadServices = useCallback(async () => {
+  const loadServices = useCallback(async (showLoading = false) => {
+    if (showLoading) setIsLoading(true);
     try {
-      setIsLoading(true);
       setError(null);
       const data = await fetchMyServices();
       setServices(Array.isArray(data) ? data : []);
@@ -48,8 +48,28 @@ const MyServicesPage = () => {
   }, []);
 
   useEffect(() => {
-    loadServices();
-  }, [loadServices]);
+    let isMounted = true;
+    fetchMyServices()
+      .then((data) => {
+        if (isMounted) {
+          setServices(Array.isArray(data) ? data : []);
+          setIsLoading(false);
+        }
+      })
+      .catch((err) => {
+        if (isMounted) {
+          const message =
+            err instanceof Error ? err.message : "Failed to load your services";
+          setError(message);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
 
   const handleAddNew = () => {
     setEditingService(null);
@@ -114,12 +134,13 @@ const MyServicesPage = () => {
           </p>
           <button
             type="button"
-            onClick={loadServices}
+            onClick={() => loadServices(true)}
             className="mx-auto mt-5 inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-4 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] dark:bg-[#22C55E] dark:text-[#151618] dark:hover:bg-[#16A34A]"
           >
             <FiRefreshCw size={15} />
             Try again
           </button>
+
         </div>
       ) : services.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-black/20 py-20 text-center dark:border-white/20">

@@ -1,7 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useId } from "react";
+import React, { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import {
   Sparkles,
@@ -16,26 +18,24 @@ import {
   UploadCloud,
   Link2,
   Plus,
-  Trash2,
-  Eye,
   ArrowRight,
-  Copy,
   RotateCcw,
   Check,
-  ShieldCheck,
   Info,
   AlertCircle,
   ChevronRight,
-  Layers,
   FileText,
+  DollarSign,
+  ShieldAlert,
+  ArrowLeft,
+  Star,
 } from "lucide-react";
 
 import { authClient } from "@/lib/auth-client";
-import { imgUpload } from "@/lib/imageUpload";
+import { createService } from "@/lib/api/provider";
 import { SERVICE_CATEGORIES } from "@/types/index";
-import type { NewServicePayload, ServiceAvailability } from "@/types/index";
+import type { ServiceAvailability, ServiceCategory } from "@/types/index";
 
-// Quick curated demo image presets for instant testing
 const PRESET_IMAGES = [
   {
     name: "Deep Cleaning",
@@ -58,7 +58,7 @@ const PRESET_IMAGES = [
     url: "https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&w=1000&q=80",
   },
   {
-    name: "AC Repair",
+    name: "Appliance Repair",
     category: "Appliance Repair",
     url: "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=1000&q=80",
   },
@@ -85,7 +85,7 @@ const CATEGORY_ICONS: Record<string, React.ReactNode> = {
 
 interface FormState {
   title: string;
-  category: string;
+  category: ServiceCategory | string;
   price: string;
   pricingModel: "fixed" | "hourly" | "starting_at";
   duration: string;
@@ -116,30 +116,25 @@ const initialFormState: FormState = {
   instantBooking: true,
   responseTime: "Under 1 hour",
   highlights: [
-    "100% Verified Professional",
-    "Essential Tools & Equipment Included",
-    "Post-service Clean Up Guarantee",
+    "100% Verified Professional Service",
+    "All Essential Tools & Equipment Provided",
+    "Post-service Quality Inspection Guarantee",
   ],
 };
 
 export default function AddServicePage() {
-  const { data: session } = authClient.useSession();
-  const providerId = (session?.user as { id?: string })?.id || "provider_demo_8824";
+  const router = useRouter();
+  const { data: session, isPending: isAuthPending } = authClient.useSession();
+  const userRole = (session?.user as { role?: string })?.role;
   const providerName = session?.user?.name || "Professional Provider";
 
   const [form, setForm] = useState<FormState>(initialFormState);
   const [errors, setErrors] = useState<Partial<Record<keyof FormState, string>>>({});
-  const [isUploading, setIsUploading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [imageTab, setImageTab] = useState<"preset" | "url" | "upload">("preset");
+  const [backendError, setBackendError] = useState<string | null>(null);
+  const [imageTab, setImageTab] = useState<"preset" | "url">("preset");
   const [newHighlight, setNewHighlight] = useState("");
-  const [submittedPayload, setSubmittedPayload] = useState<NewServicePayload | null>(null);
-  const [hasCopied, setHasCopied] = useState(false);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
-  const generatedDraftId = useId().replace(/[:]/g, "").slice(0, 8);
-
-  // Field change handler
   const handleFieldChange = <K extends keyof FormState>(
     field: K,
     value: FormState[K]
@@ -148,9 +143,17 @@ export default function AddServicePage() {
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+    if (backendError) {
+      setBackendError(null);
+    }
   };
 
-  // Toggle day selection
+  const handlePriceChange = (value: string) => {
+    // Only permit positive integer/decimal digits
+    const cleaned = value.replace(/[^0-9.]/g, "");
+    handleFieldChange("price", cleaned);
+  };
+
   const toggleDay = (day: string) => {
     setForm((prev) => {
       const exists = prev.selectedDays.includes(day);
@@ -164,7 +167,6 @@ export default function AddServicePage() {
     }
   };
 
-  // Quick day preset buttons
   const setDaysPreset = (preset: "all" | "weekdays" | "weekends") => {
     if (preset === "all") {
       setForm((prev) => ({ ...prev, selectedDays: [...DAYS_OF_WEEK] }));
@@ -184,7 +186,6 @@ export default function AddServicePage() {
     }
   };
 
-  // Add highlight bullet
   const handleAddHighlight = () => {
     if (!newHighlight.trim()) return;
     if (form.highlights.includes(newHighlight.trim())) {
@@ -198,7 +199,6 @@ export default function AddServicePage() {
     setNewHighlight("");
   };
 
-  // Remove highlight bullet
   const handleRemoveHighlight = (indexToRemove: number) => {
     setForm((prev) => ({
       ...prev,
@@ -206,43 +206,13 @@ export default function AddServicePage() {
     }));
   };
 
-  // Handle local file image upload
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploading(true);
-      // Attempt imgUpload (ImgBB)
-      const res = await imgUpload(file);
-      if (res?.url) {
-        handleFieldChange("image", res.url);
-        toast.success("Image uploaded successfully!");
-      } else {
-        // Safe fallback for local development without ImgBB credentials
-        const objectUrl = URL.createObjectURL(file);
-        handleFieldChange("image", objectUrl);
-        toast.success("Image loaded for preview!");
-      }
-    } catch {
-      // Offline / fallback handling
-      const objectUrl = URL.createObjectURL(file);
-      handleFieldChange("image", objectUrl);
-      toast.success("Image loaded for preview!");
-    } finally {
-      setIsUploading(false);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-    }
-  };
-
-  // Form validation
   const validateForm = (): boolean => {
     const errs: Partial<Record<keyof FormState, string>> = {};
 
     if (!form.title.trim()) {
       errs.title = "Service title is required";
-    } else if (form.title.trim().length < 5) {
-      errs.title = "Title must be at least 5 characters";
+    } else if (form.title.trim().length < 3) {
+      errs.title = "Title must be at least 3 characters";
     }
 
     if (!form.category) {
@@ -251,17 +221,13 @@ export default function AddServicePage() {
 
     const priceNum = Number(form.price);
     if (!form.price.trim() || Number.isNaN(priceNum) || priceNum <= 0) {
-      errs.price = "Enter a valid price greater than 0";
-    }
-
-    if (!form.image.trim()) {
-      errs.image = "Please provide an image for the service";
+      errs.price = "Enter a valid positive price greater than 0";
     }
 
     if (!form.description.trim()) {
       errs.description = "Service description is required";
-    } else if (form.description.trim().length < 20) {
-      errs.description = "Description should be at least 20 characters";
+    } else if (form.description.trim().length < 10) {
+      errs.description = "Description should be at least 10 characters";
     }
 
     if (form.selectedDays.length === 0) {
@@ -272,89 +238,102 @@ export default function AddServicePage() {
     return Object.keys(errs).length === 0;
   };
 
-  // Reset form
   const handleReset = () => {
     setForm(initialFormState);
     setErrors({});
-    toast("Form reset to default values", { icon: "🧹" });
+    setBackendError(null);
+    toast("Form reset to defaults", { icon: "🧹" });
   };
 
-  // Submit Handler: formats payload according to schema and console logs
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setBackendError(null);
 
     if (!validateForm()) {
       toast.error("Please fill in all required fields properly");
       return;
     }
 
-    setIsSubmitting(true);
+    try {
+      setIsSubmitting(true);
 
-    const generatedId = `srv_${Date.now()}_${Math.random().toString(36).substring(2, 7)}`;
+      const availabilityData: ServiceAvailability = {
+        status: form.availabilityStatus,
+        days: form.selectedDays,
+        workingHours: {
+          from: form.workingHoursFrom,
+          to: form.workingHoursTo,
+        },
+        instantBooking: form.instantBooking,
+        responseTime: form.responseTime,
+      };
 
-    const availabilityData: ServiceAvailability = {
-      status: form.availabilityStatus,
-      days: form.selectedDays,
-      workingHours: {
-        from: form.workingHoursFrom,
-        to: form.workingHoursTo,
-      },
-      instantBooking: form.instantBooking,
-      responseTime: form.responseTime,
-    };
+      const payload = {
+        title: form.title.trim(),
+        description: form.description.trim(),
+        category: form.category,
+        price: Number(form.price),
+        image: form.image.trim(),
+        availability: availabilityData,
+        duration: form.duration,
+        highlights: form.highlights,
+        status: "active" as const,
+      };
 
-    const payload: NewServicePayload = {
-      id: generatedId,
-      providerId: providerId,
-      title: form.title.trim(),
-      description: form.description.trim(),
-      category: form.category,
-      price: Number(form.price),
-      image: form.image.trim(),
-      availability: availabilityData,
-      duration: form.duration,
-      highlights: form.highlights,
-      createdAt: new Date().toISOString(),
-    };
+      await createService(payload);
 
-    // Primary Requirement: console log the submitted data
-    console.log(
-      "%c🚀 [HandyHub] Add Service - Submitted Payload:",
-      "background: #15803D; color: white; padding: 4px 8px; border-radius: 4px; font-weight: bold;",
-      payload
-    );
-
-    setTimeout(() => {
+      toast.success("Service created successfully!");
+      router.push("/dashboard/provider/my-services");
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Unable to communicate with the server. Please check your network and try again.";
+      setBackendError(errorMessage);
+      toast.error(errorMessage);
+    } finally {
       setIsSubmitting(false);
-      setSubmittedPayload(payload);
-      toast.success("Service created! Data logged to browser console.");
-    }, 400);
+    }
   };
 
-  const handleCopyJson = () => {
-    if (!submittedPayload) return;
-    navigator.clipboard.writeText(JSON.stringify(submittedPayload, null, 2));
-    setHasCopied(true);
-    toast.success("Payload copied to clipboard!");
-    setTimeout(() => setHasCopied(false), 2000);
-  };
+  // Route Guard: Block non-providers gracefully
+  if (!isAuthPending && userRole && userRole !== "provider") {
+    return (
+      <div className="mx-auto max-w-xl py-16 text-center">
+        <div className="mx-auto flex size-14 items-center justify-center rounded-2xl bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
+          <ShieldAlert className="size-7" />
+        </div>
+        <h2 className="mt-4 text-xl font-bold text-[#1C1917] dark:text-[#F4F4F5]">
+          Provider Access Required
+        </h2>
+        <p className="mt-2 text-sm text-[#1C1917]/70 dark:text-[#A1A1AA]">
+          This page is reserved for verified service providers on HandyHub. Please switch to a provider account or explore services as a customer.
+        </p>
+        <Link
+          href="/dashboard"
+          className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-5 py-2.5 text-sm font-semibold text-white transition hover:bg-[#166534] dark:bg-[#22C55E] dark:text-[#18181B]"
+        >
+          Return to Dashboard
+        </Link>
+      </div>
+    );
+  }
 
-  // Calculate form completion percentage
-  const completionPercentage = (() => {
-    let completed = 0;
-    const total = 6;
-    if (form.title.trim().length >= 5) completed += 1;
-    if (form.category) completed += 1;
-    if (Number(form.price) > 0) completed += 1;
-    if (form.image.trim()) completed += 1;
-    if (form.selectedDays.length > 0) completed += 1;
-    if (form.description.trim().length >= 20) completed += 1;
-    return Math.round((completed / total) * 100);
-  })();
+  const isFormValid =
+    form.title.trim().length >= 3 &&
+    Boolean(form.category) &&
+    Number(form.price) > 0 &&
+    form.description.trim().length >= 10 &&
+    form.selectedDays.length > 0;
 
   return (
-    <div className="mx-auto max-w-7xl space-y-8 pb-16">
-      {/* 1. Header & Breadcrumbs */}
+    <motion.div
+      initial={{ opacity: 0, y: 12 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.35, ease: "easeOut" }}
+      className="mx-auto max-w-7xl space-y-8 pb-20"
+    >
+      {/* Page Header with Breadcrumbs */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <nav className="mb-2 flex items-center gap-2 text-xs font-medium text-[#1C1917]/50 dark:text-[#A1A1AA]/70">
@@ -369,7 +348,7 @@ export default function AddServicePage() {
               href="/dashboard/provider/my-services"
               className="transition hover:text-[#15803D] dark:hover:text-[#22C55E]"
             >
-              Provider
+              My Services
             </Link>
             <ChevronRight className="size-3" />
             <span className="text-[#1C1917] dark:text-[#F4F4F5]">Add Service</span>
@@ -381,85 +360,51 @@ export default function AddServicePage() {
             </div>
             <div>
               <h1 className="text-2xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5] sm:text-3xl">
-                Add New Service
+                Add a New Service
               </h1>
-              <p className="text-sm text-[#1C1917]/65 dark:text-[#A1A1AA]">
-                Configure service pricing, availability, and details to start receiving bookings.
+              <p className="text-xs text-[#1C1917]/65 dark:text-[#A1A1AA] sm:text-sm">
+                Publish a professional trade service listing to attract direct customer bookings.
               </p>
             </div>
           </div>
         </div>
 
-        {/* Top Header Actions */}
         <div className="flex items-center gap-2.5">
+          <Link
+            href="/dashboard/provider/my-services"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-black/10 bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1C1917]/75 transition hover:bg-black/5 dark:border-white/10 dark:bg-[#27272A] dark:text-[#A1A1AA] dark:hover:bg-white/5"
+          >
+            <ArrowLeft className="size-3.5" />
+            Back to My Services
+          </Link>
           <button
             type="button"
             onClick={handleReset}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-black/10 bg-white px-3.5 py-2 text-xs font-semibold text-[#1C1917]/75 transition hover:bg-black/5 dark:border-white/10 dark:bg-[#27272A] dark:text-[#A1A1AA] dark:hover:bg-white/5"
+            className="inline-flex items-center gap-1.5 rounded-xl border border-black/10 bg-white px-3.5 py-2.5 text-xs font-semibold text-[#1C1917]/75 transition hover:bg-black/5 dark:border-white/10 dark:bg-[#27272A] dark:text-[#A1A1AA] dark:hover:bg-white/5"
           >
             <RotateCcw className="size-3.5" />
-            Reset Form
+            Reset
           </button>
-          <Link
-            href="/dashboard/provider/my-services"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-black/10 bg-white px-3.5 py-2 text-xs font-semibold text-[#1C1917]/75 transition hover:bg-black/5 dark:border-white/10 dark:bg-[#27272A] dark:text-[#A1A1AA] dark:hover:bg-white/5"
-          >
-            <Layers className="size-3.5" />
-            View My Services
-          </Link>
         </div>
       </div>
 
-      {/* Completion & Schema Context Banner */}
-      <div className="rounded-2xl border border-black/10 bg-white p-4 shadow-sm dark:border-white/10 dark:bg-[#27272A]/70 sm:p-5">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex size-9 shrink-0 items-center justify-center rounded-lg bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]">
-              <ShieldCheck className="size-5" />
-            </div>
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <span className="text-xs font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                  Active Provider:
-                </span>
-                <span className="rounded-md bg-black/5 px-2 py-0.5 text-xs font-mono font-medium text-[#15803D] dark:bg-white/10 dark:text-[#22C55E]">
-                  {providerId}
-                </span>
-                <span className="text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]">
-                  ({providerName})
-                </span>
-              </div>
-              <p className="mt-0.5 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]/80">
-                Draft ID: <span className="font-mono">srv_draft_{generatedDraftId}</span> • All submissions are logged to the console
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 sm:w-64">
-            <div className="flex-1">
-              <div className="flex justify-between text-xs font-medium text-[#1C1917]/70 dark:text-[#A1A1AA]">
-                <span>Form Progress</span>
-                <span className="font-bold text-[#15803D] dark:text-[#22C55E]">
-                  {completionPercentage}%
-                </span>
-              </div>
-              <div className="mt-1 h-2 w-full overflow-hidden rounded-full bg-black/10 dark:bg-white/10">
-                <div
-                  className="h-full bg-gradient-to-r from-[#15803D] to-[#22C55E] transition-all duration-300"
-                  style={{ width: `${completionPercentage}%` }}
-                />
-              </div>
-            </div>
+      {/* Backend Error Alert Banner */}
+      {backendError && (
+        <div className="flex items-start gap-3 rounded-2xl border border-rose-500/30 bg-rose-500/10 p-4 text-xs text-rose-700 dark:border-rose-500/30 dark:bg-rose-500/15 dark:text-rose-300">
+          <AlertCircle className="size-4 shrink-0 text-rose-600 dark:text-rose-400 mt-0.5" />
+          <div className="flex-1">
+            <p className="font-bold text-rose-800 dark:text-rose-200">Unable to publish service</p>
+            <p className="mt-0.5">{backendError}</p>
           </div>
         </div>
-      </div>
+      )}
 
-      {/* 2-Column Responsive Layout */}
+      {/* 2-Column Responsive Layout: Left Form (~60%), Right Preview (~40%) */}
       <div className="grid grid-cols-1 gap-8 lg:grid-cols-12">
         {/* Left Column: Form */}
         <div className="lg:col-span-7 xl:col-span-8">
           <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Card 1: Basic Information */}
+            {/* Section 1: Basic Information */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:p-6">
               <div className="mb-5 flex items-center gap-2.5 border-b border-black/5 pb-4 dark:border-white/5">
                 <div className="flex size-7 items-center justify-center rounded-lg bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
@@ -467,10 +412,10 @@ export default function AddServicePage() {
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                    1. Basic Service Information
+                    1. Basic Information
                   </h2>
                   <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    Provide an enticing title and appropriate category for search discoverability.
+                    Enter the fundamental details that help customers discover your service.
                   </p>
                 </div>
               </div>
@@ -491,8 +436,8 @@ export default function AddServicePage() {
                     maxLength={100}
                     value={form.title}
                     onChange={(e) => handleFieldChange("title", e.target.value)}
-                    placeholder="e.g., Professional Home Deep Cleaning & Sanitization"
-                    className={`h-12 w-full rounded-xl border bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
+                    placeholder="e.g., Deep Kitchen & Bathroom Sanitization Service"
+                    className={`h-11 w-full rounded-xl border bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
                       errors.title
                         ? "border-red-500 bg-red-50/20"
                         : "border-black/10 dark:border-white/10"
@@ -504,60 +449,72 @@ export default function AddServicePage() {
                       {errors.title}
                     </p>
                   )}
+                  <p className="mt-1 text-[11px] text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
+                    Use clear, descriptive wording mentioning what trade or problem is solved.
+                  </p>
                 </div>
 
-                {/* Category Grid Selection */}
+                {/* Category Dropdown & Quick Select */}
                 <div>
-                  <label className="mb-2 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Select Category <span className="text-red-500">*</span>
+                  <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
+                    Service Category <span className="text-red-500">*</span>
                   </label>
-                  <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
-                    {SERVICE_CATEGORIES.map((cat) => {
-                      const isSelected = form.category === cat;
-                      return (
-                        <button
-                          key={cat}
-                          type="button"
-                          onClick={() => handleFieldChange("category", cat)}
-                          className={`flex items-center gap-2.5 rounded-xl border p-3 text-left transition-all ${
-                            isSelected
-                              ? "border-[#15803D] bg-[#15803D]/5 text-[#15803D] shadow-sm dark:border-[#22C55E] dark:bg-[#22C55E]/10 dark:text-[#22C55E]"
-                              : "border-black/10 bg-[#FAF9F7] text-[#1C1917]/70 hover:border-black/20 dark:border-white/10 dark:bg-[#18181B] dark:text-[#A1A1AA] dark:hover:border-white/20"
-                          }`}
-                        >
-                          <span
-                            className={`flex size-7 shrink-0 items-center justify-center rounded-lg ${
-                              isSelected
-                                ? "bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]"
-                                : "bg-black/5 text-[#1C1917]/60 dark:bg-white/5 dark:text-[#A1A1AA]"
-                            }`}
-                          >
-                            {CATEGORY_ICONS[cat] || <Sparkles className="size-3.5" />}
-                          </span>
-                          <span className="truncate text-xs font-medium">{cat}</span>
-                        </button>
-                      );
-                    })}
-                  </div>
+                  <select
+                    value={form.category}
+                    onChange={(e) => handleFieldChange("category", e.target.value)}
+                    className="h-11 w-full rounded-xl border border-black/10 bg-[#FAF9F7] px-3.5 text-sm font-medium text-[#1C1917] outline-none transition-all focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20"
+                  >
+                    {SERVICE_CATEGORIES.map((cat) => (
+                      <option key={cat} value={cat}>
+                        {cat}
+                      </option>
+                    ))}
+                  </select>
                   {errors.category && (
                     <p className="mt-1.5 text-xs text-red-500">{errors.category}</p>
+                  )}
+                </div>
+
+                {/* Description */}
+                <div>
+                  <div className="flex items-center justify-between">
+                    <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
+                      Detailed Description <span className="text-red-500">*</span>
+                    </label>
+                    <span className="text-[11px] text-[#1C1917]/40 dark:text-[#A1A1AA]/50">
+                      {form.description.length} chars (min 10)
+                    </span>
+                  </div>
+                  <textarea
+                    rows={4}
+                    value={form.description}
+                    onChange={(e) => handleFieldChange("description", e.target.value)}
+                    placeholder="Describe what is included in this service, how your team operates, any prerequisites, and guarantees you offer..."
+                    className={`w-full resize-y rounded-xl border bg-[#FAF9F7] p-3.5 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
+                      errors.description
+                        ? "border-red-500 bg-red-50/20"
+                        : "border-black/10 dark:border-white/10"
+                    }`}
+                  />
+                  {errors.description && (
+                    <p className="mt-1.5 text-xs text-red-500">{errors.description}</p>
                   )}
                 </div>
               </div>
             </div>
 
-            {/* Card 2: Pricing & Duration */}
+            {/* Section 2: Pricing & Duration */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:p-6">
               <div className="mb-5 flex items-center gap-2.5 border-b border-black/5 pb-4 dark:border-white/5">
                 <div className="flex size-7 items-center justify-center rounded-lg bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
-                  <Clock className="size-4" />
+                  <DollarSign className="size-4" />
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-[#1C1917] dark:text-[#F4F4F5]">
                     2. Pricing & Duration
                   </h2>
                   <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    Set fair, transparent pricing and estimated completion time.
+                    Set transparent pricing in BDT and estimated work duration.
                   </p>
                 </div>
               </div>
@@ -566,20 +523,19 @@ export default function AddServicePage() {
                 {/* Price */}
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Service Price (৳ BDT) <span className="text-red-500">*</span>
+                    Base Price (৳ BDT) <span className="text-red-500">*</span>
                   </label>
                   <div className="relative">
                     <span className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 font-bold text-[#1C1917]/40 dark:text-[#A1A1AA]/50">
                       ৳
                     </span>
                     <input
-                      type="number"
-                      min="0"
-                      step="10"
+                      type="text"
+                      inputMode="decimal"
                       value={form.price}
-                      onChange={(e) => handleFieldChange("price", e.target.value)}
+                      onChange={(e) => handlePriceChange(e.target.value)}
                       placeholder="1200"
-                      className={`h-12 w-full rounded-xl border bg-[#FAF9F7] pl-9 pr-4 text-sm font-semibold text-[#1C1917] outline-none transition-all placeholder:font-normal placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
+                      className={`h-11 w-full rounded-xl border bg-[#FAF9F7] pl-8 pr-4 text-sm font-semibold text-[#1C1917] outline-none transition-all placeholder:font-normal placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
                         errors.price
                           ? "border-red-500 bg-red-50/20"
                           : "border-black/10 dark:border-white/10"
@@ -591,10 +547,10 @@ export default function AddServicePage() {
                   )}
                 </div>
 
-                {/* Pricing Model */}
+                {/* Pricing Type */}
                 <div>
                   <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Pricing Type
+                    Pricing Model
                   </label>
                   <select
                     value={form.pricingModel}
@@ -604,7 +560,7 @@ export default function AddServicePage() {
                         e.target.value as "fixed" | "hourly" | "starting_at"
                       )
                     }
-                    className="h-12 w-full rounded-xl border border-black/10 bg-[#FAF9F7] px-3.5 text-sm font-medium text-[#1C1917] outline-none transition-all focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20"
+                    className="h-11 w-full rounded-xl border border-black/10 bg-[#FAF9F7] px-3.5 text-sm font-medium text-[#1C1917] outline-none transition-all focus:border-[#15803D] focus:bg-white dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
                   >
                     <option value="fixed">Fixed Price (Per Job)</option>
                     <option value="hourly">Hourly Rate</option>
@@ -612,10 +568,10 @@ export default function AddServicePage() {
                   </select>
                 </div>
 
-                {/* Estimated Duration */}
+                {/* Duration */}
                 <div className="sm:col-span-2">
                   <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Estimated Service Duration
+                    Estimated Duration
                   </label>
                   <div className="flex flex-col gap-2 sm:flex-row">
                     <input
@@ -623,7 +579,7 @@ export default function AddServicePage() {
                       value={form.duration}
                       onChange={(e) => handleFieldChange("duration", e.target.value)}
                       placeholder="e.g., 1 - 2 Hours"
-                      className="h-11 flex-1 rounded-xl border border-black/10 bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all focus:border-[#15803D] focus:bg-white dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
+                      className="h-11 flex-1 rounded-xl border border-black/10 bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition focus:border-[#15803D] focus:bg-white dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
                     />
                     <div className="flex flex-wrap gap-1.5">
                       {["30 Mins", "1-2 Hours", "3-5 Hours", "Full Day"].map((preset) => (
@@ -642,7 +598,7 @@ export default function AddServicePage() {
               </div>
             </div>
 
-            {/* Card 3: Media & Images */}
+            {/* Section 3: Media & Images */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:p-6">
               <div className="mb-5 flex items-center gap-2.5 border-b border-black/5 pb-4 dark:border-white/5">
                 <div className="flex size-7 items-center justify-center rounded-lg bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
@@ -650,15 +606,15 @@ export default function AddServicePage() {
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                    3. Service Image <span className="text-red-500">*</span>
+                    3. Media & Service Banner
                   </h2>
                   <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    High quality visuals drastically boost customer confidence and click-through rates.
+                    Provide a clean high-resolution banner image URL or select from curated presets.
                   </p>
                 </div>
               </div>
 
-              {/* Image Input Options Switcher */}
+              {/* Media Mode Tabs */}
               <div className="mb-4 flex items-center gap-1 rounded-xl bg-[#FAF9F7] p-1 dark:bg-[#18181B]">
                 <button
                   type="button"
@@ -670,19 +626,7 @@ export default function AddServicePage() {
                   }`}
                 >
                   <Sparkles className="size-3.5" />
-                  Preset Samples
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setImageTab("upload")}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition ${
-                    imageTab === "upload"
-                      ? "bg-white text-[#15803D] shadow-sm dark:bg-[#27272A] dark:text-[#22C55E]"
-                      : "text-[#1C1917]/60 hover:text-[#1C1917] dark:text-[#A1A1AA]"
-                  }`}
-                >
-                  <UploadCloud className="size-3.5" />
-                  Upload File
+                  Preset Library
                 </button>
                 <button
                   type="button"
@@ -694,77 +638,41 @@ export default function AddServicePage() {
                   }`}
                 >
                   <Link2 className="size-3.5" />
-                  Direct URL
+                  Custom Image URL
                 </button>
               </div>
 
-              {/* Tab 1: Presets */}
-              {imageTab === "preset" && (
-                <div className="space-y-3">
-                  <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    Click any sample image below to select it immediately:
-                  </p>
-                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
-                    {PRESET_IMAGES.map((preset) => (
-                      <button
-                        key={preset.name}
-                        type="button"
-                        onClick={() => handleFieldChange("image", preset.url)}
-                        className={`group relative aspect-video overflow-hidden rounded-xl border transition-all ${
-                          form.image === preset.url
-                            ? "ring-2 ring-[#15803D] dark:ring-[#22C55E]"
-                            : "border-black/10 opacity-75 hover:opacity-100 dark:border-white/10"
-                        }`}
-                      >
-                        {/* eslint-disable-next-line @next/next/no-img-element */}
-                        <img
-                          src={preset.url}
-                          alt={preset.name}
-                          className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
-                        />
-                        <span className="absolute inset-x-0 bottom-0 bg-black/60 p-1 text-center text-[10px] font-semibold text-white backdrop-blur-sm">
-                          {preset.name}
+              {imageTab === "preset" ? (
+                <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+                  {PRESET_IMAGES.map((preset) => (
+                    <button
+                      key={preset.name}
+                      type="button"
+                      onClick={() => handleFieldChange("image", preset.url)}
+                      className={`group relative aspect-video overflow-hidden rounded-xl border transition-all ${
+                        form.image === preset.url
+                          ? "ring-2 ring-[#15803D] dark:ring-[#22C55E]"
+                          : "border-black/10 opacity-75 hover:opacity-100 dark:border-white/10"
+                      }`}
+                    >
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img
+                        src={preset.url}
+                        alt={preset.name}
+                        className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      />
+                      <span className="absolute inset-x-0 bottom-0 bg-black/60 p-1 text-center text-[10px] font-semibold text-white backdrop-blur-sm">
+                        {preset.name}
+                      </span>
+                      {form.image === preset.url && (
+                        <span className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
+                          <Check className="size-3" />
                         </span>
-                        {form.image === preset.url && (
-                          <span className="absolute right-1 top-1 flex size-5 items-center justify-center rounded-full bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
-                            <Check className="size-3" />
-                          </span>
-                        )}
-                      </button>
-                    ))}
-                  </div>
+                      )}
+                    </button>
+                  ))}
                 </div>
-              )}
-
-              {/* Tab 2: Upload File */}
-              {imageTab === "upload" && (
-                <div>
-                  <div
-                    onClick={() => fileInputRef.current?.click()}
-                    className="flex cursor-pointer flex-col items-center justify-center rounded-2xl border-2 border-dashed border-black/15 bg-[#FAF9F7] p-6 text-center transition hover:border-[#15803D] hover:bg-[#15803D]/5 dark:border-white/15 dark:bg-[#18181B] dark:hover:border-[#22C55E]"
-                  >
-                    <div className="flex size-12 items-center justify-center rounded-2xl bg-black/5 text-[#15803D] dark:bg-white/5 dark:text-[#22C55E]">
-                      <UploadCloud className="size-6" />
-                    </div>
-                    <p className="mt-3 text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                      {isUploading ? "Uploading file..." : "Click or drag & drop to upload"}
-                    </p>
-                    <p className="mt-1 text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]">
-                      PNG, JPG, WEBP up to 5MB
-                    </p>
-                    <input
-                      ref={fileInputRef}
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={handleFileUpload}
-                    />
-                  </div>
-                </div>
-              )}
-
-              {/* Tab 3: URL */}
-              {imageTab === "url" && (
+              ) : (
                 <div>
                   <input
                     type="url"
@@ -773,43 +681,14 @@ export default function AddServicePage() {
                     placeholder="https://images.unsplash.com/photo-..."
                     className="h-11 w-full rounded-xl border border-black/10 bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all focus:border-[#15803D] focus:bg-white dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
                   />
+                  <p className="mt-1 text-[11px] text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
+                    Paste a direct image link (PNG, JPG, WebP) from Unsplash or image host.
+                  </p>
                 </div>
-              )}
-
-              {/* Current Image Preview Strip */}
-              {form.image && (
-                <div className="mt-4 flex items-center gap-3 rounded-xl border border-black/10 bg-[#FAF9F7] p-2.5 dark:border-white/10 dark:bg-[#18181B]">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={form.image}
-                    alt="Active preview"
-                    className="size-14 rounded-lg object-cover ring-1 ring-black/10 dark:ring-white/10"
-                  />
-                  <div className="flex-1 overflow-hidden">
-                    <p className="truncate text-xs font-medium text-[#1C1917] dark:text-[#F4F4F5]">
-                      {form.image}
-                    </p>
-                    <p className="text-[11px] text-[#15803D] dark:text-[#22C55E]">
-                      ✓ Image ready for service listing
-                    </p>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={() => handleFieldChange("image", "")}
-                    className="rounded-lg p-2 text-red-500 transition hover:bg-red-500/10"
-                    title="Remove image"
-                  >
-                    <Trash2 className="size-4" />
-                  </button>
-                </div>
-              )}
-
-              {errors.image && (
-                <p className="mt-1.5 text-xs text-red-500">{errors.image}</p>
               )}
             </div>
 
-            {/* Card 4: Availability & Scheduling (Crucial Schema requirement) */}
+            {/* Section 4: Availability & Working Hours */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:p-6">
               <div className="mb-5 flex items-center justify-between border-b border-black/5 pb-4 dark:border-white/5">
                 <div className="flex items-center gap-2.5">
@@ -821,83 +700,17 @@ export default function AddServicePage() {
                       4. Availability & Working Hours
                     </h2>
                     <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                      Define when and how customers can book this service with you.
+                      Configure when you are available to accept bookings for this service.
                     </p>
                   </div>
                 </div>
 
-                {/* Status Indicator */}
-                <span
-                  className={`rounded-full px-2.5 py-1 text-[11px] font-semibold capitalize ${
-                    form.availabilityStatus === "available"
-                      ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]"
-                      : form.availabilityStatus === "by-appointment"
-                      ? "bg-blue-500/10 text-blue-600 dark:bg-blue-500/20 dark:text-blue-400"
-                      : "bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400"
-                  }`}
-                >
+                <span className="rounded-full bg-[#15803D]/10 px-2.5 py-1 text-[11px] font-bold text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E] capitalize">
                   ● {form.availabilityStatus.replace("-", " ")}
                 </span>
               </div>
 
               <div className="space-y-5">
-                {/* Availability Status Options */}
-                <div>
-                  <label className="mb-2 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Service Availability Status
-                  </label>
-                  <div className="grid grid-cols-1 gap-2.5 sm:grid-cols-3">
-                    {[
-                      {
-                        value: "available",
-                        label: "Available Now",
-                        desc: "Accepting immediate booking requests",
-                      },
-                      {
-                        value: "by-appointment",
-                        label: "By Appointment",
-                        desc: "Requires advance scheduling approval",
-                      },
-                      {
-                        value: "busy",
-                        label: "Limited / Busy",
-                        desc: "High volume, waitlist or delays",
-                      },
-                    ].map((st) => {
-                      const isSelected = form.availabilityStatus === st.value;
-                      return (
-                        <button
-                          key={st.value}
-                          type="button"
-                          onClick={() =>
-                            handleFieldChange(
-                              "availabilityStatus",
-                              st.value as "available" | "busy" | "by-appointment"
-                            )
-                          }
-                          className={`rounded-xl border p-3 text-left transition-all ${
-                            isSelected
-                              ? "border-[#15803D] bg-[#15803D]/5 ring-1 ring-[#15803D] dark:border-[#22C55E] dark:bg-[#22C55E]/10 dark:ring-[#22C55E]"
-                              : "border-black/10 bg-[#FAF9F7] dark:border-white/10 dark:bg-[#18181B]"
-                          }`}
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                              {st.label}
-                            </span>
-                            {isSelected && (
-                              <CheckCircle2 className="size-4 text-[#15803D] dark:text-[#22C55E]" />
-                            )}
-                          </div>
-                          <p className="mt-1 text-[11px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                            {st.desc}
-                          </p>
-                        </button>
-                      );
-                    })}
-                  </div>
-                </div>
-
                 {/* Available Days */}
                 <div>
                   <div className="mb-2 flex items-center justify-between">
@@ -955,7 +768,7 @@ export default function AddServicePage() {
                   )}
                 </div>
 
-                {/* Working Hours Range & Response Time */}
+                {/* Shift Hours & Response Time */}
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
@@ -997,7 +810,7 @@ export default function AddServicePage() {
 
                   <div>
                     <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                      Avg. Response Time
+                      Response Time
                     </label>
                     <select
                       value={form.responseTime}
@@ -1020,10 +833,10 @@ export default function AddServicePage() {
                     </div>
                     <div>
                       <p className="text-xs font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                        Instant Booking Enabled
+                        Allow Instant Bookings
                       </p>
                       <p className="text-[11px] text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                        Clients can book immediately within your specified schedule.
+                        Clients can confirm orders directly within your working shifts.
                       </p>
                     </div>
                   </div>
@@ -1040,119 +853,85 @@ export default function AddServicePage() {
               </div>
             </div>
 
-            {/* Card 5: Description & Included Highlights */}
+            {/* Section 5: Included Features & Highlights */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:p-6">
-              <div className="mb-5 flex items-center gap-2.5 border-b border-black/5 pb-4 dark:border-white/5">
+              <div className="mb-4 flex items-center gap-2.5 border-b border-black/5 pb-4 dark:border-white/5">
                 <div className="flex size-7 items-center justify-center rounded-lg bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
-                  <FileText className="size-4" />
+                  <CheckCircle2 className="size-4" />
                 </div>
                 <div>
                   <h2 className="text-base font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                    5. Description & Highlights <span className="text-red-500">*</span>
+                    5. Service Highlights / What&apos;s Included
                   </h2>
                   <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    Detail your service scope, quality standards, and what is included.
+                    Add bullet points highlighting safety, guarantees, and included tools.
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-4">
-                <div>
-                  <div className="flex items-center justify-between">
-                    <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                      Service Description
-                    </label>
-                    <span className="text-[11px] text-[#1C1917]/40 dark:text-[#A1A1AA]/50">
-                      {form.description.length} characters (min 20)
-                    </span>
-                  </div>
-                  <textarea
-                    rows={4}
-                    value={form.description}
-                    onChange={(e) => handleFieldChange("description", e.target.value)}
-                    placeholder="Describe what is included in this service, how your team operates, any prerequisites, and guarantees you offer..."
-                    className={`w-full resize-y rounded-xl border bg-[#FAF9F7] p-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
-                      errors.description
-                        ? "border-red-500 bg-red-50/20"
-                        : "border-black/10 dark:border-white/10"
-                    }`}
-                  />
-                  {errors.description && (
-                    <p className="mt-1.5 text-xs text-red-500">{errors.description}</p>
-                  )}
-                </div>
+              <div className="flex gap-2">
+                <input
+                  type="text"
+                  value={newHighlight}
+                  onChange={(e) => setNewHighlight(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      handleAddHighlight();
+                    }
+                  }}
+                  placeholder="e.g., 30-Day Service Guarantee"
+                  className="h-10 flex-1 rounded-xl border border-black/10 bg-[#FAF9F7] px-3.5 text-xs text-[#1C1917] outline-none transition focus:border-[#15803D] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
+                />
+                <button
+                  type="button"
+                  onClick={handleAddHighlight}
+                  className="inline-flex items-center gap-1 rounded-xl bg-[#15803D]/10 px-3.5 py-2 text-xs font-semibold text-[#15803D] transition hover:bg-[#15803D] hover:text-white dark:bg-[#22C55E]/15 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
+                >
+                  <Plus className="size-3.5" />
+                  Add Highlight
+                </button>
+              </div>
 
-                {/* Key Features / What's Included */}
-                <div>
-                  <label className="mb-1.5 block text-xs font-semibold text-[#1C1917]/80 dark:text-[#A1A1AA]">
-                    Key Highlights / What&apos;s Included
-                  </label>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={newHighlight}
-                      onChange={(e) => setNewHighlight(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                          e.preventDefault();
-                          handleAddHighlight();
-                        }
-                      }}
-                      placeholder="e.g., 30-Day Service Guarantee"
-                      className="h-10 flex-1 rounded-xl border border-black/10 bg-[#FAF9F7] px-3.5 text-xs text-[#1C1917] outline-none transition focus:border-[#15803D] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
-                    />
+              <div className="mt-3 flex flex-wrap gap-2">
+                {form.highlights.map((hl, index) => (
+                  <span
+                    key={hl}
+                    className="inline-flex items-center gap-1.5 rounded-lg border border-black/10 bg-[#FAF9F7] px-3 py-1.5 text-xs font-medium text-[#1C1917] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5]"
+                  >
+                    <CheckCircle2 className="size-3 text-[#15803D] dark:text-[#22C55E]" />
+                    {hl}
                     <button
                       type="button"
-                      onClick={handleAddHighlight}
-                      className="inline-flex items-center gap-1 rounded-xl bg-[#15803D]/10 px-3.5 py-2 text-xs font-semibold text-[#15803D] transition hover:bg-[#15803D] hover:text-white dark:bg-[#22C55E]/15 dark:text-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
+                      onClick={() => handleRemoveHighlight(index)}
+                      className="ml-1 text-[#1C1917]/40 hover:text-red-500 dark:text-[#A1A1AA]/50"
                     >
-                      <Plus className="size-3.5" />
-                      Add Highlight
+                      ✕
                     </button>
-                  </div>
-
-                  {/* Highlights Pill List */}
-                  <div className="mt-3 flex flex-wrap gap-2">
-                    {form.highlights.map((hl, index) => (
-                      <span
-                        key={hl}
-                        className="inline-flex items-center gap-1.5 rounded-lg border border-black/10 bg-[#FAF9F7] px-3 py-1.5 text-xs font-medium text-[#1C1917] dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5]"
-                      >
-                        <CheckCircle2 className="size-3 text-[#15803D] dark:text-[#22C55E]" />
-                        {hl}
-                        <button
-                          type="button"
-                          onClick={() => handleRemoveHighlight(index)}
-                          className="ml-1 text-[#1C1917]/40 hover:text-red-500 dark:text-[#A1A1AA]/50"
-                        >
-                          ✕
-                        </button>
-                      </span>
-                    ))}
-                  </div>
-                </div>
+                  </span>
+                ))}
               </div>
             </div>
 
-            {/* Bottom Actions */}
+            {/* Bottom Form Actions */}
             <div className="flex flex-col-reverse gap-3 rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A] sm:flex-row sm:items-center sm:justify-between">
               <button
                 type="button"
                 onClick={handleReset}
                 className="rounded-xl px-5 py-3 text-xs font-semibold text-[#1C1917]/70 transition hover:bg-black/5 dark:text-[#A1A1AA] dark:hover:bg-white/5"
               >
-                Clear / Reset Form
+                Clear Form
               </button>
 
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#15803D] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#15803D]/20 transition-all hover:bg-[#166534] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A] dark:shadow-[#22C55E]/10"
+                disabled={isSubmitting || !isFormValid}
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#15803D] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#15803D]/20 transition-all hover:bg-[#166534] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A] dark:shadow-[#22C55E]/10"
               >
                 {isSubmitting ? (
                   <>
                     <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent dark:border-[#18181B]" />
-                    Processing Service...
+                    Publishing Service...
                   </>
                 ) : (
                   <>
@@ -1166,46 +945,45 @@ export default function AddServicePage() {
           </form>
         </div>
 
-        {/* Right Column: Sticky Live Preview & Guidance */}
+        {/* Right Column: Sticky Live Marketplace Preview Card (~40%) */}
         <div className="space-y-6 lg:col-span-5 xl:col-span-4">
           <div className="sticky top-24 space-y-6">
-            {/* Live Service Card Preview */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-md dark:border-white/10 dark:bg-[#27272A]">
               <div className="mb-4 flex items-center justify-between border-b border-black/5 pb-3 dark:border-white/5">
                 <div className="flex items-center gap-2">
-                  <Eye className="size-4 text-[#15803D] dark:text-[#22C55E]" />
+                  <Sparkles className="size-4 text-[#15803D] dark:text-[#22C55E]" />
                   <span className="text-xs font-bold uppercase tracking-wider text-[#1C1917]/75 dark:text-[#F4F4F5]">
-                    Customer Live Preview
+                    Marketplace Preview
                   </span>
                 </div>
                 <span className="rounded-full bg-[#15803D]/10 px-2 py-0.5 text-[10px] font-bold text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]">
-                  Real-time
+                  Live
                 </span>
               </div>
 
-              {/* Service Card Mockup */}
-              <div className="group overflow-hidden rounded-2xl border border-black/10 bg-[#FAF9F7] transition duration-300 dark:border-white/10 dark:bg-[#18181B]">
-                {/* Image & Badges */}
-                <div className="relative aspect-video w-full overflow-hidden bg-black/10 dark:bg-white/5">
+              {/* Service Card Mockup (exact parity with ServiceCard / ProviderServiceCard) */}
+              <article className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FAF9F7] transition-all duration-300 hover:border-[#15803D]/40 hover:shadow-xl dark:border-white/10 dark:bg-[#18181B] dark:hover:border-[#22C55E]/40">
+                {/* Visual Header */}
+                <div className="relative flex h-36 items-center justify-center bg-[#18181B] dark:bg-[#27272A] overflow-hidden">
                   {form.image ? (
                     // eslint-disable-next-line @next/next/no-img-element
                     <img
                       src={form.image}
-                      alt="Service Card Preview"
-                      className="h-full w-full object-cover transition duration-300 group-hover:scale-105"
+                      alt="Service preview"
+                      className="h-full w-full object-cover opacity-90 transition duration-300 group-hover:scale-105"
                     />
                   ) : (
-                    <div className="flex h-full w-full items-center justify-center text-[#1C1917]/30 dark:text-[#A1A1AA]/30">
-                      <Sparkles className="size-8" />
+                    <div className="flex size-14 items-center justify-center rounded-2xl bg-[#15803D] text-white shadow-lg dark:bg-[#22C55E] dark:text-[#18181B]">
+                      {CATEGORY_ICONS[form.category] || <Wrench className="size-6" />}
                     </div>
                   )}
 
                   {/* Category Pill */}
-                  <span className="absolute left-3 top-3 rounded-full bg-black/60 px-3 py-1 text-[11px] font-semibold text-white backdrop-blur-md">
+                  <span className="absolute left-3 top-3 rounded-full border border-white/10 bg-white/10 px-2.5 py-1 text-[10px] font-medium text-white backdrop-blur-sm">
                     {form.category}
                   </span>
 
-                  {/* Availability Badge */}
+                  {/* Status Badge */}
                   <span className="absolute right-3 top-3 inline-flex items-center gap-1.5 rounded-full bg-white/90 px-2.5 py-1 text-[10px] font-bold text-[#15803D] shadow-sm backdrop-blur-md dark:bg-[#18181B]/90 dark:text-[#22C55E]">
                     <span className="size-1.5 animate-pulse rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
                     {form.availabilityStatus === "available"
@@ -1217,174 +995,77 @@ export default function AddServicePage() {
                 </div>
 
                 {/* Card Content */}
-                <div className="p-4">
-                  {/* Provider Info & Rating */}
+                <div className="flex flex-1 flex-col p-4">
                   <div className="flex items-center justify-between text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    <span className="font-medium truncate max-w-[150px]">
+                    <span className="font-medium truncate max-w-[140px]">
                       By {providerName}
                     </span>
-                    <span className="flex items-center gap-1 font-semibold text-amber-500">
-                      ★ 5.0 (New)
-                    </span>
+                    <div className="flex items-center gap-1 text-[#F59E0B] dark:text-[#FBBF24]">
+                      <Star size={13} className="fill-current" />
+                      <span className="text-xs font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
+                        5.0 (New)
+                      </span>
+                    </div>
                   </div>
 
-                  {/* Title */}
-                  <h3 className="mt-2 line-clamp-2 text-sm font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                    {form.title.trim() || "Your Service Title will appear here..."}
+                  <h3 className="mt-2 line-clamp-1 text-base font-semibold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
+                    {form.title.trim() || "Service Title Preview"}
                   </h3>
 
-                  {/* Description snippet */}
-                  <p className="mt-1.5 line-clamp-2 text-xs text-[#1C1917]/70 dark:text-[#A1A1AA]">
+                  <p className="mt-2 line-clamp-2 text-xs leading-5 text-[#1C1917]/70 dark:text-[#A1A1AA]">
                     {form.description.trim() ||
-                      "Add a compelling description to showcase the quality of your work..."}
+                      "Add a descriptive summary of what is included in this service package..."}
                   </p>
 
-                  {/* Working Days & Duration */}
-                  <div className="mt-3 flex flex-wrap items-center gap-2 border-t border-black/5 pt-3 text-[11px] text-[#1C1917]/65 dark:border-white/5 dark:text-[#A1A1AA]">
-                    <span className="inline-flex items-center gap-1 rounded bg-black/5 px-2 py-0.5 dark:bg-white/5">
-                      <Clock className="size-3 text-[#15803D] dark:text-[#22C55E]" />
-                      {form.duration || "1-2h"}
-                    </span>
-                    <span className="inline-flex items-center gap-1 rounded bg-black/5 px-2 py-0.5 dark:bg-white/5">
-                      <Calendar className="size-3 text-[#15803D] dark:text-[#22C55E]" />
-                      {form.selectedDays.length === 7
-                        ? "Everyday"
-                        : `${form.selectedDays.length} Days / wk`}
-                    </span>
-                  </div>
-
-                  {/* Price & CTA Button */}
-                  <div className="mt-4 flex items-center justify-between border-t border-black/5 pt-3 dark:border-white/5">
+                  <div className="mt-4 flex items-center justify-between border-t border-black/10 pt-3 dark:border-white/10">
                     <div>
-                      <span className="text-[10px] text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
+                      <p className="text-[10px] text-[#1C1917]/50 dark:text-[#A1A1AA]/70">
                         {form.pricingModel === "hourly"
-                          ? "Per Hour"
+                          ? "Hourly Rate"
                           : form.pricingModel === "starting_at"
-                          ? "Starting From"
+                          ? "Starting at"
                           : "Fixed Price"}
-                      </span>
-                      <p className="text-base font-extrabold text-[#15803D] dark:text-[#22C55E]">
-                        ৳ {Number(form.price) > 0 ? Number(form.price).toLocaleString() : "0"}
+                      </p>
+                      <p className="text-sm font-bold text-[#15803D] dark:text-[#22C55E]">
+                        ৳{Number(form.price) > 0 ? Number(form.price).toLocaleString() : "0"}
                       </p>
                     </div>
 
-                    <div className="rounded-xl bg-[#15803D] px-3.5 py-2 text-xs font-bold text-white dark:bg-[#22C55E] dark:text-[#18181B]">
-                      Book Now
+                    <div className="flex items-center gap-1.5 text-xs text-[#1C1917]/70 dark:text-[#A1A1AA]">
+                      <Clock className="size-3 text-[#15803D] dark:text-[#22C55E]" />
+                      {form.duration || "1 - 2 Hours"}
                     </div>
                   </div>
+
+                  <div className="mt-4 flex w-full items-center justify-center gap-1.5 rounded-xl bg-[#15803D] py-2.5 text-xs font-bold text-white transition dark:bg-[#22C55E] dark:text-[#18181B]">
+                    View Details & Book
+                  </div>
                 </div>
-              </div>
+              </article>
             </div>
 
-            {/* Provider Quick Tips */}
+            {/* Provider Tips Box */}
             <div className="rounded-2xl border border-black/10 bg-white p-5 shadow-sm dark:border-white/10 dark:bg-[#27272A]">
               <div className="flex items-center gap-2">
                 <Info className="size-4 text-[#15803D] dark:text-[#22C55E]" />
                 <h4 className="text-xs font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                  HandyHub Pro Provider Tips
+                  Listing Quality Guidelines
                 </h4>
               </div>
               <ul className="mt-3 space-y-2 text-xs text-[#1C1917]/70 dark:text-[#A1A1AA]">
                 <li className="flex items-start gap-2">
                   <span className="text-[#15803D] dark:text-[#22C55E]">✓</span>
-                  Clear, specific titles attract 40% more service requests.
+                  Specify clear service scope to avoid cancellation requests.
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-[#15803D] dark:text-[#22C55E]">✓</span>
-                  Specifying accurate working hours prevents unfulfilled bookings.
-                </li>
-                <li className="flex items-start gap-2">
-                  <span className="text-[#15803D] dark:text-[#22C55E]">✓</span>
-                  Adding bullet highlights builds instant buyer confidence.
+                  Accurate shift hours allow automated instant booking matching.
                 </li>
               </ul>
             </div>
           </div>
         </div>
       </div>
-
-      {/* 3. Post-Submission Payload Modal / Inspector */}
-      {submittedPayload && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm">
-          <div className="w-full max-w-2xl overflow-hidden rounded-3xl border border-black/10 bg-white shadow-2xl dark:border-white/10 dark:bg-[#18181B]">
-            {/* Modal Header */}
-            <div className="flex items-center justify-between border-b border-black/10 bg-[#FAF9F7] px-6 py-4 dark:border-white/10 dark:bg-[#27272A]">
-              <div className="flex items-center gap-3">
-                <div className="flex size-9 items-center justify-center rounded-xl bg-[#15803D]/15 text-[#15803D] dark:bg-[#22C55E]/15 dark:text-[#22C55E]">
-                  <CheckCircle2 className="size-5" />
-                </div>
-                <div>
-                  <h3 className="text-base font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                    Service Created & Logged to Console
-                  </h3>
-                  <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    Open Browser DevTools (F12 → Console) or inspect the JSON below.
-                  </p>
-                </div>
-              </div>
-
-              <button
-                type="button"
-                onClick={() => setSubmittedPayload(null)}
-                className="rounded-lg p-1.5 text-[#1C1917]/50 hover:bg-black/5 dark:text-[#A1A1AA] dark:hover:bg-white/5"
-              >
-                ✕
-              </button>
-            </div>
-
-            {/* Modal Body: JSON Inspector */}
-            <div className="p-6">
-              <div className="mb-3 flex items-center justify-between">
-                <span className="text-xs font-semibold text-[#1C1917]/70 dark:text-[#A1A1AA]">
-                  Payload Schema: <span className="font-mono text-[#15803D] dark:text-[#22C55E]">NewServicePayload</span>
-                </span>
-                <button
-                  type="button"
-                  onClick={handleCopyJson}
-                  className="inline-flex items-center gap-1 rounded-lg border border-black/10 bg-[#FAF9F7] px-2.5 py-1 text-xs font-semibold text-[#1C1917] transition hover:bg-black/5 dark:border-white/10 dark:bg-[#27272A] dark:text-[#F4F4F5] dark:hover:bg-white/5"
-                >
-                  {hasCopied ? (
-                    <>
-                      <Check className="size-3 text-[#15803D] dark:text-[#22C55E]" />
-                      Copied!
-                    </>
-                  ) : (
-                    <>
-                      <Copy className="size-3" />
-                      Copy JSON
-                    </>
-                  )}
-                </button>
-              </div>
-
-              <pre className="max-h-80 overflow-y-auto rounded-xl border border-black/10 bg-[#151618] p-4 text-xs font-mono text-emerald-400 dark:border-white/10">
-                {JSON.stringify(submittedPayload, null, 2)}
-              </pre>
-            </div>
-
-            {/* Modal Actions */}
-            <div className="flex flex-col-reverse gap-2 border-t border-black/10 bg-[#FAF9F7] px-6 py-4 dark:border-white/10 dark:bg-[#27272A] sm:flex-row sm:justify-end">
-              <button
-                type="button"
-                onClick={() => {
-                  setSubmittedPayload(null);
-                  handleReset();
-                }}
-                className="rounded-xl border border-black/10 bg-white px-4 py-2.5 text-xs font-semibold text-[#1C1917] transition hover:bg-black/5 dark:border-white/10 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:hover:bg-white/5"
-              >
-                Add Another Service
-              </button>
-              <Link
-                href="/dashboard/provider/my-services"
-                className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#15803D] px-5 py-2.5 text-xs font-bold text-white transition hover:bg-[#166534] dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A]"
-              >
-                Go to My Services
-                <ArrowRight className="size-3.5" />
-              </Link>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
+    </motion.div>
   );
 }

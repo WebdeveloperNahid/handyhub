@@ -1,22 +1,32 @@
-import type { ProviderService, ServiceFormValues } from "@/types/index";
+import type {
+  Booking,
+  BookingStatus,
+  ProviderService,
+  ProviderStats,
+  ServiceAvailability,
+  ServiceFormValues,
+} from "@/types/index";
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000/api/v1";
 
 /**
- * Helper function to handle API response errors
+ * Standardized API response parser.
+ * Unwraps `{ success: true, data }` response envelope or falls back to raw data.
  */
 async function handleResponse<T>(response: Response): Promise<T> {
-  if (!response.ok) {
-    const errorData = await response.json().catch(() => ({}));
-    throw new Error(
-      errorData.message || `Request failed with status ${response.status}`,
-    );
+  const json = await response.json().catch(() => ({}));
+  if (!response.ok || json.success === false) {
+    const errorMsg =
+      json?.error?.message ||
+      json?.message ||
+      `Request failed with status ${response.status}`;
+    throw new Error(errorMsg);
   }
-  return response.json();
+  return (json.data !== undefined ? json.data : json) as T;
 }
 
 /**
- * Fetch all services belonging to the logged-in provider
+ * 1. Fetch all services belonging to the logged-in provider
  */
 export async function fetchMyServices(): Promise<ProviderService[]> {
   const response = await fetch(`${BASE_URL}/provider/services`, {
@@ -24,7 +34,7 @@ export async function fetchMyServices(): Promise<ProviderService[]> {
     headers: {
       "Content-Type": "application/json",
     },
-    // Server/Client Component অনুযায়ী প্রয়োজনমতো cache strategy সেট করুন
+    credentials: "include",
     cache: "no-store",
   });
 
@@ -32,16 +42,33 @@ export async function fetchMyServices(): Promise<ProviderService[]> {
 }
 
 /**
- * Create a new service
+ * 2. Fetch single service details
+ */
+export async function fetchServiceById(id: string): Promise<ProviderService> {
+  const response = await fetch(`${BASE_URL}/provider/services/${id}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  return handleResponse<ProviderService>(response);
+}
+
+/**
+ * 3. Create a new service
  */
 export async function createService(
-  values: ServiceFormValues,
+  values: Partial<ProviderService> | ServiceFormValues
 ): Promise<ProviderService> {
   const response = await fetch(`${BASE_URL}/provider/services`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(values),
   });
 
@@ -49,17 +76,18 @@ export async function createService(
 }
 
 /**
- * Update an existing service by ID
+ * 4. Update an existing service
  */
 export async function updateService(
   id: string,
-  values: ServiceFormValues,
+  values: Partial<ProviderService> | ServiceFormValues
 ): Promise<ProviderService> {
   const response = await fetch(`${BASE_URL}/provider/services/${id}`, {
-    method: "PUT", // অথবা প্রয়োজন অনুযায়ী 'PATCH'
+    method: "PUT",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
     body: JSON.stringify(values),
   });
 
@@ -67,15 +95,88 @@ export async function updateService(
 }
 
 /**
- * Delete a service by ID
+ * 5. Delete a service
  */
-export async function deleteService(id: string): Promise<{ success: boolean }> {
+export async function deleteService(id: string): Promise<{ message: string; deleted: boolean }> {
   const response = await fetch(`${BASE_URL}/provider/services/${id}`, {
     method: "DELETE",
     headers: {
       "Content-Type": "application/json",
     },
+    credentials: "include",
   });
 
-  return handleResponse<{ success: boolean }>(response);
+  return handleResponse<{ message: string; deleted: boolean }>(response);
 }
+
+/**
+ * 6. Update service availability
+ */
+export async function updateServiceAvailability(
+  id: string,
+  availability: ServiceAvailability
+): Promise<ProviderService> {
+  const response = await fetch(`${BASE_URL}/provider/services/${id}/availability`, {
+    method: "PUT",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify(availability),
+  });
+
+  return handleResponse<ProviderService>(response);
+}
+
+/**
+ * 7. Fetch provider bookings (with optional status filter)
+ */
+export async function fetchProviderBookings(status?: string): Promise<Booking[]> {
+  const query = status && status !== "All" ? `?status=${encodeURIComponent(status)}` : "";
+  const response = await fetch(`${BASE_URL}/provider/bookings${query}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  return handleResponse<Booking[]>(response);
+}
+
+/**
+ * 8. Update booking status
+ */
+export async function updateBookingStatus(
+  bookingId: string,
+  status: BookingStatus | string
+): Promise<Booking> {
+  const response = await fetch(`${BASE_URL}/provider/bookings/${bookingId}/status`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    body: JSON.stringify({ status }),
+  });
+
+  return handleResponse<Booking>(response);
+}
+
+/**
+ * 9. Fetch provider dashboard statistics
+ */
+export async function fetchProviderStats(): Promise<ProviderStats> {
+  const response = await fetch(`${BASE_URL}/provider/stats`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    credentials: "include",
+    cache: "no-store",
+  });
+
+  return handleResponse<ProviderStats>(response);
+}
+

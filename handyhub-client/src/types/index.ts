@@ -41,3 +41,29 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   "Home Repair",
   "Appliance Repair",
 ];
+
+export interface ServiceAvailability {
+  status: "available" | "busy" | "by-appointment";
+  days: string[];
+  workingHours: {
+    from: string;
+    to: string;
+  };
+  instantBooking: boolean;
+  responseTime: string;
+}
+
+export interface NewServicePayload {
+  id: string;
+  providerId: string;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  image: string;
+  availability: ServiceAvailability;
+  duration?: string;
+  highlights?: string[];
+  createdAt: string;
+}
+

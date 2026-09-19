@@ -98,6 +98,11 @@ export function DashboardSidebar() {
       label: "Active Jobs",
       href: "/dashboard/provider/active-jobs",
     },
+    {
+      icon: LuCircleUserRound,
+      label: "Profile",
+      href: "/dashboard/provider/profile",
+    },
   ];
 
   const adminItems: NavItem[] = [

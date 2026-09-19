@@ -250,7 +250,7 @@ export default function AddServicePage() {
     setBackendError(null);
 
     if (!validateForm()) {
-      toast.error("Please fill in all required fields properly");
+      toast.error("Please complete all required fields");
       return;
     }
 
@@ -259,30 +259,36 @@ export default function AddServicePage() {
 
       const availabilityData: ServiceAvailability = {
         status: form.availabilityStatus,
-        days: form.selectedDays,
+        days: form.selectedDays.length > 0 ? form.selectedDays : ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"],
         workingHours: {
-          from: form.workingHoursFrom,
-          to: form.workingHoursTo,
+          from: form.workingHoursFrom || "09:00 AM",
+          to: form.workingHoursTo || "06:00 PM",
         },
         instantBooking: form.instantBooking,
-        responseTime: form.responseTime,
+        responseTime: form.responseTime || "Under 1 hour",
       };
+
+      const finalImage =
+        form.image.trim().length > 0
+          ? form.image.trim()
+          : PRESET_IMAGES.find((p) => p.category === form.category)?.url ||
+            "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
 
       const payload = {
         title: form.title.trim(),
         description: form.description.trim(),
         category: form.category,
         price: Number(form.price),
-        image: form.image.trim(),
+        image: finalImage,
         availability: availabilityData,
-        duration: form.duration,
+        duration: form.duration || "1 - 2 Hours",
         highlights: form.highlights,
         status: "active" as const,
       };
 
       await createService(payload);
 
-      toast.success("Service created successfully!");
+      toast.success("Service published successfully!");
       router.push("/dashboard/provider/my-services");
     } catch (err) {
       const errorMessage =
@@ -318,13 +324,6 @@ export default function AddServicePage() {
       </div>
     );
   }
-
-  const isFormValid =
-    form.title.trim().length >= 3 &&
-    Boolean(form.category) &&
-    Number(form.price) > 0 &&
-    form.description.trim().length >= 10 &&
-    form.selectedDays.length > 0;
 
   return (
     <motion.div
@@ -925,7 +924,7 @@ export default function AddServicePage() {
 
               <button
                 type="submit"
-                disabled={isSubmitting || !isFormValid}
+                disabled={isSubmitting}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#15803D] px-8 py-3.5 text-sm font-bold text-white shadow-lg shadow-[#15803D]/20 transition-all hover:bg-[#166534] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#16A34A] dark:shadow-[#22C55E]/10"
               >
                 {isSubmitting ? (

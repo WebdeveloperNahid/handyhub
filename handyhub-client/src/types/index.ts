@@ -17,6 +17,7 @@ export interface ProviderService {
   price: number;
   duration: string;
   image?: string;
+  availability?: ServiceAvailability;
   status: ServiceStatus;
   createdAt?: string;
   updatedAt?: string;
@@ -41,3 +42,78 @@ export const SERVICE_CATEGORIES: ServiceCategory[] = [
   "Home Repair",
   "Appliance Repair",
 ];
+
+export interface ServiceAvailability {
+  status: "available" | "busy" | "by-appointment" | string;
+  days: string[];
+  workingHours: {
+    from: string;
+    to: string;
+  };
+  instantBooking?: boolean;
+  responseTime?: string;
+}
+
+export interface NewServicePayload {
+  id?: string;
+  _id?: string;
+  providerId: string;
+  title: string;
+  description: string;
+  category: string;
+  price: number;
+  image?: string;
+  availability?: ServiceAvailability;
+  duration?: string;
+  highlights?: string[];
+  status?: ServiceStatus;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export type BookingStatus =
+  | "Pending"
+  | "Accepted"
+  | "In Progress"
+  | "Completed"
+  | "Rejected"
+  | "Cancelled";
+
+export interface Booking {
+  _id: string;
+  customerId: string;
+  providerId: string;
+  serviceId: string;
+  date?: string;
+  time?: string;
+  status: BookingStatus | string;
+  notes?: string;
+  price?: number;
+  serviceTitle?: string;
+  customerName?: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  customerAddress?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
+
+export interface ProviderStats {
+  totalServices: number;
+  activeServices: number;
+  pendingBookings: number;
+  activeJobs: number;
+  completedBookings: number;
+  estimatedRevenue: number;
+}
+
+export interface ApiResponse<T = unknown> {
+  success: boolean;
+  data?: T;
+  error?: {
+    code: string;
+    message: string;
+  };
+}
+
+

@@ -1,7 +1,6 @@
-import React from "react";
+import MyServicesPage from "@/Components/dashboard/provider/services/page";
 
-const page = () => {
-  return <div>my-services page</div>;
-};
+export default function Page() {
+  return <MyServicesPage />;
+}
 
-export default page;

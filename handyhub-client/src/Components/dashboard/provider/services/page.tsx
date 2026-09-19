@@ -140,7 +140,6 @@ const MyServicesPage = () => {
             <FiRefreshCw size={15} />
             Try again
           </button>
-
         </div>
       ) : services.length === 0 ? (
         <div className="rounded-2xl border border-dashed border-black/20 py-20 text-center dark:border-white/20">

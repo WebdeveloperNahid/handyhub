@@ -23,7 +23,6 @@ export interface ProviderService {
   updatedAt?: string;
 }
 
-
 // Payload shape used when creating/editing a service from the dashboard form
 export interface ServiceFormValues {
   title: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import type { ComponentType, SVGProps } from "react";
+import { useState, useEffect, type ComponentType, type SVGProps } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import {
@@ -13,10 +13,11 @@ import {
   Briefcase,
   Boxes3,
 } from "@gravity-ui/icons";
-import { Button, Drawer } from "@heroui/react";
+import { Drawer } from "@heroui/react";
 import { TfiMenuAlt } from "react-icons/tfi";
 import { FiLogOut } from "react-icons/fi";
 import { authClient } from "@/lib/auth-client";
+import { LuCircleUserRound, LuUserRound } from "react-icons/lu";
 
 type NavItem = {
   icon: ComponentType<SVGProps<SVGSVGElement>>;
@@ -27,19 +28,31 @@ type NavItem = {
 export function DashboardSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
+  // Track dark mode from the html element's class (class-based toggle)
+  const [isDark, setIsDark] = useState(false);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    const check = () => setIsDark(html.classList.contains("dark"));
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(html, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
+  // Explicit colors based on isDark — prevents HeroUI/OS dark-mode CSS from conflicting
+  const drawerBg = isDark ? "#18181B" : "#ffffff";
+  const drawerHeaderBg = isDark ? "#27272A" : "#ffffff";
+  const drawerBorder = isDark ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)";
+  const drawerBodyBg = isDark ? "#18181B" : "#ffffff";
 
   const { data: session, isPending } = authClient.useSession();
 
-  const role = !isPending
-    ? (session?.user as { role?: string })?.role
-    : null;
+  const role = !isPending ? (session?.user as { role?: string })?.role : null;
 
   const userItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/user",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/user" },
     {
       icon: ListCheck,
       label: "My Requests",
@@ -50,19 +63,16 @@ export function DashboardSidebar() {
       label: "Saved Providers",
       href: "/dashboard/user/saved-providers",
     },
+    { icon: Boxes3, label: "Browse Services", href: "/all-services" },
     {
-      icon: Boxes3,
-      label: "Browse Services",
-      href: "/all-services",
+      icon: LuCircleUserRound,
+      label: "Profile",
+      href: "/dashboard/user/profile",
     },
   ];
 
   const providerItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/provider",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/provider" },
     {
       icon: Briefcase,
       label: "My Services",
@@ -88,14 +98,15 @@ export function DashboardSidebar() {
       label: "Active Jobs",
       href: "/dashboard/provider/active-jobs",
     },
+    {
+      icon: LuCircleUserRound,
+      label: "Profile",
+      href: "/dashboard/provider/profile",
+    },
   ];
 
   const adminItems: NavItem[] = [
-    {
-      icon: House,
-      label: "Overview",
-      href: "/dashboard/admin",
-    },
+    { icon: House, label: "Overview", href: "/dashboard/admin" },
     {
       icon: Person,
       label: "Manage Users",
@@ -115,23 +126,12 @@ export function DashboardSidebar() {
 
   const getNavDetails = () => {
     if (role === "admin") {
-      return {
-        items: adminItems,
-        label: "Admin Panel",
-      };
+      return { items: adminItems, label: "Admin Panel" };
     }
-
     if (role === "provider") {
-      return {
-        items: providerItems,
-        label: "Provider Panel",
-      };
+      return { items: providerItems, label: "Provider Panel" };
     }
-
-    return {
-      items: userItems,
-      label: "Customer Panel",
-    };
+    return { items: userItems, label: "Customer Panel" };
   };
 
   const { items, label: roleLabel } = getNavDetails();
@@ -156,23 +156,24 @@ export function DashboardSidebar() {
           <Link
             key={item.href}
             href={item.href}
-            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${isActive
-              ? "bg-[#6E473B]/10 text-[#6E473B] dark:bg-[#A78D78]/10 dark:text-[#A78D78]"
-              : "text-[#6E473B]/75 hover:bg-[#6E473B]/5 hover:text-[#291C0E] dark:text-[#C5B8AA]/70 dark:hover:bg-white/5 dark:hover:text-[#E1D4C2]"
-              }`}
+            className={`group relative flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+              isActive
+                ? "bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]"
+                : "text-[#1C1917]/75 hover:bg-[#15803D]/5 hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-white/5 dark:hover:text-[#F4F4F5]"
+            }`}
           >
             <span
-              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#6E473B] transition-opacity dark:bg-[#A78D78] ${isActive
-                ? "opacity-100"
-                : "opacity-0"
-                }`}
+              className={`absolute left-0 top-1/2 h-5 w-[3px] -translate-y-1/2 rounded-full bg-[#15803D] transition-opacity dark:bg-[#22C55E] ${
+                isActive ? "opacity-100" : "opacity-0"
+              }`}
             />
 
             <item.icon
-              className={`size-4 ${isActive
-                ? "text-[#6E473B] dark:text-[#A78D78]"
-                : "text-[#6E473B]/50 dark:text-[#C5B8AA]/50"
-                }`}
+              className={`size-4 ${
+                isActive
+                  ? "text-[#15803D] dark:text-[#22C55E]"
+                  : "text-[#1C1917]/50 dark:text-[#A1A1AA]/60"
+              }`}
             />
 
             {item.label}
@@ -185,21 +186,16 @@ export function DashboardSidebar() {
   const NavContent = (
     <div className="flex h-full flex-col">
       {/* Logo */}
-      <Link
-        href="/"
-        className="mb-8 flex items-center px-3"
-      >
-        <span className="text-xl font-bold tracking-tight text-[#291C0E] dark:text-[#E1D4C2]">
+      <Link href="/" className="mb-8 flex items-center px-3">
+        <span className="text-xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
           Handy
-          <span className="text-[#6E473B] dark:text-[#A78D78]">
-            Hub
-          </span>
+          <span className="text-[#15803D] dark:text-[#22C55E]">Hub</span>
         </span>
       </Link>
 
       {/* Navigation */}
       <div className="flex-1 overflow-y-auto pr-1">
-        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#6E473B]/45 dark:text-[#C5B8AA]/40">
+        <p className="mb-3 px-3 text-[11px] font-semibold uppercase tracking-[0.16em] text-[#1C1917]/45 dark:text-[#A1A1AA]/50">
           {roleLabel}
         </p>
 
@@ -207,17 +203,16 @@ export function DashboardSidebar() {
       </div>
 
       {/* Logout */}
-      <div className="mt-4 border-t border-[#6E473B]/10 pt-4 dark:border-white/10">
+      <div className="mt-4 border-t border-black/10 pt-4 dark:border-white/10">
         <button
           type="button"
           onClick={handleLogout}
-          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#6E473B]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#C5B8AA]/70 dark:hover:text-red-400"
+          className="group flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-[#1C1917]/75 transition-all hover:bg-red-500/10 hover:text-red-600 dark:text-[#A1A1AA] dark:hover:text-red-400"
         >
           <FiLogOut
             size={16}
             className="transition-transform duration-200 group-hover:translate-x-0.5"
           />
-
           Logout
         </button>
       </div>
@@ -229,51 +224,260 @@ export function DashboardSidebar() {
       {/* Desktop Sidebar */}
       <aside
         className="
-            hidden
-            lg:block
-            h-screen
-            w-full
-            border-r
-            border-[#6E473B]/15
-            bg-[#E8DDCE]
-            px-3
-            py-5
-            dark:border-white/10
-            dark:bg-[#181411]
-          "
+          fixed
+          left-0
+          top-0
+          z-40
+          hidden
+          h-screen
+          w-64
+          lg:block
+          border-r
+          border-black/10
+          bg-white
+          px-3
+          py-5
+          dark:border-white/10
+          dark:bg-[#18181B]
+        "
       >
         {NavContent}
       </aside>
 
-      {/* Mobile Menu */}
-      <div className="fixed left-4 top-20 z-50 lg:hidden">
-        <Drawer>
-          <Button
-            className="h-10 w-10 min-w-10 rounded-xl border border-[#6E473B]/15 bg-[#E8DDCE] p-0 shadow-md dark:border-white/10 dark:bg-[#241B17]"
-            variant="secondary"
-          >
-            <TfiMenuAlt className="size-5 text-[#6E473B] dark:text-[#A78D78]" />
-          </Button>
+      {/* Mobile Menu — Hamburger button OUTSIDE Drawer to prevent click blocking */}
+      <button
+        type="button"
+        aria-label="Open navigation menu"
+        onClick={() => setIsDrawerOpen(true)}
+        style={{
+          backgroundColor: isDark ? "#27272A" : "#ffffff",
+          borderColor: drawerBorder,
+          color: isDark ? "#F4F4F5" : "#1C1917",
+        }}
+        className={[
+          "fixed left-4 top-3 z-[60] lg:hidden",
+          "flex h-11 w-11 items-center justify-center",
+          "rounded-xl border shadow-md shadow-black/5",
+          "transition-all duration-200 active:scale-95",
+          isDrawerOpen
+            ? "pointer-events-none opacity-0"
+            : "pointer-events-auto opacity-100",
+        ].join(" ")}
+      >
+        <TfiMenuAlt className="size-5" />
+      </button>
 
-          <Drawer.Backdrop>
-            <Drawer.Content placement="left">
-              <Drawer.Dialog>
-                <Drawer.CloseTrigger />
+      {/* Mobile Drawer */}
+      <Drawer isOpen={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
+        <Drawer.Backdrop>
+          <Drawer.Content placement="left" className="w-[290px] max-w-[85vw]">
+            <Drawer.Dialog
+              className="overflow-hidden shadow-2xl shadow-black/20"
+              style={{ backgroundColor: drawerBg }}
+            >
+              {/* Drawer Header */}
+              <Drawer.Header
+                className="border-b px-5 py-4"
+                style={{
+                  backgroundColor: drawerHeaderBg,
+                  borderColor: drawerBorder,
+                }}
+              >
+                <div className="flex w-full items-center justify-between">
+                  <Link href="/" className="flex items-center gap-2.5">
+                    <span
+                      className="
+                    flex
+                    h-9
+                    w-9
+                    items-center
+                    justify-center
+                    rounded-xl
+                    bg-[#15803D]
+                    text-sm
+                    font-bold
+                    text-white
+                    shadow-sm
+                    dark:bg-[#22C55E]
+                    dark:text-[#18181B]
+                  "
+                    >
+                      HH
+                    </span>
 
-                <Drawer.Header>
-                  <Drawer.Heading className="text-[#291C0E] dark:text-[#E1D4C2]">
-                    HandyHub
-                  </Drawer.Heading>
-                </Drawer.Header>
+                    <div className="flex flex-col leading-none">
+                      <span className="text-lg font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5]">
+                        Handy
+                        <span className="text-[#15803D] dark:text-[#22C55E]">
+                          Hub
+                        </span>
+                      </span>
 
-                <Drawer.Body className="bg-[#E8DDCE] dark:bg-[#181411]">
-                  {NavContent}
-                </Drawer.Body>
-              </Drawer.Dialog>
-            </Drawer.Content>
-          </Drawer.Backdrop>
-        </Drawer>
-      </div>
+                      <span className="mt-1 text-[10px] font-medium uppercase tracking-[0.16em] text-[#15803D]/70 dark:text-[#22C55E]/70">
+                        {roleLabel}
+                      </span>
+                    </div>
+                  </Link>
+
+                  <Drawer.CloseTrigger
+                    className="
+                  rounded-lg
+                  text-[#1C1917]
+                  transition-colors
+                  hover:bg-black/5
+                  hover:text-[#1C1917]
+                  dark:text-[#A1A1AA]
+                  dark:hover:bg-white/5
+                "
+                  />
+                </div>
+              </Drawer.Header>
+
+              {/* Drawer Body */}
+              <Drawer.Body
+                className="px-3 py-5"
+                style={{ backgroundColor: drawerBodyBg }}
+              >
+                <div className="flex min-h-full flex-col">
+                  {/* Navigation Label */}
+                  <div className="mb-3 px-2">
+                    <p className="text-[10px] font-bold uppercase tracking-[0.18em] text-[#1C1917]/55 dark:text-[#A1A1AA]/60">
+                      Navigation
+                    </p>
+                  </div>
+
+                  {/* Navigation Links */}
+                  <nav className="flex flex-col gap-1.5">
+                    {items.map((item) => {
+                      const isActive =
+                        pathname === item.href ||
+                        (item.href !== "/dashboard/user" &&
+                          item.href !== "/dashboard/provider" &&
+                          item.href !== "/dashboard/admin" &&
+                          pathname.startsWith(`${item.href}/`));
+
+                      return (
+                        <Link
+                          key={item.href}
+                          href={item.href}
+                          className={`
+                        group
+                        relative
+                        flex
+                        items-center
+                        gap-3
+                        rounded-xl
+                        px-3.5
+                        py-3
+                        text-sm
+                        font-medium
+                        transition-all
+                        duration-200
+
+                        ${
+                          isActive
+                            ? "bg-[#15803D] text-white shadow-md shadow-black/10 dark:bg-[#22C55E] dark:text-[#18181B]"
+                            : "text-[#1C1917]/75 hover:bg-[#FAF9F7] hover:text-[#1C1917] dark:text-[#A1A1AA] dark:hover:bg-[#27272A] dark:hover:text-[#F4F4F5]"
+                        }
+                      `}
+                        >
+                          {/* Active Indicator */}
+                          {isActive && (
+                            <span className="absolute left-0 top-1/2 h-6 w-1 -translate-y-1/2 rounded-r-full bg-[#F59E0B] dark:bg-[#FBBF24]" />
+                          )}
+
+                          <span
+                            className={`
+                          flex
+                          h-8
+                          w-8
+                          shrink-0
+                          items-center
+                          justify-center
+                          rounded-lg
+                          transition-all
+                          duration-200
+                          ${
+                            isActive
+                              ? "bg-white/15"
+                              : "bg-[#FAF9F7] group-hover:bg-[#15803D]/10 dark:bg-[#27272A] dark:group-hover:bg-white/10"
+                          }
+                        `}
+                          >
+                            <item.icon
+                              className={`
+                            size-4
+                            ${
+                              isActive
+                                ? "text-white dark:text-[#18181B]"
+                                : "text-[#15803D] dark:text-[#22C55E]"
+                            }
+                          `}
+                            />
+                          </span>
+
+                          <span>{item.label}</span>
+                        </Link>
+                      );
+                    })}
+                  </nav>
+
+                  {/* Bottom Section */}
+                  <div className="mt-auto pt-8">
+                    <div className="mb-4 border-t border-black/10 dark:border-white/10" />
+
+                    <button
+                      type="button"
+                      onClick={handleLogout}
+                      className="
+                    group
+                    flex
+                    w-full
+                    items-center
+                    gap-3
+                    rounded-xl
+                    px-3.5
+                    py-3
+                    text-sm
+                    font-medium
+                    text-[#1C1917]/75
+                    transition-all
+                    duration-200
+                    hover:bg-red-500/10
+                    hover:text-red-600
+                    dark:text-[#A1A1AA]
+                    dark:hover:bg-red-500/10
+                    dark:hover:text-red-400
+                  "
+                    >
+                      <span
+                        className="
+                      flex
+                      h-8
+                      w-8
+                      items-center
+                      justify-center
+                      rounded-lg
+                      bg-[#FAF9F7]
+                      transition-colors
+                      group-hover:bg-red-500/10
+                      dark:bg-[#27272A]
+                    "
+                      >
+                        <FiLogOut
+                          size={15}
+                          className="transition-transform duration-200 group-hover:translate-x-0.5"
+                        />
+                      </span>
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              </Drawer.Body>
+            </Drawer.Dialog>
+          </Drawer.Content>
+        </Drawer.Backdrop>
+      </Drawer>
     </>
   );
 }

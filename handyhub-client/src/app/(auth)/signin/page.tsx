@@ -12,11 +12,14 @@ import {
   FiEyeOff,
   FiTool,
   FiCheck,
+  FiUser,
+  FiBriefcase,
 } from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
-import { authClient } from "@/lib/auth-client";
+
 import backgroundImage from "@/assets/images/login_bg.png";
 import cardImage from "@/assets/images/login.png";
+import { authClient } from "@/lib/auth-client";
 
 interface FormState {
   email: string;
@@ -49,6 +52,22 @@ export default function LoginPage() {
   const handleChange = (field: keyof FormState, value: string) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
+  };
+
+  const handleDemoFill = (role: "user" | "provider") => {
+    setErrors({});
+    setSubmitError("");
+    if (role === "user") {
+      setForm({
+        email: "user@demo.com",
+        password: "12345678password",
+      });
+    } else {
+      setForm({
+        email: "provider@demo.com",
+        password: "12345678password",
+      });
+    }
   };
 
   const validate = (): boolean => {
@@ -88,9 +107,6 @@ export default function LoginPage() {
         return;
       }
 
-      // window.location.href এর বদলে router.push — client-side navigation,
-      // full page reload হয় না, তাই অনেক দ্রুত।
-      // router.refresh() Navbar-এর session state সাথে সাথে আপডেট করে দেয়।
       router.push("/");
       router.refresh();
     } catch {
@@ -100,9 +116,13 @@ export default function LoginPage() {
     }
   };
 
-  const handleGoogleLogin = () => {
-    // TODO: better-auth google social signIn call goes here
-    console.log("Google login clicked");
+  const handleGoogleLogin = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+    });
+    if (error) {
+      console.error("Google sign-in failed:", error.message);
+    }
   };
 
   return (
@@ -124,60 +144,16 @@ export default function LoginPage() {
 
       {/* Centered card */}
       <div className="w-full max-w-4xl max-h-[95vh] overflow-y-auto bg-[#FAF9F7] rounded-2xl sm:rounded-3xl shadow-2xl grid grid-cols-1 md:grid-cols-2">
-        {/* Left info panel — shown from tablet upward */}
-        <div className="hidden md:flex relative flex-col justify-between p-6 md:p-8 lg:p-10 overflow-hidden min-h-[480px] md:min-h-[560px] lg:min-h-[640px]">
-          <Image
-            src={cardImage}
-            alt="HandyHub professional at work"
-            fill
-            sizes="(max-width: 768px) 0px, 50vw"
-            quality={70}
-            placeholder="blur"
-            className="object-cover"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />
+        {/* Left: Form panel */}
 
-          <div className="relative z-10 flex items-center gap-2 text-white">
-            <FiTool className="text-xl md:text-2xl" />
-            <span className="text-lg md:text-xl font-semibold tracking-tight">
-              HandyHub
-            </span>
-          </div>
-
-          <div className="relative z-10 space-y-4 md:space-y-5">
-            <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">
-              Welcome back,
-              <br />
-              let&apos;s keep things moving.
-            </h1>
-            <p className="text-[#F0F0EE] text-sm">
-              Log in to view your bookings, providers, and service history.
-            </p>
-
-            <ul className="space-y-2.5 md:space-y-3">
-              {trustPoints.map((point) => (
-                <li key={point} className="flex items-start gap-3">
-                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20">
-                    <FiCheck className="text-[#F59E0B] text-xs" />
-                  </span>
-                  <span className="text-sm text-[#F0F0EE]">{point}</span>
-                </li>
-              ))}
-            </ul>
-
-            <p className="text-xs text-[#D6D3D1] pt-2">
-              © {new Date().getFullYear()} HandyHub — Local service marketplace
-            </p>
-          </div>
-        </div>
-
-        {/* Right form panel */}
-        <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10">
-          <div className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917]">
+        <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10 md:order-1">
+          <Link
+            href={"/"}
+            className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917] cursor-pointer w-fit"
+          >
             <FiTool className="text-2xl text-[#15803D]" />
             <span className="text-xl font-semibold">HandyHub</span>
-          </div>
-
+          </Link>
           <h2 className="text-xl sm:text-2xl font-semibold text-[#1C1917] mb-1">
             Log in
           </h2>
@@ -190,6 +166,30 @@ export default function LoginPage() {
               Create one
             </Link>
           </p>
+
+          {/* Quick Demo Credentials Buttons */}
+          <div className="grid grid-cols-2 gap-2 mb-3">
+            <Button
+              type="button"
+              onPress={() => handleDemoFill("user")}
+              variant="outline"
+              className="w-full bg-emerald-50 border-emerald-200 text-[#15803D] hover:bg-emerald-100 font-medium text-xs sm:text-sm"
+              size="md"
+            >
+              <FiUser className="mr-1 sm:mr-1.5" />
+              Demo User
+            </Button>
+            <Button
+              type="button"
+              onPress={() => handleDemoFill("provider")}
+              variant="outline"
+              className="w-full bg-amber-50 border-amber-200 text-amber-800 hover:bg-amber-100 font-medium text-xs sm:text-sm"
+              size="md"
+            >
+              <FiBriefcase className="mr-1 sm:mr-1.5" />
+              Demo Provider
+            </Button>
+          </div>
 
           <Button
             onPress={handleGoogleLogin}
@@ -221,7 +221,7 @@ export default function LoginPage() {
                 <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-[#78716C] z-10" />
                 <Input
                   placeholder="you@example.com"
-                   className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
+                  className="pl-10 !bg-white !text-[#1C1917] placeholder:!text-[#A8A29E] !border-[#E7E5E4] !shadow-sm"
                   fullWidth
                 />
               </div>
@@ -281,8 +281,54 @@ export default function LoginPage() {
             </Button>
           </form>
         </div>
+
+        {/* Right: Image panel — shown from tablet upward */}
+        <div className="hidden md:flex relative flex-col justify-between p-6 md:p-8 lg:p-10 overflow-hidden min-h-[480px] md:min-h-[560px] lg:min-h-[640px] md:order-2">
+          <Image
+            src={cardImage}
+            alt="HandyHub professional at work"
+            fill
+            sizes="(max-width: 768px) 0px, 50vw"
+            quality={70}
+            placeholder="blur"
+            className="object-cover"
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />
+
+          <Link href="/" className="relative z-10 flex items-center gap-2 text-white">
+            <FiTool className="text-xl md:text-2xl" />
+            <span className="text-lg md:text-xl font-semibold tracking-tight">
+              HandyHub
+            </span>
+          </Link>
+
+          <div className="relative z-10 space-y-4 md:space-y-5">
+            <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">
+              Welcome back,
+              <br />
+              let&apos;s keep things moving.
+            </h1>
+            <p className="text-[#F0F0EE] text-sm">
+              Log in to view your bookings, providers, and service history.
+            </p>
+
+            <ul className="space-y-2.5 md:space-y-3">
+              {trustPoints.map((point) => (
+                <li key={point} className="flex items-start gap-3">
+                  <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-white/20">
+                    <FiCheck className="text-[#F59E0B] text-xs" />
+                  </span>
+                  <span className="text-sm text-[#F0F0EE]">{point}</span>
+                </li>
+              ))}
+            </ul>
+
+            <p className="text-xs text-[#D6D3D1] pt-2">
+              © {new Date().getFullYear()} HandyHub — Local service marketplace
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
-  
 }

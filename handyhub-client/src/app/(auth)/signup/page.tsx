@@ -4,14 +4,16 @@ import { useState, FormEvent } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { TextField, Label, Input, FieldError, Button } from "@heroui/react";
 import {
-  TextField,
-  Label,
-  Input,
-  FieldError,
-  Button,
-} from "@heroui/react";
-import { FiUser, FiMail, FiLock, FiEye, FiEyeOff, FiTool, FiCheck } from "react-icons/fi";
+  FiUser,
+  FiMail,
+  FiLock,
+  FiEye,
+  FiEyeOff,
+  FiTool,
+  FiCheck,
+} from "react-icons/fi";
 import { FcGoogle } from "react-icons/fc";
 import { authClient } from "@/lib/auth-client";
 import backgroundImage from "@/assets/images/login_bg.png";
@@ -52,7 +54,10 @@ export default function SignupPage() {
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
   const [submitError, setSubmitError] = useState<string>("");
 
-  const handleChange = (field: "name" | "email" | "password", value: string) => {
+  const handleChange = (
+    field: "name" | "email" | "password",
+    value: string,
+  ) => {
     setForm((prev) => ({ ...prev, [field]: value }));
     setErrors((prev) => ({ ...prev, [field]: undefined }));
   };
@@ -96,7 +101,9 @@ export default function SignupPage() {
       });
 
       if (error) {
-        setSubmitError(error.message || "Could not create account, please try again");
+        setSubmitError(
+          error.message || "Could not create account, please try again",
+        );
         return;
       }
 
@@ -112,9 +119,13 @@ export default function SignupPage() {
     }
   };
 
-  const handleGoogleSignup = () => {
-    // TODO: better-auth google social signIn call goes here
-    console.log("Google signup clicked");
+  const handleGoogleSignup = async () => {
+    const { error } = await authClient.signIn.social({
+      provider: "google",
+    });
+    if (error) {
+      console.error("Google sign-in failed:", error.message);
+    }
   };
 
   return (
@@ -148,11 +159,14 @@ export default function SignupPage() {
             className="object-cover"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0F4C24]/95 via-[#0F4C24]/50 to-[#0F4C24]/10" />
-
-          <div className="relative z-10 flex items-center gap-2 text-white">
-            <FiTool className="text-xl md:text-2xl" />
-            <span className="text-lg md:text-xl font-semibold tracking-tight">HandyHub</span>
-          </div>
+          <Link href="/">
+            <div className="relative z-10 flex items-center gap-2 text-white">
+              <FiTool className="text-xl md:text-2xl" />
+              <span className="text-lg md:text-xl font-semibold tracking-tight">
+                HandyHub
+              </span>
+            </div>
+          </Link>
 
           <div className="relative z-10 space-y-4 md:space-y-5">
             <h1 className="text-2xl md:text-3xl font-semibold text-white leading-tight">
@@ -184,17 +198,20 @@ export default function SignupPage() {
 
         {/* Right form panel */}
         <div className="flex flex-col justify-center p-5 sm:p-8 lg:p-10">
-          <div className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917]">
+          <Link href={"/"} className="md:hidden flex items-center gap-2 mb-5 sm:mb-6 text-[#1C1917]">
             <FiTool className="text-2xl text-[#15803D]" />
             <span className="text-xl font-semibold">HandyHub</span>
-          </div>
+          </Link>
 
           <h2 className="text-xl sm:text-2xl font-semibold text-[#1C1917] mb-1">
             Create your account
           </h2>
           <p className="text-sm text-[#57534E] mb-5 sm:mb-6">
             Already have an account?{" "}
-            <Link href="/signin" className="text-[#15803D] font-medium hover:underline">
+            <Link
+              href="/signin"
+              className="text-[#15803D] font-medium hover:underline"
+            >
               Log in
             </Link>
           </p>
@@ -299,7 +316,9 @@ export default function SignupPage() {
                     name="role"
                     value="user"
                     checked={form.role === "user"}
-                    onChange={() => setForm((prev) => ({ ...prev, role: "user" }))}
+                    onChange={() =>
+                      setForm((prev) => ({ ...prev, role: "user" }))
+                    }
                     className="sr-only"
                   />
                   <span className="text-sm font-medium">User</span>
@@ -317,7 +336,9 @@ export default function SignupPage() {
                     name="role"
                     value="provider"
                     checked={form.role === "provider"}
-                    onChange={() => setForm((prev) => ({ ...prev, role: "provider" }))}
+                    onChange={() =>
+                      setForm((prev) => ({ ...prev, role: "provider" }))
+                    }
                     className="sr-only"
                   />
                   <span className="text-sm font-medium">Provider</span>
@@ -344,8 +365,14 @@ export default function SignupPage() {
 
           <p className="text-xs text-[#78716C] text-center pt-4">
             By creating an account you agree to HandyHub&apos;s{" "}
-            <Link href="/terms" className="underline">Terms</Link> and{" "}
-            <Link href="/privacy" className="underline">Privacy Policy</Link>.
+            <Link href="/terms" className="underline">
+              Terms
+            </Link>{" "}
+            and{" "}
+            <Link href="/privacy" className="underline">
+              Privacy Policy
+            </Link>
+            .
           </p>
         </div>
       </div>

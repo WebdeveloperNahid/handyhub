@@ -8,21 +8,15 @@ type DashboardLayoutProps = {
 
 const DashboardLayout = ({ children }: DashboardLayoutProps) => {
   return (
-    <div className="min-h-screen bg-[#E1D4C2] dark:bg-[#1F1712]">
-      <div className="flex min-h-screen">
-        {/* Sidebar */}
-        <div className="hidden w-64 shrink-0 lg:block">
-          <DashboardSidebar />
-        </div>
+    <div className="min-h-screen bg-[#FAF9F7] dark:bg-[#18181B]">
+      <DashboardSidebar />
 
-        {/* Main Content */}
-        <div className="flex min-w-0 flex-1 flex-col">
-          <DashboardNavbar />
+      <div className="min-h-screen lg:ml-64">
+        <DashboardNavbar />
 
-          <main className="flex-1 p-6">
-            {children}
-          </main>
-        </div>
+        <main className="px-4 pb-6 pt-20 sm:px-6 sm:pt-24 lg:p-6 lg:mt-12">
+          {children}
+        </main>
       </div>
     </div>
   );

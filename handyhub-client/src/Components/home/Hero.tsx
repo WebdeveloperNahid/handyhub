@@ -1,695 +1,730 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ElementType } from "react";
 import Link from "next/link";
-import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+
 import {
-    FiArrowLeft,
-    FiArrowRight,
-    FiCheck,
-    FiHome,
-    FiStar,
-    FiTool,
-    FiUsers,
-    FiDroplet,
-    FiZap,
-    FiWind,
-    FiEdit3,
-    FiShield,
-    FiCalendar,
-    FiClock,
+  FiArrowLeft,
+  FiArrowRight,
+  FiCheck,
+  FiDroplet,
+  FiGrid,
+  FiHome,
+  FiMapPin,
+  FiPrinter,
+  FiShield,
+  FiStar,
+  FiTool,
+  FiWind,
+  FiZap,
 } from "react-icons/fi";
 
-const slides = [
-    {
-        id: 1,
-        badge: "HANDYHUB • EVERYDAY SERVICES",
-        title: "Need a hand?",
-        highlight: "Find the right one.",
-        description:
-            "Connect with trusted professionals for the services your everyday life needs.",
-        button: "Browse Services",
-        icon: FiTool,
-        type: "provider",
-    },
-    {
-        id: 2,
-        badge: "HOME • REPAIR • CARE",
-        title: "Your home,",
-        highlight: "taken care of.",
-        description:
-            "From plumbing and electrical work to cleaning and repairs, get the help you need.",
-        button: "Explore Services",
-        icon: FiHome,
-        type: "services",
-    },
-    {
-        id: 3,
-        badge: "TRUSTED PROFESSIONALS",
-        title: "Skills you need.",
-        highlight: "People you can trust.",
-        description:
-            "Discover skilled service providers and choose with confidence through ratings and reviews.",
-        button: "Meet Service Providers",
-        icon: FiUsers,
-        type: "trust",
-    },
-    {
-        id: 4,
-        badge: "SIMPLE • FAST • CONVENIENT",
-        title: "From request",
-        highlight: "to done.",
-        description:
-            "Find a service, connect with a professional, and get your task completed without the hassle.",
-        button: "Get Started",
-        icon: FiCheck,
-        type: "booking",
-    },
+interface HeroSlide {
+  id: number;
+  image: string;
+  category: string;
+  title: string;
+  highlight: string;
+  description: string;
+  button: string;
+  service: string;
+  icon: ElementType;
+  rating: string;
+}
+
+/* =========================================
+   AUTOPLAY DURATION
+   3 seconds
+   ========================================= */
+const SLIDE_DURATION_MS = 3000;
+
+const slides: HeroSlide[] = [
+  {
+    id: 1,
+    image:
+      "https://images.unsplash.com/photo-1621905252507-b35492cc74b4?auto=format&fit=crop&w=2200&q=80",
+    category: "ELECTRICAL SERVICE",
+    title: "Electrical work,",
+    highlight: "done safely.",
+    description:
+      "Find trusted local electricians for wiring, switches, lights, installations, repairs and everyday electrical work.",
+    button: "Find Electricians",
+    service: "Electrical",
+    icon: FiZap,
+    rating: "4.9",
+  },
+
+  {
+    id: 2,
+    image:
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=2200&q=80",
+    category: "HOME CLEANING",
+    title: "A cleaner home,",
+    highlight: "a better feeling.",
+    description:
+      "Book reliable home cleaners for deep cleaning, regular cleaning, kitchens, bedrooms and complete home care.",
+    button: "Find Home Cleaners",
+    service: "Home Cleaning",
+    icon: FiHome,
+    rating: "4.8",
+  },
+
+  {
+    id: 3,
+    image:
+      "https://images.unsplash.com/photo-1584568694244-14fbdf83bd30?auto=format&fit=crop&w=2200&q=80",
+    category: "FRIDGE & APPLIANCE REPAIR",
+    title: "Fridge not cooling?",
+    highlight: "Get it fixed fast.",
+    description:
+      "Connect with local technicians for refrigerator repair, cooling problems, appliance maintenance and installation.",
+    button: "Find Fridge Experts",
+    service: "Fridge Repair",
+    icon: FiTool,
+    rating: "4.9",
+  },
+
+  {
+    id: 4,
+    image:
+      "https://static.vecteezy.com/system/resources/thumbnails/074/237/150/small/professional-air-conditioner-installation-and-maintenance-by-technician-in-uniform-photo.jpg",
+    category: "AC SERVICE & REPAIR",
+    title: "AC not cooling?",
+    highlight: "Let's get it sorted.",
+    description:
+      "Find skilled AC professionals for servicing, gas refill, repair, maintenance and complete cooling solutions.",
+    button: "Find AC Services",
+    service: "AC Repair",
+    icon: FiWind,
+    rating: "4.9",
+  },
+
+  {
+    id: 5,
+    image:
+      "https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=2200&q=80",
+    category: "TANK & PIPELINE",
+    title: "Water problems?",
+    highlight: "We've got the help.",
+    description:
+      "Find experienced professionals for water tanks, pipelines, leakage, fittings, pumps and household plumbing work.",
+    button: "Find Pipeline Experts",
+    service: "Tank & Pipeline",
+    icon: FiDroplet,
+    rating: "4.9",
+  },
+
+  {
+    id: 6,
+    image:
+      "https://images.unsplash.com/photo-1612815154858-60aa4c59eaa6?auto=format&fit=crop&w=2200&q=80",
+    category: "PRINTER & OFFICE REPAIR",
+    title: "Printer trouble?",
+    highlight: "Keep work moving.",
+    description:
+      "Get local technicians for printer setup, repair, maintenance, cartridge problems and office equipment support.",
+    button: "Find Printer Experts",
+    service: "Printer Repair",
+    icon: FiPrinter,
+    rating: "4.8",
+  },
+
+  {
+    id: 7,
+    image:
+      "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&w=2200&q=80",
+    category: "ARCHITECT & BUILDING",
+    title: "Planning to build?",
+    highlight: "Start with a better design.",
+    description:
+      "Connect with architects and building professionals for home design, planning, renovation and construction support.",
+    button: "Find Architects",
+    service: "Architect & Building",
+    icon: FiHome,
+    rating: "4.9",
+  },
+
+  {
+    id: 8,
+    image:
+      "https://images.unsplash.com/photo-1586023492125-27b2c045efd7?auto=format&fit=crop&w=2200&q=80",
+    category: "TILES • MASONRY • DOORS",
+    title: "Upgrade your space,",
+    highlight: "beautifully.",
+    description:
+      "Find skilled professionals for tiles, masonry, doors, windows, glass work, frames and modern home finishing.",
+    button: "Find Home Experts",
+    service: "Tiles & Doors",
+    icon: FiGrid,
+    rating: "4.9",
+  },
 ];
 
+/* =========================================================
+   HERO
+========================================================= */
+
 export default function Hero() {
-    const [current, setCurrent] = useState(0);
+  const [current, setCurrent] = useState(0);
 
-    const nextSlide = () => {
-        setCurrent((prev) => (prev + 1) % slides.length);
+  /*
+    Only touch devices will use this pause state.
+
+    PC/Laptop:
+    Hover করলে pause হবে না.
+
+    Mobile/Tablet:
+    Finger touch/press করলে pause হবে.
+  */
+  const [isTouching, setIsTouching] = useState(false);
+
+  const prefersReducedMotion = useReducedMotion();
+
+  const slide = slides[current];
+
+  /* =========================================
+     NEXT SLIDE
+  ========================================= */
+  const nextSlide = () => {
+    setCurrent((prev) => (prev + 1) % slides.length);
+  };
+
+  /* =========================================
+     PREVIOUS SLIDE
+  ========================================= */
+  const previousSlide = () => {
+    setCurrent(
+      (prev) => (prev - 1 + slides.length) % slides.length
+    );
+  };
+
+  /* =========================================
+     AUTOPLAY
+
+     IMPORTANT:
+     এখানে mouse hover check নেই.
+
+     তাই PC/Laptop এ cursor hero-এর উপর
+     থাকলেও image change চলতে থাকবে.
+
+     Mobile/Tablet এ শুধু touch করলে
+     temporary pause হবে.
+  ========================================= */
+  useEffect(() => {
+    if (isTouching || prefersReducedMotion) return;
+
+    const timer = setInterval(() => {
+      setCurrent((prev) => (prev + 1) % slides.length);
+    }, SLIDE_DURATION_MS);
+
+    return () => clearInterval(timer);
+  }, [isTouching, prefersReducedMotion]);
+
+  /* =========================================
+     KEYBOARD CONTROL
+  ========================================= */
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "ArrowRight") {
+        nextSlide();
+      }
+
+      if (e.key === "ArrowLeft") {
+        previousSlide();
+      }
     };
 
-    const prevSlide = () => {
-        setCurrent((prev) => (prev - 1 + slides.length) % slides.length);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
     };
+  }, []);
 
-    useEffect(() => {
-        const interval = setInterval(nextSlide, 6000);
+  /* =========================================
+     TOUCH HANDLERS
 
-        return () => clearInterval(interval);
-    }, []);
+     Mobile/Tablet:
+     finger touch শুরু = pause
+     finger release = autoplay resume
+  ========================================= */
+  const handleTouchStart = () => {
+    setIsTouching(true);
+  };
 
-    const slide = slides[current];
-    const Icon = slide.icon;
+  const handleTouchEnd = () => {
+    setIsTouching(false);
+  };
 
-    return (
-        <section className="relative min-h-[calc(100vh-4rem)] overflow-hidden bg-[#E1D4C2] text-[#291C0E] transition-colors duration-500 dark:bg-[#1F1712] dark:text-[#E1D4C2]">
-            {/* Background blobs */}
+  const handleTouchCancel = () => {
+    setIsTouching(false);
+  };
+
+  return (
+    <section
+      className="relative min-h-[calc(100svh-4rem)] w-full overflow-hidden bg-[#1C1917] text-white"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+      onTouchCancel={handleTouchCancel}
+      aria-roledescription="carousel"
+      aria-label="Featured HandyHub services"
+    >
+      {/* =========================================
+          SCREEN READER STATUS
+      ========================================= */}
+      <p className="sr-only" aria-live="polite">
+        Showing {slide.service}, slide {current + 1} of {slides.length}
+      </p>
+
+      {/* =========================================
+          BACKGROUND IMAGE
+      ========================================= */}
+      <div className="absolute inset-0">
+        <AnimatePresence initial={false} mode="sync">
+          <motion.div
+            key={slide.id}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{
+              duration: 0.65,
+              ease: "easeInOut",
+            }}
+            className="absolute inset-0 overflow-hidden"
+          >
             <motion.div
-                animate={{
-                    x: [0, 30, 0],
-                    y: [0, -20, 0],
-                }}
-                transition={{
-                    duration: 9,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute -left-32 top-20 h-80 w-80 rounded-full bg-[#6E473B]/10 blur-3xl dark:bg-[#A78D78]/10"
-            />
+              initial={{ scale: 1 }}
+              animate={{
+                scale: prefersReducedMotion ? 1 : 1.08,
+              }}
+              transition={{
+                duration: SLIDE_DURATION_MS / 1000 + 0.65,
+                ease: "linear",
+              }}
+              className="absolute inset-0"
+            >
+              <Image
+                src={slide.image}
+                alt={slide.service}
+                fill
+                sizes="100vw"
+                quality={75}
+                priority={current === 0}
+                className="object-cover object-[center_25%] sm:object-center"
+              />
+            </motion.div>
+          </motion.div>
+        </AnimatePresence>
 
-            <motion.div
-                animate={{
-                    x: [0, -25, 0],
-                    y: [0, 25, 0],
-                }}
-                transition={{
-                    duration: 11,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute -bottom-32 -right-20 h-96 w-96 rounded-full bg-[#A78D78]/15 blur-3xl dark:bg-[#6E473B]/15"
-            />
+        {/* Main image overlay */}
+        <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
 
-            {/* Decorative dots */}
-            <motion.div
-                animate={{ y: [0, -12, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-[12%] top-[22%] h-2 w-2 rounded-full bg-[#6E473B]/40 dark:bg-[#A78D78]/40"
-            />
+        {/* Bottom overlay */}
+        <div className="absolute inset-x-0 bottom-0 h-56 bg-gradient-to-t from-black/55 to-transparent" />
 
-            <motion.div
-                animate={{ y: [0, 15, 0] }}
-                transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 1,
-                }}
-                className="absolute right-[15%] top-[18%] h-3 w-3 rounded-full bg-[#A78D78]/40"
-            />
+        {/* HandyHub greenish tint */}
+        <div className="pointer-events-none absolute inset-0 bg-[#15803D]/[0.09]" />
+      </div>
 
-            <div className="relative z-10  flex min-h-[calc(100vh-4rem)] mx-auto max-w-6xl items-center px-5 py-20 sm:px-8 lg:px-10">
-                <div className="grid w-full items-center gap-14 lg:grid-cols-2 lg:gap-20">
-                    {/* LEFT */}
-                    <AnimatePresence mode="wait">
-                        <motion.div
-                            key={slide.id}
-                            initial={{ opacity: 0, x: -35 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            exit={{ opacity: 0, x: 35 }}
-                            transition={{
-                                duration: 0.7,
-                                ease: [0.22, 1, 0.36, 1],
-                            }}
-                        >
-                            {/* Badge */}
-                            <span className="inline-flex items-center gap-2 rounded-full border border-[#6E473B]/20 bg-white/30 px-4 py-2 text-xs font-semibold tracking-wider text-[#6E473B] backdrop-blur-sm dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78]">
-                                <span className="h-1.5 w-1.5 rounded-full bg-[#6E473B] dark:bg-[#A78D78]" />
-                                {slide.badge}
-                            </span>
+      {/* =========================================
+          MAIN CONTENT
+      ========================================= */}
+      <div className="relative z-10 mx-auto flex min-h-[calc(100svh-4rem)] max-w-[1500px] items-center px-5 pb-36 pt-24 sm:px-8 sm:pb-40 sm:pt-28 lg:px-12 lg:pb-44">
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={slide.id}
+            initial={{
+              opacity: 0,
+              x: -22,
+            }}
+            animate={{
+              opacity: 1,
+              x: 0,
+            }}
+            exit={{
+              opacity: 0,
+              x: 18,
+            }}
+            transition={{
+              duration: 0.5,
+              ease: [0.22, 1, 0.36, 1],
+            }}
+            className="w-full max-w-3xl"
+          >
+            {/* =========================================
+                CATEGORY BADGE
+            ========================================= */}
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[#4ADE80]/40 bg-[#15803D]/20 px-3.5 py-2 shadow-lg backdrop-blur-md sm:mb-6 sm:px-4">
+              <span className="relative flex h-2 w-2">
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#4ADE80]/60" />
 
-                            {/* Heading */}
-                            <h1 className="mt-6 max-w-2xl text-5xl font-black leading-[1.05] tracking-tight sm:text-6xl lg:text-7xl">
-                                {slide.title}
-                                <br />
-                                <span className="text-[#6E473B] dark:text-[#A78D78]">
-                                    {slide.highlight}
-                                </span>
-                            </h1>
+                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#4ADE80]" />
+              </span>
 
-                            {/* Description */}
-                            <p className="mt-6 max-w-xl text-base leading-7 text-[#6E473B] sm:text-lg dark:text-[#C5B8AA]">
-                                {slide.description}
-                            </p>
-
-                            {/* CTA */}
-                            <div className="mt-8 flex flex-wrap items-center gap-4">
-                                <Link
-                                    href="/all-services"
-                                    className="group inline-flex items-center gap-2 rounded-xl bg-[#6E473B] px-6 py-3.5 text-sm font-semibold text-[#E1D4C2] shadow-lg shadow-[#6E473B]/20 transition-all duration-300 hover:-translate-y-1 hover:bg-[#A78D78] hover:text-[#291C0E] hover:shadow-xl"
-                                >
-                                    {slide.button}
-
-                                    <FiArrowRight
-                                        size={17}
-                                        className="transition-transform duration-300 group-hover:translate-x-1"
-                                    />
-                                </Link>
-
-                                <span className="text-sm text-[#6E473B]/70 dark:text-[#C5B8AA]/70">
-                                    Trusted • Simple • Convenient
-                                </span>
-                            </div>
-                        </motion.div>
-                    </AnimatePresence>
-
-                    {/* RIGHT VISUAL */}
-                    <div className="relative flex min-h-[400px] items-center justify-center">
-                        {/* Glow */}
-                        <motion.div
-                            animate={{
-                                scale: [1, 1.05, 1],
-                            }}
-                            transition={{
-                                duration: 5,
-                                repeat: Infinity,
-                                ease: "easeInOut",
-                            }}
-                            className="absolute h-72 w-72 rounded-full bg-[#A78D78]/20 blur-3xl sm:h-96 sm:w-96"
-                        />
-
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={slide.id}
-                                initial={{ opacity: 0, x: 35, scale: 0.94 }}
-                                animate={{ opacity: 1, x: 0, scale: 1 }}
-                                exit={{ opacity: 0, x: -35, scale: 0.94 }}
-                                transition={{
-                                    duration: 0.8,
-                                    ease: [0.22, 1, 0.36, 1],
-                                }}
-                                className="relative w-full max-w-md"
-                            >
-                                {/* Main Card */}
-                                <div className="relative overflow-hidden rounded-[2rem] border border-[#6E473B]/15 bg-white/40 p-5 shadow-2xl backdrop-blur-xl dark:border-[#A78D78]/15 dark:bg-[#2D211A]/75">
-                                    {/* Header */}
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#6E473B] text-[#E1D4C2] dark:bg-[#A78D78] dark:text-[#291C0E]">
-                                                <Icon size={20} />
-                                            </div>
-
-                                            <div>
-                                                <p className="text-sm font-semibold">
-                                                    HandyHub
-                                                </p>
-                                                <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                                                    Service marketplace
-                                                </p>
-                                            </div>
-                                        </div>
-
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#A78D78]/20">
-                                            <span className="h-2 w-2 rounded-full bg-[#6E473B] dark:bg-[#A78D78]" />
-                                        </div>
-                                    </div>
-
-                                    {/* Slide Visual */}
-                                    <div className="mt-6">
-                                        {slide.type === "provider" && <ProviderVisual />}
-                                        {slide.type === "services" && <ServicesVisual />}
-                                        {slide.type === "trust" && <TrustVisual />}
-                                        {slide.type === "booking" && <BookingVisual />}
-                                    </div>
-                                </div>
-
-                                {/* Floating Notification */}
-                                <motion.div
-                                    animate={{ y: [0, -10, 0] }}
-                                    transition={{
-                                        duration: 4,
-                                        repeat: Infinity,
-                                        ease: "easeInOut",
-                                    }}
-                                    className="absolute -right-5 top-20 rounded-2xl border border-[#6E473B]/15 bg-white/70 p-3 shadow-xl backdrop-blur-xl dark:border-[#A78D78]/15 dark:bg-[#382820]/90"
-                                >
-                                    <div className="flex items-center gap-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-[#A78D78]/20">
-                                            <FiCheck
-                                                size={15}
-                                                className="text-[#6E473B] dark:text-[#A78D78]"
-                                            />
-                                        </div>
-
-                                        <div>
-                                            <p className="text-xs font-semibold">
-                                                All set!
-                                            </p>
-                                            <p className="text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                                                Service confirmed
-                                            </p>
-                                        </div>
-                                    </div>
-                                </motion.div>
-                            </motion.div>
-                        </AnimatePresence>
-                    </div>
-                </div>
-
-                {/* Slider Controls */}
-                <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-5">
-                    <button
-                        onClick={prevSlide}
-                        aria-label="Previous slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#6E473B]/20 bg-white/30 text-[#6E473B] backdrop-blur-sm transition-all hover:bg-[#6E473B] hover:text-[#E1D4C2] dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78] dark:hover:bg-[#A78D78] dark:hover:text-[#291C0E]"
-                    >
-                        <FiArrowLeft size={16} />
-                    </button>
-
-                    {/* Dots */}
-                    <div className="flex items-center gap-2">
-                        {slides.map((_, index) => (
-                            <button
-                                key={index}
-                                onClick={() => setCurrent(index)}
-                                aria-label={`Go to slide ${index + 1}`}
-                                className={`h-1.5 rounded-full transition-all duration-500 ${current === index
-                                    ? "w-8 bg-[#6E473B] dark:bg-[#A78D78]"
-                                    : "w-1.5 bg-[#6E473B]/30 dark:bg-[#A78D78]/30"
-                                    }`}
-                            />
-                        ))}
-                    </div>
-
-                    <button
-                        onClick={nextSlide}
-                        aria-label="Next slide"
-                        className="flex h-9 w-9 items-center justify-center rounded-full border border-[#6E473B]/20 bg-white/30 text-[#6E473B] backdrop-blur-sm transition-all hover:bg-[#6E473B] hover:text-[#E1D4C2] dark:border-[#A78D78]/20 dark:bg-[#2D211A]/60 dark:text-[#A78D78] dark:hover:bg-[#A78D78] dark:hover:text-[#291C0E]"
-                    >
-                        <FiArrowRight size={16} />
-                    </button>
-                </div>
+              <span className="text-[9px] font-bold tracking-[0.17em] text-[#D1FAE5] sm:text-[11px]">
+                {slide.category}
+              </span>
             </div>
-        </section>
-    );
-}
 
+            {/* =========================================
+                TITLE
+            ========================================= */}
+            <h1 className="max-w-4xl text-[2.65rem] font-black leading-[0.98] tracking-[-0.045em] text-[#D9FBE5] drop-shadow-[0_2px_10px_rgba(0,0,0,0.4)] sm:text-6xl md:text-7xl lg:text-[5rem] xl:text-[5.5rem]">
+              {slide.title}
+              <br />
 
-/* Provider Visual                */
-function ProviderVisual() {
-    return (
-        <div className="relative min-h-[300px] w-full">
-            {/* Main profile card */}
-            <motion.div
-                animate={{ y: [0, -5, 0] }}
-                transition={{
-                    duration: 5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-4 top-6 w-[260px] rounded-2xl border border-[#6E473B]/10 bg-white/90 p-5 shadow-xl backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#30221C]"
-            >
-                {/* Profile header */}
-                <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#291C0E] dark:bg-[#A78D78]">
-                        <FiUsers
-                            size={21}
-                            className="text-[#E1D4C2] dark:text-[#291C0E]"
-                        />
-                    </div>
+              <span className="text-[#4ADE80]">
+                {slide.highlight}
+              </span>
+            </h1>
 
-                    <div>
-                        <p className="text-sm font-semibold text-[#291C0E] dark:text-[#E1D4C2]">
-                            Rahim Ahmed
-                        </p>
+            {/* =========================================
+                DESCRIPTION
+            ========================================= */}
+            <p className="mt-5 max-w-2xl text-sm leading-7 text-[#D1FAE5] drop-shadow-[0_1px_6px_rgba(0,0,0,0.4)] sm:mt-6 sm:text-base sm:leading-8 lg:text-lg">
+              {slide.description}
+            </p>
 
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            Home Repair Specialist
-                        </p>
-                    </div>
+            {/* =========================================
+                BUTTON + TRUST TEXT
+            ========================================= */}
+            <div className="mt-7 flex flex-col gap-4 sm:mt-8 sm:flex-row sm:items-center">
+              <Link
+                href="/all-services"
+                className="group inline-flex w-fit items-center justify-center gap-3 rounded-xl bg-[#15803D] px-6 py-3.5 text-sm font-bold text-white shadow-xl shadow-[#15803D]/30 transition-all duration-300 hover:-translate-y-1 hover:bg-[#166534] hover:shadow-2xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4ADE80] focus-visible:ring-offset-2 focus-visible:ring-offset-[#1C1917]"
+              >
+                {slide.button}
 
-                    <div className="ml-auto flex h-6 w-6 items-center justify-center rounded-full bg-[#A78D78]/15">
-                        <FiCheck
-                            size={13}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
-                        />
-                    </div>
-                </div>
+                <FiArrowRight
+                  size={17}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </Link>
 
-                {/* Rating */}
-                <div className="mt-5 flex items-center justify-between border-t border-[#6E473B]/10 pt-4 dark:border-[#A78D78]/10">
-                    <div>
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            Rating
-                        </p>
+              <div className="flex items-center gap-2 text-sm text-[#D1FAE5] drop-shadow-sm">
+                <FiCheck
+                  size={16}
+                  className="text-[#86EFAC]"
+                />
 
-                        <div className="mt-1 flex items-center gap-1">
-                            <FiStar
-                                size={13}
-                                className="fill-current text-[#A78D78]"
-                            />
-                            <span className="text-sm font-semibold">
-                                4.9
-                            </span>
-                        </div>
-                    </div>
+                Trusted local professionals
+              </div>
+            </div>
 
-                    <div>
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            Completed
-                        </p>
+            {/* =========================================
+                TRUST INFO
+            ========================================= */}
+            <div className="mt-7 flex flex-wrap items-center gap-x-5 gap-y-3 text-xs text-[#D1FAE5] drop-shadow-sm sm:mt-8 sm:text-sm">
+              <span className="flex items-center gap-2">
+                <FiMapPin
+                  size={15}
+                  className="text-[#86EFAC]"
+                />
 
-                        <p className="mt-1 text-sm font-semibold">
-                            120+ jobs
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+                Local service providers
+              </span>
 
-            {/* Service request card */}
-            <motion.div
-                animate={{ y: [0, 6, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: 0.3,
-                }}
-                className="absolute bottom-5 right-0 w-[210px] rounded-2xl border border-[#6E473B]/10 bg-white/95 p-4 shadow-lg backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#382820]"
-            >
-                <div className="flex items-center justify-between">
-                    <span className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                        New request
-                    </span>
+              <span className="hidden h-4 w-px bg-[#4ADE80]/40 sm:block" />
 
-                    <span className="h-2 w-2 rounded-full bg-[#A78D78]" />
-                </div>
+              <span className="flex items-center gap-2">
+                <FiStar
+                  size={15}
+                  className="fill-[#4ADE80] text-[#4ADE80]"
+                />
 
-                <div className="mt-3 flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#A78D78]/15">
-                        <FiTool
-                            size={17}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
-                        />
-                    </div>
+                {slide.rating} trusted rating
+              </span>
 
-                    <div>
-                        <p className="text-sm font-semibold">
-                            Plumbing Service
-                        </p>
+              <span className="hidden h-4 w-px bg-[#4ADE80]/40 sm:block" />
 
-                        <p className="text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            Today · 10:30 AM
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
+              <span className="flex items-center gap-2">
+                <FiShield
+                  size={15}
+                  className="text-[#86EFAC]"
+                />
 
-            {/* Verified floating badge */}
-            <motion.div
-                animate={{ y: [0, -4, 0] }}
-                transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-0 left-1 rounded-xl border border-[#6E473B]/10 bg-white/90 px-3 py-2 shadow-md backdrop-blur-md dark:border-[#A78D78]/10 dark:bg-[#30221C]"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="flex h-6 w-6 items-center justify-center rounded-full bg-[#A78D78]/15">
-                        <FiShield
-                            size={13}
-                            className="text-[#6E473B] dark:text-[#A78D78]"
-                        />
-                    </div>
+                Reliable service
+              </span>
+            </div>
+          </motion.div>
+        </AnimatePresence>
+      </div>
 
-                    <div>
-                        <p className="text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            HandyHub
-                        </p>
+      {/* =========================================
+          PREVIOUS ARROW
+      ========================================= */}
+      <motion.button
+        type="button"
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.92 }}
+        onClick={previousSlide}
+        aria-label="Previous service"
+        className="absolute left-2 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#4ADE80]/70 bg-white/10 text-white shadow-lg backdrop-blur-md transition-all hover:bg-[#15803D]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4ADE80] sm:left-5 sm:h-12 sm:w-12 lg:h-14 lg:w-14"
+      >
+        <FiArrowLeft size={18} />
+      </motion.button>
 
-                        <p className="text-xs font-semibold">
-                            Verified Provider
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-        </div>
-    );
-}
+      {/* =========================================
+          NEXT ARROW
+      ========================================= */}
+      <motion.button
+        type="button"
+        whileHover={{ scale: 1.06 }}
+        whileTap={{ scale: 0.92 }}
+        onClick={nextSlide}
+        aria-label="Next service"
+        className="absolute right-2 top-1/2 z-30 flex h-9 w-9 -translate-y-1/2 items-center justify-center rounded-full border border-[#4ADE80]/70 bg-white/10 text-white shadow-lg backdrop-blur-md transition-all hover:bg-[#15803D]/40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4ADE80] sm:right-5 sm:h-12 sm:w-12 lg:h-14 lg:w-14"
+      >
+        <FiArrowRight size={18} />
+      </motion.button>
 
-/* Services Visual                */
-function ServicesVisual() {
-    const services = [
-        {
-            icon: FiDroplet,
-            name: "Plumbing",
-        },
-        {
-            icon: FiZap,
-            name: "Electrical",
-        },
-        {
-            icon: FiWind,
-            name: "Cleaning",
-        },
-        {
-            icon: FiEdit3,
-            name: "Painting",
-        },
-    ];
+      {/* =========================================
+          MOBILE THUMBNAILS
+          Maximum 3 visible
+      ========================================= */}
+      <nav
+        aria-label="Service slides"
+        className="absolute bottom-5 left-0 right-0 z-40 px-4 sm:hidden"
+      >
+        <div className="mx-auto w-full max-w-[430px] overflow-hidden rounded-2xl bg-black/20 p-1.5 backdrop-blur-md">
+          <div className="grid grid-cols-3 gap-1.5">
+            {[0, 1, 2].map((position) => {
+              const index =
+                (current - 1 + position + slides.length) %
+                slides.length;
 
-    return (
-        <div className="grid grid-cols-2 gap-3">
-            {services.map((service, index) => {
-                const ServiceIcon = service.icon;
+              const item = slides[index];
 
-                return (
+              const ItemIcon = item.icon;
+
+              const isActive = index === current;
+
+              return (
+                <motion.button
+                  key={`${item.id}-${position}`}
+                  type="button"
+                  onClick={() => setCurrent(index)}
+                  initial={{
+                    opacity: 0,
+                    scale: 0.96,
+                  }}
+                  animate={{
+                    opacity: isActive ? 1 : 0.78,
+                    scale: isActive ? 1 : 0.97,
+                  }}
+                  transition={{
+                    duration: 0.25,
+                  }}
+                  aria-label={`View ${item.service}`}
+                  aria-current={
+                    isActive ? "true" : undefined
+                  }
+                  className={`relative h-[62px] w-full min-w-0 overflow-hidden rounded-xl border shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4ADE80] ${
+                    isActive
+                      ? "border-[#4ADE80]"
+                      : "border-[#22C55E]/50"
+                  }`}
+                >
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="120px"
+                    quality={40}
+                    className="object-cover"
+                  />
+
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/10 to-transparent" />
+
+                  {/* Active green overlay */}
+                  {isActive && (
+                    <div className="absolute inset-0 bg-[#15803D]/15" />
+                  )}
+
+                  {/* Icon */}
+                  <div
+                    className={`absolute left-2 top-2 flex h-6 w-6 items-center justify-center rounded-lg backdrop-blur-md ${
+                      isActive
+                        ? "bg-[#4ADE80] text-[#1C1917]"
+                        : "bg-black/25 text-[#D1FAE5]"
+                    }`}
+                  >
+                    <ItemIcon size={12} />
+                  </div>
+
+                  {/* Service name */}
+                  <div className="absolute bottom-0 left-0 right-0 p-1.5">
+                    <p className="truncate text-left text-[8px] font-bold leading-tight text-white">
+                      {item.service}
+                    </p>
+                  </div>
+
+                  {/* Active border */}
+                  {isActive && (
                     <motion.div
-                        key={service.name}
-                        initial={{ opacity: 0, y: 15 }}
-                        animate={{ opacity: 1, y: 0 }}
+                      layoutId="mobileActive"
+                      className="pointer-events-none absolute inset-0 rounded-xl border-2 border-[#4ADE80]"
+                    />
+                  )}
+
+                  {/* Mobile progress */}
+                  {isActive &&
+                    !isTouching &&
+                    !prefersReducedMotion && (
+                      <motion.div
+                        key={`mobile-progress-${item.id}`}
+                        initial={{
+                          width: "0%",
+                        }}
+                        animate={{
+                          width: "100%",
+                        }}
                         transition={{
-                            delay: index * 0.1,
-                            duration: 0.5,
+                          duration:
+                            SLIDE_DURATION_MS / 1000,
+                          ease: "linear",
                         }}
-                        whileHover={{
-                            y: -5,
-                            scale: 1.02,
-                        }}
-                        className="group rounded-2xl border border-[#6E473B]/10 bg-white/50 p-5 backdrop-blur-sm transition-colors dark:border-[#A78D78]/10 dark:bg-[#382820]/70"
-                    >
-                        <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#6E473B]/10 text-[#6E473B] transition-colors group-hover:bg-[#6E473B] group-hover:text-[#E1D4C2] dark:bg-[#A78D78]/10 dark:text-[#A78D78] dark:group-hover:bg-[#A78D78] dark:group-hover:text-[#291C0E]">
-                            <ServiceIcon size={21} />
-                        </div>
-
-                        <p className="mt-4 text-sm font-semibold">
-                            {service.name}
-                        </p>
-
-                        <div className="mt-2 flex items-center gap-1.5 text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            <FiCheck size={12} />
-                            Available
-                        </div>
-                    </motion.div>
-                );
+                        className="absolute bottom-0 left-0 h-[2px] bg-[#4ADE80]"
+                      />
+                    )}
+                </motion.button>
+              );
             })}
+          </div>
         </div>
-    );
-}
+      </nav>
 
-/* Trust Visual                   */
-function TrustVisual() {
-    return (
-        <div className="relative min-h-[270px]">
-            {/* Main provider */}
-            <motion.div
-                animate={{ y: [0, -7, 0] }}
-                transition={{
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute left-1/2 top-2 flex -translate-x-1/2 flex-col items-center"
-            >
-                <div className="flex h-24 w-24 items-center justify-center rounded-full bg-[#6E473B] shadow-xl dark:bg-[#A78D78]">
-                    <FiUsers
-                        size={38}
-                        className="text-[#E1D4C2] dark:text-[#291C0E]"
-                    />
-                </div>
+      {/* =========================================
+          DESKTOP / TABLET THUMBNAILS
+      ========================================= */}
+      <nav
+        aria-label="Service slides"
+        className="absolute bottom-6 left-0 right-0 z-40 hidden px-5 sm:block lg:px-10"
+      >
+        <div className="mx-auto max-w-[1450px]">
+          <div className="grid grid-cols-4 gap-2 md:grid-cols-8 md:gap-2.5">
+            {slides.map((item, index) => {
+              const ItemIcon = item.icon;
 
-                <p className="mt-3 text-sm font-bold">
-                    Service Professional
-                </p>
+              const isActive = current === index;
 
-                <div className="mt-2 flex items-center gap-1">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                        <FiStar
-                            key={star}
-                            size={13}
-                            className="fill-current text-[#A78D78]"
-                        />
-                    ))}
+              return (
+                <motion.button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setCurrent(index)}
+                  whileHover={{ y: -3 }}
+                  whileTap={{ scale: 0.97 }}
+                  aria-label={`View ${item.service}`}
+                  aria-current={
+                    isActive ? "true" : undefined
+                  }
+                  className={`group relative h-[65px] min-w-0 overflow-hidden rounded-xl border shadow-lg transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#4ADE80] md:h-[75px] md:rounded-2xl ${
+                    isActive
+                      ? "border-[#4ADE80] opacity-100"
+                      : "border-[#22C55E]/50 opacity-75 hover:opacity-100"
+                  }`}
+                >
+                  <Image
+                    src={item.image}
+                    alt=""
+                    fill
+                    sizes="(max-width: 768px) 25vw, 12vw"
+                    quality={50}
+                    className="object-cover transition-transform duration-500 group-hover:scale-105"
+                  />
 
-                    <span className="ml-1 text-xs font-semibold">
-                        4.9
-                    </span>
-                </div>
-            </motion.div>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/10 to-transparent" />
 
-            {/* Completed jobs */}
-            <motion.div
-                animate={{ x: [0, 5, 0] }}
-                transition={{
-                    duration: 3,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-5 left-0 rounded-2xl bg-white/80 p-4 shadow-lg backdrop-blur-md dark:bg-[#382820]"
-            >
-                <div className="flex items-center gap-2">
-                    <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#A78D78]/20">
-                        <FiCheck size={15} />
-                    </div>
+                  {/* Icon */}
+                  <div
+                    className={`absolute left-2 top-2 flex h-7 w-7 items-center justify-center rounded-lg backdrop-blur-md ${
+                      isActive
+                        ? "bg-[#4ADE80] text-[#1C1917]"
+                        : "bg-black/25 text-[#D1FAE5]"
+                    }`}
+                  >
+                    <ItemIcon size={13} />
+                  </div>
 
-                    <div>
-                        <p className="text-xs font-semibold">
-                            156 completed jobs
-                        </p>
+                  {/* Service name */}
+                  <div className="absolute bottom-0 left-0 right-0 p-2">
+                    <p className="truncate text-left text-[9px] font-bold text-white md:text-[10px]">
+                      {item.service}
+                    </p>
+                  </div>
 
-                        <p className="mt-1 text-[10px] text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                            Verified professional
-                        </p>
-                    </div>
-                </div>
-            </motion.div>
-
-            {/* Review */}
-            <motion.div
-                animate={{ x: [0, -5, 0] }}
-                transition={{
-                    duration: 3.5,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                }}
-                className="absolute bottom-10 right-0 rounded-2xl bg-[#291C0E] p-4 text-[#E1D4C2] shadow-lg dark:bg-[#A78D78] dark:text-[#291C0E]"
-            >
-                <div className="flex items-center gap-1">
-                    <FiStar
-                        size={13}
-                        className="fill-current"
-                    />
-
-                    <span className="text-xs font-semibold">
-                        5.0 Rating
-                    </span>
-                </div>
-
-                <p className="mt-2 text-[10px] opacity-70">
-                    Excellent service!
-                </p>
-            </motion.div>
-        </div>
-    );
-}
-
-/* Booking Visual                 */
-function BookingVisual() {
-    const steps = [
-        {
-            number: "01",
-            title: "Request",
-            description: "Tell us what you need",
-            icon: FiTool,
-        },
-        {
-            number: "02",
-            title: "Connect",
-            description: "Find the right professional",
-            icon: FiUsers,
-        },
-        {
-            number: "03",
-            title: "Done",
-            description: "Get your task completed",
-            icon: FiCheck,
-        },
-    ];
-
-    return (
-        <div className="relative space-y-3">
-            {steps.map((step, index) => {
-                const StepIcon = step.icon;
-
-                return (
+                  {/* Active border */}
+                  {isActive && (
                     <motion.div
-                        key={step.number}
-                        initial={{ opacity: 0, x: 15 }}
-                        animate={{ opacity: 1, x: 0 }}
-                        transition={{
-                            delay: index * 0.15,
-                            duration: 0.5,
-                        }}
-                        className="flex items-center gap-4 rounded-2xl border border-[#6E473B]/10 bg-white/50 p-3 dark:border-[#A78D78]/10 dark:bg-[#382820]/70"
-                    >
-                        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-[#6E473B] text-[#E1D4C2] dark:bg-[#A78D78] dark:text-[#291C0E]">
-                            <StepIcon size={18} />
-                        </div>
+                      layoutId="desktopActive"
+                      className="pointer-events-none absolute inset-0 rounded-xl border-2 border-[#4ADE80] md:rounded-2xl"
+                    />
+                  )}
 
-                        <div>
-                            <p className="text-sm font-semibold">
-                                {step.title}
-                            </p>
-
-                            <p className="mt-0.5 text-xs text-[#6E473B]/60 dark:text-[#C5B8AA]/60">
-                                {step.description}
-                            </p>
-                        </div>
-
-                        {index === steps.length - 1 && (
-                            <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                                transition={{ delay: 0.7 }}
-                                className="ml-auto flex h-7 w-7 items-center justify-center rounded-full bg-[#A78D78]/20"
-                            >
-                                <FiCheck size={14} />
-                            </motion.div>
-                        )}
-                    </motion.div>
-                );
+                  {/* Desktop progress */}
+                  {isActive && !prefersReducedMotion && (
+                    <motion.div
+                      key={`desktop-progress-${item.id}`}
+                      initial={{
+                        width: "0%",
+                      }}
+                      animate={{
+                        width: "100%",
+                      }}
+                      transition={{
+                        duration:
+                          SLIDE_DURATION_MS / 1000,
+                        ease: "linear",
+                      }}
+                      className="absolute bottom-0 left-0 h-[2px] bg-[#4ADE80]"
+                    />
+                  )}
+                </motion.button>
+              );
             })}
+          </div>
         </div>
-    );
+      </nav>
+
+      {/* =========================================
+          SLIDE NUMBER
+      ========================================= */}
+      <div className="absolute bottom-9 right-6 z-40 hidden items-center gap-2 text-xs text-[#D1FAE5] lg:flex">
+        <span className="font-bold text-[#4ADE80]">
+          {String(current + 1).padStart(2, "0")}
+        </span>
+
+        <span>/</span>
+
+        <span>
+          {String(slides.length).padStart(2, "0")}
+        </span>
+      </div>
+
+      {/* =========================================
+          MAIN BOTTOM PROGRESS
+      ========================================= */}
+      <div className="absolute bottom-0 left-0 right-0 z-50 h-[2px] bg-white/20">
+        {!isTouching && !prefersReducedMotion && (
+          <motion.div
+            key={`main-progress-${slide.id}`}
+            initial={{
+              width: "0%",
+            }}
+            animate={{
+              width: "100%",
+            }}
+            transition={{
+              duration: SLIDE_DURATION_MS / 1000,
+              ease: "linear",
+            }}
+            className="h-full bg-[#4ADE80]"
+          />
+        )}
+      </div>
+    </section>
+  );
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, FormEvent } from "react";
 import {
   getAllServices,
   getServiceById,
@@ -33,17 +33,13 @@ export interface IService {
 }
 
 export interface UpdateServicePayload {
+  [key: string]: unknown;
   title?: string;
   price?: number;
   category?: string;
   description?: string;
   status?: "active" | "inactive" | "pending";
 }
-
-const getClientToken = () => {
-  if (typeof window === "undefined") return undefined;
-  return localStorage.getItem("admin_token") || localStorage.getItem("token") || undefined;
-};
 
 export default function ManageServicesPage() {
   const [services, setServices] = useState<IService[]>([]);
@@ -63,11 +59,12 @@ export default function ManageServicesPage() {
   const [deleteModalService, setDeleteModalService] = useState<IService | null>(null);
   const [deleting, setDeleting] = useState(false);
 
-  // Toasts state
+  // Pure Counter for Toast IDs
+  const toastIdRef = useRef(0);
   const [toasts, setToasts] = useState<ToastMessage[]>([]);
 
   const addToast = (type: "success" | "error" | "info", text: string) => {
-    const id = Date.now().toString();
+    const id = `toast-${toastIdRef.current++}`;
     setToasts((prev) => [...prev, { id, type, text }]);
     setTimeout(() => {
       setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -83,15 +80,15 @@ export default function ManageServicesPage() {
     setLoading(true);
     setError(null);
     try {
-      const token = getClientToken();
-      const res = await getAllServices(token);
-      if (res.success || Array.isArray(res.data)) {
+      const res = await getAllServices();
+      if (res?.success || Array.isArray(res?.data)) {
         setServices(res.data || []);
       } else {
-        setError(res.error || res.message || "Failed to load services");
+        setError(res?.error || res?.message || "Failed to load services");
       }
-    } catch (err: any) {
-      setError(err.message || "Network error. Please try again.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Network error. Please try again.";
+      setError(message);
     } finally {
       setLoading(false);
     }
@@ -105,50 +102,55 @@ export default function ManageServicesPage() {
   const handleViewDetails = async (id: string) => {
     setFetchingDetail(true);
     try {
-      const token = getClientToken();
-      const res = await getServiceById(id, token);
-      if (res.success || res.data) {
+      const res = await getServiceById(id);
+      if (res?.success || res?.data) {
         setDetailModalService(res.data);
       } else {
-        addToast("error", res.error || res.message || "Could not fetch service details.");
+        addToast("error", res?.error || res?.message || "Could not fetch service details.");
       }
-    } catch (err: any) {
-      addToast("error", err.message || "Failed to load service details.");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Failed to load service details.";
+      addToast("error", message);
     } finally {
       setFetchingDetail(false);
     }
+  };
+
+  const handleCloseDetailModal = () => {
+    setDetailModalService(null);
+    setFetchingDetail(false);
   };
 
   // Open Edit Modal
   const handleOpenEdit = (service: IService) => {
     setEditModalService(service);
     setEditForm({
-      title: service.title,
-      price: service.price,
+      title: service.title || "",
+      price: service.price || 0,
       category: service.category || "",
-      description: service.description,
-      status: service.status,
+      description: service.description || "",
+      status: service.status || "active",
     });
   };
 
   // Submit Edit
-  const handleUpdateService = async (e: React.FormEvent) => {
+  const handleUpdateService = async (e: FormEvent) => {
     e.preventDefault();
     if (!editModalService) return;
 
     setUpdating(true);
     try {
-      const token = getClientToken();
-      const res = await updateService(editModalService._id, editForm, token);
-      if (res.success || res.data?.modifiedCount || res.message) {
-        addToast("success", res.message || "Service updated successfully");
+      const res = await updateService(editModalService._id, editForm);
+      if (res?.success || res?.data?.modifiedCount || res?.message) {
+        addToast("success", res?.message || "Service updated successfully");
         setEditModalService(null);
         fetchServices();
       } else {
-        addToast("error", res.error || res.message || "Failed to update service");
+        addToast("error", res?.error || res?.message || "Failed to update service");
       }
-    } catch (err: any) {
-      addToast("error", err.message || "Error updating service");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error updating service";
+      addToast("error", message);
     } finally {
       setUpdating(false);
     }
@@ -160,24 +162,24 @@ export default function ManageServicesPage() {
 
     setDeleting(true);
     try {
-      const token = getClientToken();
-      const res = await deleteService(deleteModalService._id, token);
-      if (res.success || res.data?.deletedCount || res.message) {
-        addToast("success", res.message || "Service deleted successfully");
+      const res = await deleteService(deleteModalService._id);
+      if (res?.success || res?.data?.deletedCount || res?.message) {
+        addToast("success", res?.message || "Service deleted successfully");
         setDeleteModalService(null);
         fetchServices();
       } else {
-        addToast("error", res.error || res.message || "Failed to delete service");
+        addToast("error", res?.error || res?.message || "Failed to delete service");
       }
-    } catch (err: any) {
-      addToast("error", err.message || "Error deleting service");
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Error deleting service";
+      addToast("error", message);
     } finally {
       setDeleting(false);
     }
   };
 
   // Filtered Services
-  const filteredServices = services.filter((svc) => {
+  const filteredServices = (services || []).filter((svc) => {
     const matchesSearch =
       svc.title?.toLowerCase().includes(search.toLowerCase()) ||
       svc.category?.toLowerCase().includes(search.toLowerCase()) ||
@@ -239,7 +241,6 @@ export default function ManageServicesPage() {
 
       {/* Content Area */}
       {loading ? (
-        /* Loading Skeleton */
         <div className="rounded-2xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-[#18181B]">
           <div className="space-y-4 animate-pulse">
             <div className="h-6 w-1/4 rounded bg-neutral-200 dark:bg-neutral-800" />
@@ -249,7 +250,6 @@ export default function ManageServicesPage() {
           </div>
         </div>
       ) : error ? (
-        /* Error State */
         <div className="rounded-2xl border border-red-500/20 bg-red-500/5 p-6 text-center dark:bg-red-500/10">
           <FiAlertTriangle className="mx-auto size-8 text-red-500" />
           <h3 className="mt-2 text-lg font-semibold text-red-600 dark:text-red-400">
@@ -264,7 +264,6 @@ export default function ManageServicesPage() {
           </button>
         </div>
       ) : filteredServices.length === 0 ? (
-        /* Empty State */
         <div className="rounded-2xl border border-dashed border-black/20 p-12 text-center dark:border-white/20">
           <FiLayers className="mx-auto size-10 text-[#15803D] dark:text-[#22C55E]" />
           <h3 className="mt-4 text-lg font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
@@ -277,7 +276,6 @@ export default function ManageServicesPage() {
           </p>
         </div>
       ) : (
-        /* Service Table View */
         <div className="overflow-x-auto rounded-2xl border border-black/10 bg-white shadow-sm dark:border-white/10 dark:bg-[#18181B]">
           <table className="w-full text-left text-sm">
             <thead className="border-b border-black/10 bg-neutral-50/50 text-xs font-semibold uppercase text-[#1C1917]/60 dark:border-white/10 dark:bg-neutral-900/50 dark:text-[#A1A1AA]">
@@ -362,7 +360,7 @@ export default function ManageServicesPage() {
                 Service Details
               </h3>
               <button
-                onClick={() => setDetailModalService(null)}
+                onClick={handleCloseDetailModal}
                 className="rounded-lg p-1 text-[#1C1917]/60 transition hover:bg-neutral-100 dark:text-[#A1A1AA] dark:hover:bg-neutral-800"
               >
                 <FiX className="size-5" />
@@ -574,7 +572,7 @@ export default function ManageServicesPage() {
               <p className="mt-1 text-sm text-[#1C1917]/70 dark:text-[#A1A1AA]">
                 Are you sure you want to delete{" "}
                 <span className="font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
-                  "{deleteModalService.title}"
+                  &quot;{deleteModalService.title}&quot;
                 </span>
                 ? This action cannot be undone.
               </p>

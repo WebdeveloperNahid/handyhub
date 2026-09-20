@@ -1,5 +1,5 @@
 "use server"
-const BACKEND_URL = process.env.SERVER_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_SERVER_URL|| "http://localhost:5000";
 
 
 export async function getUsers() {

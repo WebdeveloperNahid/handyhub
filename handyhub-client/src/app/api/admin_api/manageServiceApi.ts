@@ -2,7 +2,7 @@
 
 import { cookies } from "next/headers";
 
-const BACKEND_URL = process.env.SERVER_URL || "http://localhost:5000";
+const BACKEND_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
 async function getHeaders(tokenOverride?: string): Promise<Record<string, string>> {
   let token = tokenOverride;
@@ -51,7 +51,7 @@ export async function getServiceById(id: string, token?: string) {
   return res.json();
 }
 
-export async function updateService(id: string, payload: any, token?: string) {
+export async function updateService(id: string, payload: Record<string, unknown>, token?: string) {
   const headers = await getHeaders(token);
   const res = await fetch(`${BACKEND_URL}/api/v1/admin/services/${id}`, {
     method: "PATCH",

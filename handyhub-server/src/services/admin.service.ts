@@ -22,9 +22,10 @@ export class AdminService {
   }
 
   static async updateService(serviceId: string, updateData: Record<string, unknown>) {
+    const { _id, ...cleanData } = updateData;
     return await serviceCollection.updateOne(
       { _id: new ObjectId(serviceId) },
-      { $set: { ...updateData, updatedAt: new Date() } }
+      { $set: { ...cleanData, updatedAt: new Date() } }
     );
   }
 

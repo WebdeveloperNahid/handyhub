@@ -72,6 +72,7 @@ export function DashboardSidebar() {
     { icon: House, label: "Overview", href: "/dashboard/admin" },
     { icon: Person, label: "Manage Users", href: "/dashboard/admin/manage-users" },
     { icon: Person, label: "Manage Providers", href: "/dashboard/admin/manage-providers" },
+    { icon: Briefcase, label: "Manage Services", href: "/dashboard/admin/manage-services" },
     { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
   ];
 
@@ -88,6 +89,8 @@ export function DashboardSidebar() {
   const { items, label: roleLabel } = getNavDetails();
 
   const handleLogout = async () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("admin_token");
     await authClient.signOut();
     router.push("/signin");
     router.refresh();

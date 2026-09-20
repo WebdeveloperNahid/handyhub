@@ -16,10 +16,12 @@
     "@react-aria/utils": "^3.34.1",
     "better-auth": "^1.7.2",
     "framer-motion": "^13.2.0",
+    "lucide-react": "^1.46.0",
     "mongodb": "^7.6.0",
     "next": "16.3.3",
     "react": "19.2.8",
     "react-dom": "19.2.8",
+    "react-hot-toast": "^2.6.1",
     "react-icons": "^5.7.0"
   },
   "devDependencies": {

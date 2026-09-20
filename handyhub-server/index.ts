@@ -11,7 +11,7 @@ import authRoutes from "./src/routes/auth.routes";
 import customerRoutes from "./src/routes/customer.routes";
 import providerRoutes from "./src/routes/provider.routes";
 import adminRoutes from "./src/routes/admin.routes";
-
+import profileRoutes from "./src/routes/profile.routes";
 dotenv.config();
 console.log("Starting server...");
 
@@ -19,7 +19,32 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Global Middlewares
-app.use(cors());
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like mobile apps, curl, server-to-server)
+      if (!origin) return callback(null, true);
+      const allowedOrigins = [
+        "http://localhost:3000",
+        "http://localhost:3001",
+        "http://127.0.0.1:3000",
+        process.env.CLIENT_URL,
+      ].filter(Boolean);
+
+      if (
+        allowedOrigins.includes(origin) ||
+        process.env.NODE_ENV !== "production" ||
+        origin.startsWith("http://localhost:")
+      ) {
+        return callback(null, true);
+      }
+      return callback(new Error("Not allowed by CORS"));
+    },
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+  })
+);
 app.use(express.json());
 
 // Database connection middleware
@@ -35,6 +60,9 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/provider", providerRoutes);
 app.use("/api/v1/admin", adminRoutes);
+
+// Profile update route
+app.use("/api/profile", profileRoutes);
 
 // Also mount root route aliases for convenience
 app.use("/auth", authRoutes);

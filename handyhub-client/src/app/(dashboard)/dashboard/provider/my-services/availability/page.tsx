@@ -1,11 +1,5 @@
-import React from 'react';
+import ProviderAvailabilityPage from "../../availability/page";
 
-const page = () => {
-    return (
-        <div>
-            availability Page
-        </div>
-    );
-};
-
-export default page;
+export default function Page() {
+  return <ProviderAvailabilityPage />;
+}

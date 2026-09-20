@@ -13,7 +13,7 @@ import {
 import PaymentMethod from "@/Components/checkout/PaymentMethod";
 import DeliveryMethod from "@/Components/checkout/DeliveryMethod";
 import ReviewModal from "@/Components/booking/ReviewModal";
-import DeleteModal from "@/Components/modals/DeleteModal"; // ✅ আপনার প্রজেক্ট পাথ অনুযায়ী ইমপোর্ট করা হয়েছে
+import DeleteModal from "@/Components/modals/DeleteModal";
 
 // Booking Lifecycle Types
 type BookingStatus =
@@ -203,8 +203,17 @@ export default function MyBookingsPage() {
 
         {/* Delivery & Payment Selection Sections */}
         <div className="grid gap-8 rounded-3xl border border-black/10 bg-white p-6 dark:border-white/10 dark:bg-[#27272A] md:grid-cols-2">
-          <DeliveryMethod />
-          <PaymentMethod />
+          {/* Delivery Slot Selection */}
+          <DeliveryMethod
+            onSelect={(slot) => console.log("Selected Delivery Slot:", slot)}
+          />
+
+          {/* Payment Selection */}
+          <PaymentMethod
+            onSelect={(methodId) =>
+              console.log("Selected Payment Method:", methodId)
+            }
+          />
         </div>
 
         {/* Modals */}

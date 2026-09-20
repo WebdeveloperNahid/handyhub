@@ -17,6 +17,21 @@ export class AdminService {
     return await serviceCollection.find({}).toArray();
   }
 
+  static async getServiceById(serviceId: string) {
+    return await serviceCollection.findOne({ _id: new ObjectId(serviceId) });
+  }
+
+  static async updateService(serviceId: string, updateData: Record<string, unknown>) {
+    return await serviceCollection.updateOne(
+      { _id: new ObjectId(serviceId) },
+      { $set: { ...updateData, updatedAt: new Date() } }
+    );
+  }
+
+  static async deleteService(serviceId: string) {
+    return await serviceCollection.deleteOne({ _id: new ObjectId(serviceId) });
+  }
+
   static async getAllBookings() {
     return await bookingCollection.find({}).toArray();
   }

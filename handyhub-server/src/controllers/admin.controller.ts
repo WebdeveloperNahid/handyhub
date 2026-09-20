@@ -31,6 +31,45 @@ export class AdminController {
     }
   }
 
+  static async getServiceById(req: Request, res: Response) {
+    try {
+      const serviceId = req.params.id as string;
+      const service = await AdminService.getServiceById(serviceId);
+      if (!service) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      return res.status(200).json({ success: true, data: service });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to fetch service details", error });
+    }
+  }
+
+  static async updateService(req: Request, res: Response) {
+    try {
+      const serviceId = req.params.id as string;
+      const result = await AdminService.updateService(serviceId, req.body);
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      return res.status(200).json({ success: true, message: "Service updated successfully", data: result });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to update service", error });
+    }
+  }
+
+  static async deleteService(req: Request, res: Response) {
+    try {
+      const serviceId = req.params.id as string;
+      const result = await AdminService.deleteService(serviceId);
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ message: "Service not found" });
+      }
+      return res.status(200).json({ success: true, message: "Service deleted successfully", data: result });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to delete service", error });
+    }
+  }
+
   static async getAllBookings(req: Request, res: Response) {
     try {
       const bookings = await AdminService.getAllBookings();

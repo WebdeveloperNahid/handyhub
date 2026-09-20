@@ -1,4 +1,7 @@
-import { ApiResponse, IService, UpdateServicePayload } from "@/types/service";
+// import { ApiResponse, IService, UpdateServicePayload } from "@/types/service";
+
+import { IService, UpdateServicePayload } from "@/app/(dashboard)/dashboard/admin/manage-services/page";
+import { ApiResponse } from "@/types";
 
 const BASE_URL = process.env.NEXT_PUBLIC_SERVER_URL || "http://localhost:5000";
 
@@ -23,7 +26,7 @@ export const getAuthToken = (): string | null => {
   // 2. Scan cookies for any token/session cookie
   if (document.cookie) {
     const cookies = document.cookie.split(";");
-    for (let c of cookies) {
+    for (const c of cookies) {
       const [rawName, rawVal] = c.trim().split("=");
       if (!rawName || !rawVal) continue;
       const name = rawName.trim().toLowerCase();

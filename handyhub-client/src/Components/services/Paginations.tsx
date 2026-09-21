@@ -1,19 +1,26 @@
 "use client";
 
-import { useState } from "react";
 import { FiChevronLeft, FiChevronRight } from "react-icons/fi";
 
-const Paginations = () => {
-  const [currentPage, setCurrentPage] = useState(1);
+type PaginationsProps = {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+};
 
-  const totalPages = 5;
+const Paginations = ({
+  currentPage,
+  totalPages,
+  onPageChange,
+}: PaginationsProps) => {
+  if (totalPages <= 1) return null;
 
   return (
     <div className="mt-10 flex items-center justify-center gap-2">
       {/* Previous */}
       <button
         disabled={currentPage === 1}
-        onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+        onClick={() => onPageChange(Math.max(currentPage - 1, 1))}
         className="flex h-10 w-10 items-center justify-center rounded-lg border border-black/10 text-[#1C1917] transition-all hover:border-[#15803D] hover:bg-[#15803D] hover:text-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/10 dark:text-[#A1A1AA] dark:hover:border-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
       >
         <FiChevronLeft size={17} />
@@ -24,7 +31,7 @@ const Paginations = () => {
         (page) => (
           <button
             key={page}
-            onClick={() => setCurrentPage(page)}
+            onClick={() => onPageChange(page)}
             className={`flex h-10 min-w-10 items-center justify-center rounded-lg px-3 text-sm font-medium transition-all ${
               currentPage === page
                 ? "bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]"
@@ -39,7 +46,7 @@ const Paginations = () => {
       {/* Next */}
       <button
         disabled={currentPage === totalPages}
-        onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+        onClick={() => onPageChange(Math.min(currentPage + 1, totalPages))}
         className="flex h-10 w-10 items-center justify-center rounded-lg border border-black/10 text-[#1C1917] transition-all hover:border-[#15803D] hover:bg-[#15803D] hover:text-white disabled:cursor-not-allowed disabled:opacity-30 dark:border-white/10 dark:text-[#A1A1AA] dark:hover:border-[#22C55E] dark:hover:bg-[#22C55E] dark:hover:text-[#18181B]"
       >
         <FiChevronRight size={17} />

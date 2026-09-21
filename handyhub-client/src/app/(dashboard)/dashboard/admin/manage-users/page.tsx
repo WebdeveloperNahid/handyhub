@@ -2,7 +2,7 @@
 
 import { Chip, Pagination, Table } from "@heroui/react";
 import { useEffect, useMemo, useState } from "react";
-import { getUsers } from "@/app/api/admin_api/GetAllUser";
+import { getUsers } from "@/lib/api/admin_api/GetAllUser";
 
 interface User {
   _id: string;

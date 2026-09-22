@@ -272,7 +272,7 @@ export default function AddServicePage() {
         form.image.trim().length > 0
           ? form.image.trim()
           : PRESET_IMAGES.find((p) => p.category === form.category)?.url ||
-            "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
+          "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
 
       const payload = {
         title: form.title.trim(),
@@ -283,7 +283,7 @@ export default function AddServicePage() {
         availability: availabilityData,
         duration: form.duration || "1 - 2 Hours",
         highlights: form.highlights,
-        status: "active" as const,
+        status: "pending" as const,
       };
 
       await createService(payload);
@@ -436,11 +436,10 @@ export default function AddServicePage() {
                     value={form.title}
                     onChange={(e) => handleFieldChange("title", e.target.value)}
                     placeholder="e.g., Deep Kitchen & Bathroom Sanitization Service"
-                    className={`h-11 w-full rounded-xl border bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
-                      errors.title
+                    className={`h-11 w-full rounded-xl border bg-[#FAF9F7] px-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${errors.title
                         ? "border-red-500 bg-red-50/20"
                         : "border-black/10 dark:border-white/10"
-                    }`}
+                      }`}
                   />
                   {errors.title && (
                     <p className="mt-1.5 flex items-center gap-1 text-xs text-red-500">
@@ -489,11 +488,10 @@ export default function AddServicePage() {
                     value={form.description}
                     onChange={(e) => handleFieldChange("description", e.target.value)}
                     placeholder="Describe what is included in this service, how your team operates, any prerequisites, and guarantees you offer..."
-                    className={`w-full resize-y rounded-xl border bg-[#FAF9F7] p-3.5 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
-                      errors.description
+                    className={`w-full resize-y rounded-xl border bg-[#FAF9F7] p-3.5 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${errors.description
                         ? "border-red-500 bg-red-50/20"
                         : "border-black/10 dark:border-white/10"
-                    }`}
+                      }`}
                   />
                   {errors.description && (
                     <p className="mt-1.5 text-xs text-red-500">{errors.description}</p>
@@ -534,11 +532,10 @@ export default function AddServicePage() {
                       value={form.price}
                       onChange={(e) => handlePriceChange(e.target.value)}
                       placeholder="1200"
-                      className={`h-11 w-full rounded-xl border bg-[#FAF9F7] pl-8 pr-4 text-sm font-semibold text-[#1C1917] outline-none transition-all placeholder:font-normal placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${
-                        errors.price
+                      className={`h-11 w-full rounded-xl border bg-[#FAF9F7] pl-8 pr-4 text-sm font-semibold text-[#1C1917] outline-none transition-all placeholder:font-normal placeholder:text-[#1C1917]/40 focus:border-[#15803D] focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:bg-[#18181B] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/50 dark:focus:border-[#22C55E] dark:focus:ring-[#22C55E]/20 ${errors.price
                           ? "border-red-500 bg-red-50/20"
                           : "border-black/10 dark:border-white/10"
-                      }`}
+                        }`}
                     />
                   </div>
                   {errors.price && (
@@ -618,11 +615,10 @@ export default function AddServicePage() {
                 <button
                   type="button"
                   onClick={() => setImageTab("preset")}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition ${
-                    imageTab === "preset"
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition ${imageTab === "preset"
                       ? "bg-white text-[#15803D] shadow-sm dark:bg-[#27272A] dark:text-[#22C55E]"
                       : "text-[#1C1917]/60 hover:text-[#1C1917] dark:text-[#A1A1AA]"
-                  }`}
+                    }`}
                 >
                   <Sparkles className="size-3.5" />
                   Preset Library
@@ -630,11 +626,10 @@ export default function AddServicePage() {
                 <button
                   type="button"
                   onClick={() => setImageTab("url")}
-                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition ${
-                    imageTab === "url"
+                  className={`flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition ${imageTab === "url"
                       ? "bg-white text-[#15803D] shadow-sm dark:bg-[#27272A] dark:text-[#22C55E]"
                       : "text-[#1C1917]/60 hover:text-[#1C1917] dark:text-[#A1A1AA]"
-                  }`}
+                    }`}
                 >
                   <Link2 className="size-3.5" />
                   Custom Image URL
@@ -648,11 +643,10 @@ export default function AddServicePage() {
                       key={preset.name}
                       type="button"
                       onClick={() => handleFieldChange("image", preset.url)}
-                      className={`group relative aspect-video overflow-hidden rounded-xl border transition-all ${
-                        form.image === preset.url
+                      className={`group relative aspect-video overflow-hidden rounded-xl border transition-all ${form.image === preset.url
                           ? "ring-2 ring-[#15803D] dark:ring-[#22C55E]"
                           : "border-black/10 opacity-75 hover:opacity-100 dark:border-white/10"
-                      }`}
+                        }`}
                     >
                       {/* eslint-disable-next-line @next/next/no-img-element */}
                       <img
@@ -751,11 +745,10 @@ export default function AddServicePage() {
                           key={day}
                           type="button"
                           onClick={() => toggleDay(day)}
-                          className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${
-                            isSelected
+                          className={`rounded-xl px-3.5 py-2 text-xs font-semibold transition-all ${isSelected
                               ? "bg-[#15803D] text-white shadow-sm dark:bg-[#22C55E] dark:text-[#18181B]"
                               : "border border-black/10 bg-[#FAF9F7] text-[#1C1917]/70 hover:border-black/20 dark:border-white/10 dark:bg-[#18181B] dark:text-[#A1A1AA]"
-                          }`}
+                            }`}
                         >
                           {day.slice(0, 3)}
                         </button>
@@ -988,8 +981,8 @@ export default function AddServicePage() {
                     {form.availabilityStatus === "available"
                       ? "Available"
                       : form.availabilityStatus === "by-appointment"
-                      ? "Appointment"
-                      : "Busy"}
+                        ? "Appointment"
+                        : "Busy"}
                   </span>
                 </div>
 
@@ -1022,8 +1015,8 @@ export default function AddServicePage() {
                         {form.pricingModel === "hourly"
                           ? "Hourly Rate"
                           : form.pricingModel === "starting_at"
-                          ? "Starting at"
-                          : "Fixed Price"}
+                            ? "Starting at"
+                            : "Fixed Price"}
                       </p>
                       <p className="text-sm font-bold text-[#15803D] dark:text-[#22C55E]">
                         ৳{Number(form.price) > 0 ? Number(form.price).toLocaleString() : "0"}

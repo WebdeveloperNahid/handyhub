@@ -1,8 +1,8 @@
-import Hero from "@/Components/home/Hero";
-import HowItWorks from "@/Components/home/HowItWorks";
-import PopularServices from "@/Components/home/PopularServices";
-import ProviderCTA from "@/Components/home/ProviderCTA";
-import WhyHandyHub from "@/Components/home/WhyHandyHub";
+import Hero from "@/assets/home/Hero";
+import HowItWorks from "@/assets/home/HowItWorks";
+import PopularServices from "@/assets/home/PopularServices";
+import ProviderCTA from "@/assets/home/ProviderCTA";
+import WhyHandyHub from "@/assets/home/WhyHandyHub";
 
 
 export default function Home() {

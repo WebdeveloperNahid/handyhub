@@ -78,4 +78,13 @@ export class AdminController {
       return res.status(500).json({ message: "Failed to fetch all bookings", error });
     }
   }
+
+  static async getStats(req: Request, res: Response) {
+    try {
+      const stats = await AdminService.getAdminStats();
+      return res.status(200).json({ success: true, data: stats });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to fetch admin stats", error });
+    }
+  }
 }

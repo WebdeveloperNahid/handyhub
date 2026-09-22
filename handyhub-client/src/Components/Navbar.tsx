@@ -10,6 +10,7 @@ import ThemeToggle from "./Themetoggle";
 const navLinks = [
   { href: "/", label: "Home" },
   { href: "/all-services", label: "Browse Services" },
+  { href: "/ai-recommendation", label: "AI Recommendation" },
 ];
 
 export default function Navbar() {
@@ -69,11 +70,10 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`relative py-1 text-sm font-medium transition-colors ${
-                  isActive
-                    ? "border-b-2 border-[#15803D] text-[#15803D] dark:border-[#22C55E] dark:text-[#22C55E]"
-                    : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
-                }`}
+                className={`relative py-1 text-sm font-medium transition-colors ${isActive
+                  ? "border-b-2 border-[#15803D] text-[#15803D] dark:border-[#22C55E] dark:text-[#22C55E]"
+                  : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
+                  }`}
               >
                 {link.label}
               </Link>
@@ -87,11 +87,10 @@ export default function Navbar() {
               return (
                 <Link
                   href={dashboardHref}
-                  className={`relative py-1 text-sm font-medium transition-colors ${
-                    isDashboardActive
-                      ? "border-b-2 border-[#15803D] text-[#15803D] dark:border-[#22C55E] dark:text-[#22C55E]"
-                      : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
-                  }`}
+                  className={`relative py-1 text-sm font-medium transition-colors ${isDashboardActive
+                    ? "border-b-2 border-[#15803D] text-[#15803D] dark:border-[#22C55E] dark:text-[#22C55E]"
+                    : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
+                    }`}
                 >
                   Dashboard
                 </Link>
@@ -116,11 +115,10 @@ export default function Navbar() {
             <>
               <Link
                 href="/signin"
-                className={`text-sm font-medium transition-colors ${
-                  pathname === "/signin"
-                    ? "text-[#15803D] dark:text-[#22C55E]"
-                    : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
-                }`}
+                className={`text-sm font-medium transition-colors ${pathname === "/signin"
+                  ? "text-[#15803D] dark:text-[#22C55E]"
+                  : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
+                  }`}
               >
                 Login
               </Link>
@@ -161,11 +159,10 @@ export default function Navbar() {
                   key={link.href}
                   href={link.href}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`text-sm font-medium transition-colors ${
-                    isActive
-                      ? "text-[#15803D] dark:text-[#22C55E]"
-                      : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
-                  }`}
+                  className={`text-sm font-medium transition-colors ${isActive
+                    ? "text-[#15803D] dark:text-[#22C55E]"
+                    : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
+                    }`}
                 >
                   {link.label}
                 </Link>
@@ -180,11 +177,10 @@ export default function Navbar() {
                   <Link
                     href={dashboardHref}
                     onClick={() => setIsMenuOpen(false)}
-                    className={`text-sm font-medium transition-colors ${
-                      isDashboardActive
-                        ? "text-[#15803D] dark:text-[#22C55E]"
-                        : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
-                    }`}
+                    className={`text-sm font-medium transition-colors ${isDashboardActive
+                      ? "text-[#15803D] dark:text-[#22C55E]"
+                      : "text-[#1C1917]/70 hover:text-[#15803D] dark:text-[#A1A1AA] dark:hover:text-[#22C55E]"
+                      }`}
                   >
                     Dashboard
                   </Link>

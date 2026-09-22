@@ -2,3 +2,7 @@ node_modules/
 .env
 dist/
 plan.md
+
+dist/
+src/**/*.js
+index.js

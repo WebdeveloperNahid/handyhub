@@ -4,5 +4,4 @@ dist
 .next
 *.log
 run.md
-.agents
 PROJECT_CONTEXT.md

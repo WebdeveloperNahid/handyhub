@@ -1,3 +1,4 @@
+"use client";
 import ServiceDetail from "@/Components/services/detailsPage/ServiceDetail";
 
 const ServiceDetailsPage = ({

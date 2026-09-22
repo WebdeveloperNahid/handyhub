@@ -1,18 +1,6 @@
-"use client";
+import ServiceDetail from "@/Components/services/detailsPage/ServiceDetail";
 
-import { use, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import {
-  FiArrowLeft,
-  FiCalendar,
-  FiClock,
-  FiStar,
-  FiUser,
-  FiCheckCircle,
-} from "react-icons/fi";
-
-export default function ServiceDetailsPage({
+const ServiceDetailsPage = ({
   params,
 }: {
   params: Promise<{ id: string }>;
@@ -115,16 +103,4 @@ export default function ServiceDetailsPage({
               </p>
             </div>
 
-            <button
-              onClick={handleConfirmBooking}
-              className="flex items-center gap-2 rounded-xl bg-[#15803D] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
-            >
-              <FiCalendar size={18} />
-              Confirm & Book This Service
-            </button>
-          </div>
-        </div>
-      </div>
-    </main>
-  );
-}
+export default ServiceDetailsPage;

@@ -64,13 +64,13 @@ export function DashboardSidebar() {
     { icon: House, label: "Overview", href: "/dashboard/user" },
     {
       icon: ListCheck,
-      label: "My Requests",
-      href: "/dashboard/user/my-requests",
+      label: "My Booking",
+      href: "/dashboard/user/my-bookings",
     },
     {
       icon: Heart,
-      label: "Saved Providers",
-      href: "/dashboard/user/saved-providers",
+      label: "Booking History",
+      href: "/dashboard/user/history",
     },
     { icon: Boxes3, label: "Browse Services", href: "/all-services" },
     {

@@ -98,11 +98,7 @@ export function DashboardSidebar() {
       label: "Active Jobs",
       href: "/dashboard/provider/active-jobs",
     },
-    {
-      icon: LuCircleUserRound,
-      label: "Profile",
-      href: "/dashboard/provider/profile",
-    },
+    {icon: LuCircleUserRound,label: "Profile",href: "/dashboard/provider/profile",},
   ];
 
   const adminItems: NavItem[] = [
@@ -111,6 +107,7 @@ export function DashboardSidebar() {
     { icon: Person, label: "Manage Providers", href: "/dashboard/admin/manage-providers" },
     { icon: Briefcase, label: "Manage Services", href: "/dashboard/admin/manage-services" },
     { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
+    {icon: LuCircleUserRound,label: "Profile",href: "/dashboard/admin/profile",},
   ];
 
   const getNavDetails = () => {

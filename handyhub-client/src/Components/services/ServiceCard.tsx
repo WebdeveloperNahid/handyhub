@@ -16,8 +16,7 @@ type ServiceCardProps = {
   isLoading?: boolean;
 };
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
+const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
 
 const ServiceCard = ({ services, isLoading = false }: ServiceCardProps) => {
   if (isLoading) {
@@ -60,15 +59,9 @@ const ServiceCard = ({ services, isLoading = false }: ServiceCardProps) => {
                 whileHover={{ y: -5 }}
                 className="group flex h-full flex-col overflow-hidden rounded-2xl border border-black/10 bg-[#FAF9F7] transition-all duration-300 hover:border-[#15803D]/40 hover:shadow-xl dark:border-white/10 dark:bg-[#18181B] dark:hover:border-[#22C55E]/40"
               >
-                {/* Visual Header with Next.js Image */}
                 <div className="relative h-48 w-full overflow-hidden bg-[#18181B] dark:bg-[#27272A]">
-                  <Image
-                    src={imageUrl}
-                    alt={service.title}
-                    fill
-                    sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
+                  <Image src={imageUrl} alt={service.title} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                    className="object-cover transition-transform duration-500 group-hover:scale-105" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-60" />
 
                   <span className="absolute right-3 top-3 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-[11px] font-medium text-white backdrop-blur-md">
@@ -117,8 +110,7 @@ const ServiceCard = ({ services, isLoading = false }: ServiceCardProps) => {
                   {/* Redirect to Details Page */}
                   <Link
                     href={`/all-services/${serviceId}`}
-                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#15803D] px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
-                  >
+                    className="mt-5 flex w-full items-center justify-center gap-2 rounded-xl bg-[#15803D] px-4 py-3 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90">
                     View Details & Book
                     <FiArrowUpRight size={16} />
                   </Link>

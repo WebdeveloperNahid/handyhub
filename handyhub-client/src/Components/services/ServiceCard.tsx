@@ -16,8 +16,7 @@ type ServiceCardProps = {
   isLoading?: boolean;
 };
 
-const DEFAULT_IMAGE =
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
+const DEFAULT_IMAGE ="https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
 
 const ServiceCard = ({ services, isLoading = false }: ServiceCardProps) => {
   if (isLoading) {

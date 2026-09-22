@@ -21,7 +21,7 @@ export default function ServiceDetailsPage({
   const router = useRouter();
   const serviceId = resolvedParams.id;
 
-  // Mock service data (বাস্তব ক্ষেত্রে API থেকে আসবে)
+
   const service = {
     id: serviceId,
     title: "Professional Home Cleaning & Maintenance",

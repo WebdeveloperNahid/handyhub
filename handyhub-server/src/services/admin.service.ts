@@ -13,6 +13,13 @@ export class AdminService {
     );
   }
 
+  static async updateUserStatus(userId: string, status: "active" | "blocked") {
+    return await userCollection.updateOne(
+      { _id: new ObjectId(userId) },
+      { $set: { status, updatedAt: new Date() } }
+    );
+  }
+
   static async getAllServices() {
     return await serviceCollection.find({}).toArray();
   }

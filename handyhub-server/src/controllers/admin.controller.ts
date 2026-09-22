@@ -22,6 +22,20 @@ export class AdminController {
     }
   }
 
+  static async updateUserStatus(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId as string;
+      const { status } = req.body;
+      if (status !== "active" && status !== "blocked") {
+        return res.status(400).json({ message: "Status must be active or blocked" });
+      }
+      const result = await AdminService.updateUserStatus(userId, status);
+      return res.status(200).json({ success: true, data: result });
+    } catch (error) {
+      return res.status(500).json({ message: "Failed to update user status", error });
+    }
+  }
+
   static async getAllServices(req: Request, res: Response) {
     try {
       const services = await AdminService.getAllServices();

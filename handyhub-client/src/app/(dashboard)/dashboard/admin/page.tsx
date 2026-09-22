@@ -397,26 +397,6 @@ export default function AdminOverviewPage() {
                 </div>
                 <ArrowRight className="size-3.5 text-[#1C1917]/40 dark:text-[#A1A1AA]" />
               </Link>
-
-              <Link
-                href="/dashboard/admin/manage-providers"
-                className="flex items-center justify-between rounded-xl border border-black/5 bg-[#FAF9F7] p-3 transition hover:border-[#15803D]/30 hover:bg-[#15803D]/5 dark:border-white/5 dark:bg-[#18181B] dark:hover:bg-[#22C55E]/10"
-              >
-                <div className="flex items-center gap-3">
-                  <div className="flex size-8 items-center justify-center rounded-lg bg-amber-500/10 text-amber-600 dark:bg-amber-500/20 dark:text-amber-400">
-                    <Briefcase className="size-4" />
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-[#1C1917] dark:text-[#F4F4F5]">
-                      Manage Providers
-                    </p>
-                    <p className="text-[10px] text-[#1C1917]/50 dark:text-[#A1A1AA]">
-                      Verification & provider logs
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight className="size-3.5 text-[#1C1917]/40 dark:text-[#A1A1AA]" />
-              </Link>
             </div>
           </div>
 

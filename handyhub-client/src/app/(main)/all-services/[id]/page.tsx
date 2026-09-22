@@ -1,252 +1,130 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { use, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import {
   FiArrowLeft,
-  FiCheckCircle,
+  FiCalendar,
   FiClock,
-  FiDroplet,
-  FiMapPin,
-  FiMessageCircle,
-  FiShield,
   FiStar,
   FiUser,
-  FiCalendar,
+  FiCheckCircle,
 } from "react-icons/fi";
 
-const ServiceDetail = () => {
-  // Temporary mock data
+export default function ServiceDetailsPage({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const resolvedParams = use(params);
+  const router = useRouter();
+  const serviceId = resolvedParams.id;
+
+  // Mock service data (বাস্তব ক্ষেত্রে API থেকে আসবে)
   const service = {
-    title: "Professional Plumbing",
-    category: "Plumbing",
+    id: serviceId,
+    title: "Professional Home Cleaning & Maintenance",
+    category: "cleaning",
     description:
-      "Reliable plumbing services for leaks, pipe repairs, fittings, installations and other common household plumbing needs.",
-    price: 500,
-    rating: 4.9,
+      "Get top-tier deep home cleaning services with verified professionals. We ensure total hygiene, eco-friendly chemical usage, and 100% satisfaction guaranteed.",
+    price: 1500,
+    rating: 4.8,
     reviews: 124,
-    duration: "1–2 hrs",
-    location: "Available in your area",
-    provider: {
-      name: "Rahim Ahmed",
-      experience: "5+ years experience",
-      rating: 4.9,
-      jobs: 320,
-    },
+    duration: "2-3 hours",
+    providerName: "Cleanify Bangladesh",
+  };
+
+  const handleConfirmBooking = () => {
+    const existingBookings = JSON.parse(
+      localStorage.getItem("myBookings") || "[]",
+    );
+
+    const newBooking = {
+      ...service,
+      bookingId: `BK-${Date.now()}`,
+      bookingDate: new Date().toLocaleDateString("en-US", {
+        day: "numeric",
+        month: "short",
+        year: "numeric",
+      }),
+      status: "Pending", // initial status
+    };
+
+    localStorage.setItem(
+      "myBookings",
+      JSON.stringify([newBooking, ...existingBookings]),
+    );
+    router.push("/dashboard/user/my-bookings");
   };
 
   return (
-    <main className="min-h-screen bg-[#FAF9F7] text-[#1C1917] transition-colors duration-300 dark:bg-[#18181B] dark:text-[#F4F4F5]">
-      <div className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14">
-        {/* Back */}
+    <main className="min-h-screen bg-[#FAF9F7] px-4 py-10 text-[#1C1917] dark:bg-[#18181B] dark:text-[#F4F4F5]">
+      <div className="mx-auto max-w-4xl">
         <Link
           href="/all-services"
-          className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[#15803D] transition-colors hover:text-[#15803D]/80 dark:text-[#22C55E] dark:hover:text-[#22C55E]/80"
+          className="mb-6 inline-flex items-center gap-2 text-sm font-semibold text-[#15803D] dark:text-[#22C55E]"
         >
-          <FiArrowLeft size={16} />
-          Back to services
+          <FiArrowLeft size={16} /> Back to All Services
         </Link>
 
-        <div className="grid gap-8 lg:grid-cols-[1.35fr_0.65fr]">
-          {/* Main Content */}
-          <div>
-            {/* Service Visual */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="relative flex h-64 items-center justify-center overflow-hidden rounded-3xl bg-[#18181B] sm:h-80 dark:bg-[#27272A]"
-            >
-              <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full border border-white/10" />
-              <div className="absolute -bottom-20 -left-16 h-56 w-56 rounded-full border border-white/10" />
+        <div className="rounded-3xl border border-black/10 bg-white p-8 shadow-sm dark:border-white/10 dark:bg-[#27272A]">
+          <span className="rounded-full bg-[#15803D]/10 px-3 py-1 text-xs font-semibold text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
+            {service.category.toUpperCase()}
+          </span>
 
-              <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-[#15803D] text-white shadow-2xl dark:bg-[#22C55E] dark:text-[#18181B]">
-                <FiDroplet size={42} strokeWidth={1.5} />
-              </div>
+          <h1 className="mt-4 text-3xl font-bold tracking-tight">
+            {service.title}
+          </h1>
 
-              <span className="absolute right-5 top-5 rounded-full border border-white/10 bg-white/5 px-4 py-2 text-xs font-medium text-[#F4F4F5]">
-                {service.category}
+          <div className="mt-4 flex flex-wrap items-center gap-6 text-sm text-[#1C1917]/70 dark:text-[#A1A1AA]">
+            <div className="flex items-center gap-1.5">
+              <FiUser className="text-[#15803D] dark:text-[#22C55E]" />
+              <span>
+                Provider: <strong>{service.providerName}</strong>
               </span>
-            </motion.div>
-
-            {/* Service Info */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="mt-8"
-            >
-              <div className="flex flex-wrap items-center gap-3">
-                <span className="rounded-full bg-[#15803D]/10 px-3 py-1.5 text-xs font-semibold text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
-                  {service.category}
-                </span>
-
-                <div className="flex items-center gap-1.5 text-sm">
-                  <FiStar
-                    size={15}
-                    className="fill-current text-[#15803D] dark:text-[#22C55E]"
-                  />
-                  <span className="font-semibold">{service.rating}</span>
-                  <span className="text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    ({service.reviews} reviews)
-                  </span>
-                </div>
-              </div>
-
-              <h1 className="mt-4 text-3xl font-bold tracking-tight sm:text-4xl">
-                {service.title}
-              </h1>
-
-              <p className="mt-5 max-w-3xl text-sm leading-7 text-[#1C1917]/70 dark:text-[#A1A1AA] sm:text-base">
-                {service.description}
-              </p>
-            </motion.div>
-
-            {/* Service Features */}
-            <div className="mt-10 grid gap-4 sm:grid-cols-3">
-              <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-[#27272A]">
-                <FiClock
-                  size={20}
-                  className="text-[#15803D] dark:text-[#22C55E]"
-                />
-                <p className="mt-4 text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                  Duration
-                </p>
-                <p className="mt-1 text-sm font-semibold">{service.duration}</p>
-              </div>
-
-              <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-[#27272A]">
-                <FiMapPin
-                  size={20}
-                  className="text-[#15803D] dark:text-[#22C55E]"
-                />
-                <p className="mt-4 text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                  Location
-                </p>
-                <p className="mt-1 text-sm font-semibold">Your area</p>
-              </div>
-
-              <div className="rounded-2xl border border-black/10 bg-white p-5 dark:border-white/10 dark:bg-[#27272A]">
-                <FiShield
-                  size={20}
-                  className="text-[#15803D] dark:text-[#22C55E]"
-                />
-                <p className="mt-4 text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                  Service
-                </p>
-                <p className="mt-1 text-sm font-semibold">Trusted provider</p>
-              </div>
             </div>
-
-            {/* About Service */}
-            <div className="mt-10">
-              <h2 className="text-xl font-bold">What&apos;s included</h2>
-
-              <div className="mt-5 space-y-3">
-                {[
-                  "Professional service from an experienced provider",
-                  "Inspection and basic troubleshooting",
-                  "Quality-focused repair or maintenance",
-                  "Clear pricing before starting the work",
-                ].map((item) => (
-                  <div key={item} className="flex items-start gap-3">
-                    <FiCheckCircle
-                      size={18}
-                      className="mt-0.5 shrink-0 text-[#15803D] dark:text-[#22C55E]"
-                    />
-
-                    <p className="text-sm text-[#1C1917]/70 dark:text-[#A1A1AA]">
-                      {item}
-                    </p>
-                  </div>
-                ))}
-              </div>
+            <div className="flex items-center gap-1 text-[#F59E0B]">
+              <FiStar className="fill-current" />
+              <span>
+                {service.rating} ({service.reviews} reviews)
+              </span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <FiClock />
+              <span>{service.duration}</span>
             </div>
           </div>
 
-          {/* Booking Sidebar */}
-          <aside>
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.15 }}
-              className="sticky top-24 rounded-3xl border border-black/10 bg-white p-6 shadow-lg dark:border-white/10 dark:bg-[#27272A]"
+          <hr className="my-6 border-black/10 dark:border-white/10" />
+
+          <div>
+            <h3 className="text-lg font-semibold">Service Overview</h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#1C1917]/80 dark:text-[#A1A1AA]">
+              {service.description}
+            </p>
+          </div>
+
+          <div className="mt-8 flex items-center justify-between rounded-2xl bg-[#FAF9F7] p-5 dark:bg-[#18181B]">
+            <div>
+              <p className="text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
+                Total Service Fee
+              </p>
+              <p className="text-2xl font-bold text-[#15803D] dark:text-[#22C55E]">
+                ৳{service.price}
+              </p>
+            </div>
+
+            <button
+              onClick={handleConfirmBooking}
+              className="flex items-center gap-2 rounded-xl bg-[#15803D] px-6 py-3 text-sm font-semibold text-white transition-all hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
             >
-              <p className="text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                Starting price
-              </p>
-
-              <div className="mt-1 flex items-end gap-2">
-                <span className="text-3xl font-bold">৳{service.price}</span>
-                <span className="mb-1 text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                  / service
-                </span>
-              </div>
-
-              {/* Provider */}
-              <div className="mt-6 border-t border-black/10 pt-6 dark:border-white/10">
-                <p className="text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                  Service provider
-                </p>
-
-                <div className="mt-4 flex items-center gap-3">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]">
-                    <FiUser size={21} />
-                  </div>
-
-                  <div>
-                    <p className="text-sm font-semibold">
-                      {service.provider.name}
-                    </p>
-
-                    <p className="mt-1 text-xs text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                      {service.provider.experience}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="mt-4 flex items-center justify-between text-xs">
-                  <span className="flex items-center gap-1">
-                    <FiStar
-                      size={13}
-                      className="fill-current text-[#15803D] dark:text-[#22C55E]"
-                    />
-                    {service.provider.rating} rating
-                  </span>
-
-                  <span className="text-[#1C1917]/60 dark:text-[#A1A1AA]">
-                    {service.provider.jobs} jobs
-                  </span>
-                </div>
-              </div>
-
-              {/* CTA */}
-              <div className="mt-6 space-y-3">
-                <Link
-                  href="/booking"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#15803D] px-5 py-3.5 text-sm font-semibold text-white transition-all duration-300 hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
-                >
-                  <FiCalendar size={16} />
-                  Book this service
-                </Link>
-
-                <button
-                  type="button"
-                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-black/10 px-5 py-3.5 text-sm font-semibold text-[#1C1917] transition-all hover:border-[#15803D] hover:bg-[#15803D]/5 dark:border-white/10 dark:text-[#F4F4F5] dark:hover:border-[#22C55E] dark:hover:bg-[#22C55E]/5"
-                >
-                  <FiMessageCircle size={16} />
-                  Contact provider
-                </button>
-              </div>
-
-              <p className="mt-5 text-center text-[11px] leading-5 text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
-                Final pricing may depend on the service requirements.
-              </p>
-            </motion.div>
-          </aside>
+              <FiCalendar size={18} />
+              Confirm & Book This Service
+            </button>
+          </div>
         </div>
       </div>
     </main>
   );
-};
-
-export default ServiceDetail;
+}

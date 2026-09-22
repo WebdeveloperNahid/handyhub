@@ -95,16 +95,22 @@ export default function LoginPage() {
     setSubmitError("");
 
     try {
-      const { error } = await authClient.signIn.email({
+      const res = await authClient.signIn.email({
         email: form.email,
         password: form.password,
       });
 
-      if (error) {
+      if (res.error) {
         setSubmitError(
-          error.message || "Incorrect email or password, please try again",
+          res.error.message || "Incorrect email or password, please try again",
         );
         return;
+      }
+
+      const token = (res.data as any)?.token || (res.data as any)?.session?.token;
+      if (token) {
+        localStorage.setItem("token", token);
+        localStorage.setItem("admin_token", token);
       }
 
       router.push("/");

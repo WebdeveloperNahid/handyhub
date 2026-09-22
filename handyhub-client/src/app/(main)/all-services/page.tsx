@@ -1,82 +1,56 @@
+"use client";
+
+import { useEffect, useState, useMemo } from "react";
 import Filtering from "@/Components/services/Filtering";
 import Paginations from "@/Components/services/Paginations";
 import ServiceCard from "@/Components/services/ServiceCard";
+import { getAllServices } from "@/lib/General_API";
+import type { ProviderService } from "@/types/index";
 
-const services = [
-  {
-    id: 1,
-    title: "Professional Plumbing",
-    category: "Plumbing",
-    description:
-      "Reliable plumbing services for leaks, pipes, fittings and home repairs.",
-    price: 500,
-    rating: 4.9,
-    reviews: 124,
-    duration: "1–2 hrs",
-    icon: "plumbing",
-  },
-  {
-    id: 2,
-    title: "Electrical Repair",
-    category: "Electrical",
-    description:
-      "Professional electrical installation, repair and maintenance services.",
-    price: 600,
-    rating: 4.8,
-    reviews: 98,
-    duration: "1–2 hrs",
-    icon: "electrical",
-  },
-  {
-    id: 3,
-    title: "Home Cleaning",
-    category: "Cleaning",
-    description:
-      "Professional cleaning services to keep your home fresh and comfortable.",
-    price: 800,
-    rating: 4.9,
-    reviews: 156,
-    duration: "2–3 hrs",
-    icon: "cleaning",
-  },
-  {
-    id: 4,
-    title: "House Painting",
-    category: "Painting",
-    description:
-      "Quality interior and exterior painting services for your home.",
-    price: 1200,
-    rating: 4.7,
-    reviews: 87,
-    duration: "3–5 hrs",
-    icon: "painting",
-  },
-  {
-    id: 5,
-    title: "Home Repair",
-    category: "Home Repair",
-    description:
-      "General home repair and maintenance services from skilled professionals.",
-    price: 700,
-    rating: 4.8,
-    reviews: 76,
-    duration: "1–3 hrs",
-    icon: "repair",
-  },
-  {
-    id: 6,
-    title: "Appliance Repair",
-    category: "Appliance Repair",
-    description: "Expert repair services for common household appliances.",
-    price: 900,
-    rating: 4.8,
-    reviews: 91,
-    duration: "1–2 hrs",
-    icon: "appliance",
-  },
-];
+const ITEMS_PER_PAGE = 6;
 
-const AllServices = () => {
+export default function AllServicesPage() {
+  const [services, setServices] = useState<ProviderService[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+
+  useEffect(() => {
+    let isMounted = true;
+    getAllServices()
+      .then((res) => {
+        if (!isMounted) return;
+        const data = res?.data || (Array.isArray(res) ? res : []);
+        // Extra safeguard: only show active services
+        const activeServices = data.filter(
+          (service: ProviderService) => service.status === "active"
+        );
+        setServices(activeServices);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        if (isMounted) {
+          setServices([]);
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // Compute pagination based on active services
+  const totalPages = Math.ceil(services.length / ITEMS_PER_PAGE) || 1;
+  const paginatedServices = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return services.slice(start, start + ITEMS_PER_PAGE);
+  }, [services, currentPage]);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
     <main className="min-h-screen bg-[#FAF9F7] text-[#1C1917] transition-colors duration-300 dark:bg-[#18181B] dark:text-[#F4F4F5]">
       <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 sm:py-16">
@@ -99,13 +73,15 @@ const AllServices = () => {
         <Filtering />
 
         {/* Service Cards */}
-        <ServiceCard services={services} />
+        <ServiceCard services={paginatedServices} isLoading={isLoading} />
 
-        {/* Pagination */}
-        <Paginations />
+        {/* Dynamic Pagination */}
+        <Paginations
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+        />
       </div>
     </main>
   );
-};
-
-export default AllServices;
+}

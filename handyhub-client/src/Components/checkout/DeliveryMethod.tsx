@@ -1,7 +1,14 @@
 "use client";
 
+"use client";
+
 import { useState } from "react";
 import { FiTruck, FiZap, FiCalendar } from "react-icons/fi";
+import {
+  FiTruck as FiTruckIcon,
+  FiZap as FiZapIcon,
+  FiCalendar as FiCalendarIcon,
+} from "react-icons/fi";
 
 const options = [
   {
@@ -9,26 +16,38 @@ const options = [
     title: "Standard Delivery",
     desc: "Delivered in 2-3 Days",
     price: "Free",
-    icon: FiTruck,
+    icon: FiTruckIcon,
   },
   {
     id: "express",
     title: "Express / Immediate",
     desc: "Within 24 hours",
     price: "৳150",
-    icon: FiZap,
+    icon: FiZapIcon,
   },
   {
     id: "schedule",
     title: "Scheduled Slot",
     desc: "Pick your date & time",
     price: "৳50",
-    icon: FiCalendar,
+    icon: FiCalendarIcon,
   },
 ];
 
-export default function DeliveryMethod() {
+// ✅ TypeScript props interface যোগ করা হলো
+interface DeliveryMethodProps {
+  onSelect?: (id: string) => void;
+}
+
+export default function DeliveryMethod({ onSelect }: DeliveryMethodProps) {
   const [selected, setSelected] = useState("standard");
+
+  const handleSelect = (id: string) => {
+    setSelected(id);
+    if (onSelect) {
+      onSelect(id);
+    }
+  };
 
   return (
     <div className="space-y-4">
@@ -42,7 +61,7 @@ export default function DeliveryMethod() {
           return (
             <div
               key={opt.id}
-              onClick={() => setSelected(opt.id)}
+              onClick={() => handleSelect(opt.id)}
               className={`flex cursor-pointer items-center justify-between rounded-2xl border p-4 transition-all duration-300 ${
                 isSelected
                   ? "border-[#15803D] bg-[#15803D]/5 shadow-sm dark:border-[#22C55E] dark:bg-[#22C55E]/10"

@@ -10,10 +10,12 @@ export const verifyToken = async (req: Request, res: Response, next: NextFunctio
       return res.status(401).json({ message: "unauthorized access" });
     }
 
-    const token = authHeader.split(" ")[1];
+    let token = authHeader.split(" ")[1];
     if (!token) {
       return res.status(401).json({ message: "unauthorized access" });
     }
+
+    token = token.split(".")[0];
 
     const session = await sessionCollection.findOne({ token });
     if (!session) {

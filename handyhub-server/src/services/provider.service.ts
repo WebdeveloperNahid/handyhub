@@ -66,17 +66,17 @@ export class ProviderService {
     providerId: string,
     serviceData: Partial<IService>
   ): Promise<IService> {
-const ALLOWED_CATEGORIES = [
-  "Plumbing",
-  "Electrical",
-  "Cleaning",
-  "Painting",
-  "Home Repair",
-  "Appliance Repair",
-];
+    const ALLOWED_CATEGORIES = [
+      "Plumbing",
+      "Electrical",
+      "Cleaning",
+      "Painting",
+      "Home Repair",
+      "Appliance Repair",
+    ];
 
-const DEFAULT_SERVICE_IMAGE =
-  "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
+    const DEFAULT_SERVICE_IMAGE =
+      "https://images.unsplash.com/photo-1581578731548-c64695cc6952?auto=format&fit=crop&w=1000&q=80";
 
     const { title, description, category, price, image, availability, duration, highlights } =
       serviceData;
@@ -134,7 +134,7 @@ const DEFAULT_SERVICE_IMAGE =
       availability: validatedAvailability,
       duration: duration || "1 - 2 Hours",
       highlights: Array.isArray(highlights) ? highlights : [],
-      status: "active",
+      status: "pending",
       createdAt: new Date(),
       updatedAt: new Date(),
     };
@@ -327,9 +327,8 @@ const DEFAULT_SERVICE_IMAGE =
       throw {
         status: 400,
         code: "INVALID_STATUS_TRANSITION",
-        message: `Cannot transition booking from '${currentStatus}' to '${targetStatus}'. Allowed transitions: ${
-          allowedNext.length > 0 ? allowedNext.join(", ") : "None (terminal state)"
-        }`,
+        message: `Cannot transition booking from '${currentStatus}' to '${targetStatus}'. Allowed transitions: ${allowedNext.length > 0 ? allowedNext.join(", ") : "None (terminal state)"
+          }`,
       };
     }
 

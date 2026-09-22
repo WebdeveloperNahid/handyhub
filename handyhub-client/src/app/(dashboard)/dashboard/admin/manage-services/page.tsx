@@ -6,7 +6,7 @@ import {
   getServiceById,
   updateService,
   deleteService,
-} from "@/app/api/admin_api/manageServiceApi";
+} from "@/lib/api/admin_api/manageServiceApi";
 import { ToastNotification, ToastMessage } from "@/Components/shared/ToastNotification";
 import {
   FiEye,

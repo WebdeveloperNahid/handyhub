@@ -1,6 +1,6 @@
 
 const dns = require('node:dns');
-dns.setServers(['1.1.1.1', '1.0.0.1']); 
+dns.setServers(['1.1.1.1', '1.0.0.1']);
 
 import express, { Request, Response } from "express";
 import cors from "cors";
@@ -12,6 +12,7 @@ import customerRoutes from "./src/routes/customer.routes";
 import providerRoutes from "./src/routes/provider.routes";
 import adminRoutes from "./src/routes/admin.routes";
 import profileRoutes from "./src/routes/profile.routes";
+import aiRoutes from "./src/routes/ai.routes";
 dotenv.config();
 console.log("Starting server...");
 
@@ -60,7 +61,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/customer", customerRoutes);
 app.use("/api/v1/provider", providerRoutes);
 app.use("/api/v1/admin", adminRoutes);
-
+app.use("/api/v1/ai", aiRoutes);
 // Profile update route
 app.use("/api/profile", profileRoutes);
 

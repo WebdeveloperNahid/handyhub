@@ -11,15 +11,15 @@ const BookingHistoryTable = ({
     return (
         <div
             className="
-                overflow-hidden rounded-2xl
+                w-full max-w-full overflow-hidden rounded-2xl
                 border border-black/[0.06]
                 bg-white
                 dark:border-white/[0.06]
                 dark:bg-[#18181B]
             "
         >
-            <div className="overflow-x-auto">
-                <table className="w-full min-w-[750px] text-sm">
+            <div className="w-full overflow-x-auto">
+                <table className="w-full min-w-[650px] text-sm">
                     <thead
                         className="
                             border-b border-black/[0.06]
@@ -29,27 +29,27 @@ const BookingHistoryTable = ({
                         "
                     >
                         <tr>
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Booking ID
                             </th>
 
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Service
                             </th>
 
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Provider
                             </th>
 
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Date
                             </th>
 
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Price
                             </th>
 
-                            <th className="px-6 py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
+                            <th className="px-3 py-3 md:px-6 md:py-4 text-left font-semibold text-[#111827] dark:text-[#F4F4F5]">
                                 Status
                             </th>
                         </tr>
@@ -67,27 +67,27 @@ const BookingHistoryTable = ({
                                     dark:hover:bg-[#202023]
                                 "
                             >
-                                <td className="px-6 py-4 font-medium text-[#15803D] dark:text-[#22C55E]">
+                                <td className="px-3 py-3 md:px-6 md:py-4 font-medium text-[#15803D] dark:text-[#22C55E]">
                                     {booking.id}
                                 </td>
 
-                                <td className="px-6 py-4 font-medium text-[#111827] dark:text-[#F4F4F5]">
+                                <td className="px-3 py-3 md:px-6 md:py-4 font-medium text-[#111827] dark:text-[#F4F4F5]">
                                     {booking.serviceName}
                                 </td>
 
-                                <td className="px-6 py-4 text-[#6B7280] dark:text-[#A1A1AA]">
+                                <td className="px-3 py-3 md:px-6 md:py-4 text-[#6B7280] dark:text-[#A1A1AA]">
                                     {booking.providerName}
                                 </td>
 
-                                <td className="px-6 py-4 text-[#6B7280] dark:text-[#A1A1AA]">
+                                <td className="px-3 py-3 md:px-6 md:py-4 text-[#6B7280] dark:text-[#A1A1AA]">
                                     {booking.date}
                                 </td>
 
-                                <td className="px-6 py-4 font-medium text-[#111827] dark:text-[#F4F4F5]">
+                                <td className="px-3 py-3 md:px-6 md:py-4 font-medium text-[#111827] dark:text-[#F4F4F5]">
                                     ৳{booking.price.toLocaleString()}
                                 </td>
 
-                                <td className="px-6 py-4">
+                                <td className="px-3 py-3 md:px-6 md:py-4">
                                     <Chip
                                         size="sm"
                                         variant="soft"

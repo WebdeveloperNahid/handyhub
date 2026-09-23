@@ -1,5 +1,6 @@
 "use client";
 
+import { useState, useEffect } from "react";
 import { authClient } from "@/lib/auth-client";
 import { FiBell, FiMenu } from "react-icons/fi";
 import ThemeToggle from "../Themetoggle";
@@ -10,19 +11,24 @@ interface DashboardNavbarProps {
 
 const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
   const { data: session, isPending } = authClient.useSession();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const user = session?.user;
   const role = (user as { role?: string })?.role;
 
-  console.log(user?.image)
-  const roleLabel =
-    role === "admin"
+  const roleLabel = !mounted
+    ? "Customer"
+    : role === "admin"
       ? "Admin"
       : role === "provider"
         ? "Provider"
         : "Customer";
 
-  const userName = user?.name || "User";
+  const userName = mounted ? (user?.name || "User") : "User";
 
   return (
     <header
@@ -147,7 +153,7 @@ const DashboardNavbar = ({ onMenuClick }: DashboardNavbarProps) => {
                         dark:text-[#18181B]
                       "
             >
-              {isPending ? (
+              {!mounted || isPending ? (
                 <div className="h-full w-full animate-pulse rounded-full bg-[#E7E5E4] dark:bg-[#3F3F46]" />
               ) : user?.image ? (
                 <img

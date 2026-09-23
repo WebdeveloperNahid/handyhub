@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+﻿import { Request, Response } from "express";
 import {
   getAiRecommendationService,
   searchServicesFromDB,
@@ -25,7 +25,7 @@ export const getRecommendationController = async (
     if (!rawProblem || typeof rawProblem !== "string" || !rawProblem.trim()) {
       return res.status(400).json({
         success: false,
-        message: "অনুগ্রহ করে আপনার সমস্যাটির বিবরণ দিন। (Please describe your problem)",
+        message: "Please describe your problem before submitting.",
       });
     }
 

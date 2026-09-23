@@ -1,4 +1,4 @@
-import { GoogleGenerativeAI } from "@google/generative-ai";
+﻿import { GoogleGenerativeAI } from "@google/generative-ai";
 import { connectToMongoDB, getDb, serviceCollection } from "../config/db";
 
 // Candidate models in order of priority
@@ -121,7 +121,7 @@ export const searchServicesFromDB = async (userProblem: string, db?: any) => {
   const allServices = await collection.find({}).toArray();
 
   if (allServices.length === 0) {
-    throw new Error("ডাটাবেজে বর্তমানে কোনো সার্ভিস পাওয়া যায়নি।");
+    throw new Error("No services are currently available in the database.");
   }
 
   // Combine results: direct keyword matches first, then remaining services without duplicates
@@ -203,7 +203,7 @@ export const getAiRecommendationService = async (
     }
 
     if (!candidateServices || candidateServices.length === 0) {
-      throw new Error("ডাটাবেজে বর্তমানে কোনো সার্ভিস পাওয়া যায়নি।");
+      throw new Error("No services are currently available in the database.");
     }
 
     // Format service data for prompt efficiency
@@ -231,7 +231,7 @@ export const getAiRecommendationService = async (
         serviceId: bestMatch._id ? bestMatch._id.toString() : bestMatch.id,
         recommendedServiceTitle: bestMatch.title || bestMatch.name,
         category: bestMatch.category || "General",
-        reason: `আপনার সমস্যার ওপর ভিত্তি করে HandyHub ডাটাবেজ থেকে '${bestMatch.title}' সার্ভিসটি সুপারিশ করা হয়েছে।`,
+        reason: `Based on your problem description, '${bestMatch.title}' is the most suitable service available on HandyHub.`,
         estimatedPrice: bestMatch.price,
       };
     }
@@ -249,19 +249,20 @@ ${JSON.stringify(formattedServices, null, 2)}
 Task:
 1. Analyze the user's issue carefully (understand English, Bengali, or Banglish input).
 2. Match it with the SINGLE MOST RELEVANT service available in the MongoDB database list above.
-3. Provide a clear, polite, and helpful explanation in Bengali explaining why this specific service is the best solution for their problem.
+3. Provide a clear, polite, and helpful explanation in English explaining why this specific service is the best solution for their problem.
 
 CRITICAL INSTRUCTIONS:
 - You MUST choose an exact service that exists in the provided MongoDB database list.
 - Return strictly a valid JSON object matching the schema below.
 - Do NOT wrap with markdown syntax or backticks.
+- The "reason" field MUST be written in English only. Do not use Bengali or any other language.
 
 Output JSON Schema:
 {
   "serviceId": "the exact 'id' string of the matched service from the database",
   "recommendedServiceTitle": "exact title of the service from the database",
   "category": "exact category of the service from the database",
-  "reason": "কেন এই সার্ভিস প্রয়োজন তার সুন্দর ও সহজ বাংলা বিবরণ (২-৩ বাক্য)",
+  "reason": "A clear 2-3 sentence English explanation of why this service best matches the user problem.",
   "estimatedPrice": price_number_from_database
 }
 `;
@@ -280,7 +281,7 @@ Output JSON Schema:
         serviceId: topMatch._id ? topMatch._id.toString() : topMatch.id,
         recommendedServiceTitle: topMatch.title || topMatch.name,
         category: topMatch.category || "General",
-        reason: `আপনার সমস্যার বর্ণনার ওপর ভিত্তি করে HandyHub ডাটাবেজ থেকে '${topMatch.title}' সার্ভিসটি সবচেয়ে উপযুক্ত বলে সুপারিশ করা হয়েছে।`,
+        reason: `Based on your problem description, '${topMatch.title}' is the most suitable service available on HandyHub.`,
         estimatedPrice: topMatch.price,
       };
     }
@@ -296,11 +297,11 @@ Output JSON Schema:
       serviceId: matchedRecord._id ? matchedRecord._id.toString() : (parsedData.serviceId || matchedRecord.id),
       recommendedServiceTitle: matchedRecord.title || parsedData.recommendedServiceTitle,
       category: matchedRecord.category || parsedData.category || "General",
-      reason: parsedData.reason || "আপনার সমস্যার জন্য এই সার্ভিসটি সবচেয়ে উপযুক্ত।",
+      reason: parsedData.reason || "This service is the best match for your problem.",
       estimatedPrice: matchedRecord.price ?? parsedData.estimatedPrice,
     };
   } catch (error: any) {
     console.error("AI Service Error:", error);
-    throw new Error(error.message || "AI Recommendation প্রসেস করতে ব্যর্থ হয়েছে।");
+    throw new Error(error.message || "Failed to process the AI recommendation.");
   }
 };

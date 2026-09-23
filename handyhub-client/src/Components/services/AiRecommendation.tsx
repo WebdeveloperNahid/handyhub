@@ -3,7 +3,16 @@
 import { useState } from "react";
 import Link from "next/link";
 import toast from "react-hot-toast";
-import { FiCpu, FiArrowRight, FiCheckCircle, FiTool, FiAlertCircle } from "react-icons/fi";
+import {
+  FiCpu,
+  FiArrowRight,
+  FiCheckCircle,
+  FiAlertCircle,
+  FiZap,
+  FiSearch,
+} from "react-icons/fi";
+
+// ─── Types ─────────────────────────────────────────────────────────────────────
 
 interface RecommendationResult {
   serviceId?: string;
@@ -13,24 +22,35 @@ interface RecommendationResult {
   estimatedPrice: string | number;
 }
 
+// ─── Example prompts ───────────────────────────────────────────────────────────
+
 const EXAMPLE_PROMPTS = [
-  { label: "ফ্যান নষ্ট / Fan broken", text: "my fan is broken and making noise" },
-  { label: "প্লাম্বার দরকার / Need plumber", text: "I need a plumber to fix water pipe leakage" },
-  { label: "এসি সার্ভিসিং / AC repair", text: "my AC is not cooling and needs repair" },
+  { label: "Fan broken",        text: "my fan is broken and making noise" },
+  { label: "Need plumber",      text: "I need a plumber to fix water pipe leakage" },
+  { label: "AC repair",         text: "my AC is not cooling and needs repair" },
+  { label: "Electrical issue",  text: "my lights are flickering and switches not working" },
+  { label: "Home cleaning",     text: "I need deep cleaning service for my home" },
 ];
 
-export default function AiRecommendation() {
-  const [userProblem, setUserProblem] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [recommendation, setRecommendation] = useState<RecommendationResult | null>(null);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+// ─── Component ─────────────────────────────────────────────────────────────────
 
-  const handleGetRecommendation = async (e?: React.FormEvent, customQuery?: string) => {
+export default function AiRecommendation() {
+  const [userProblem,    setUserProblem]    = useState("");
+  const [loading,        setLoading]        = useState(false);
+  const [recommendation, setRecommendation] = useState<RecommendationResult | null>(null);
+  const [errorMessage,   setErrorMessage]   = useState<string | null>(null);
+
+  // ── Core handler (logic untouched) ────────────────────────────────────────
+
+  const handleGetRecommendation = async (
+    e?: React.FormEvent,
+    customQuery?: string
+  ) => {
     if (e) e.preventDefault();
     const query = customQuery || userProblem;
 
     if (!query.trim()) {
-      toast.error("অনুগ্রহ করে আপনার সমস্যার বিবরণ দিন।");
+      toast.error("Please describe your problem first.");
       return;
     }
 
@@ -46,29 +66,27 @@ export default function AiRecommendation() {
 
       // Normalize base URL
       const cleanBase = rawBaseUrl.replace(/\/+$/, "").replace(/\/api\/v1$/, "");
-      const endpoint = `${cleanBase}/api/v1/ai/recommend`;
+      const endpoint  = `${cleanBase}/api/v1/ai/recommend`;
 
       const response = await fetch(endpoint, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ userProblem: query.trim() }),
+        method:  "POST",
+        headers: { "Content-Type": "application/json" },
+        body:    JSON.stringify({ userProblem: query.trim() }),
       });
 
       const data = await response.json();
 
       if (response.ok && data.success) {
         setRecommendation(data.data);
-        toast.success("AI সুপারিশ সফলভাবে প্রস্তুত হয়েছে!");
+        toast.success("AI recommendation is ready!");
       } else {
-        const msg = data.message || "সুপারিশ পেতে সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+        const msg = data.message || "Unable to get a recommendation. Please try again.";
         setErrorMessage(msg);
         toast.error(msg);
       }
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("[AiRecommendation] Fetch error:", error);
-      const msg = "সার্ভারের সাথে যোগাযোগ করা যাচ্ছে না। দয়া করে নিশ্চিত করুন ব্যাকএন্ড চালু আছে।";
+      const msg = "Unable to reach the server. Please make sure the backend is running.";
       setErrorMessage(msg);
       toast.error(msg);
     } finally {
@@ -80,169 +98,233 @@ export default function AiRecommendation() {
     setUserProblem(text);
   };
 
+  // ── Render ────────────────────────────────────────────────────────────────
+
   return (
-    <div className="max-w-3xl mx-auto my-8 p-6 sm:p-8 bg-white dark:bg-[#18181B] rounded-2xl shadow-xl border border-gray-100 dark:border-white/10 transition-colors">
-      {/* Header */}
-      <div className="flex items-center gap-3 mb-3">
-        <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
-          <FiCpu className="h-6 w-6" />
-        </span>
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
-            AI Service Recommendation
-          </h1>
-          <p className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
-            Smart Matching Powered by HandyHub Intelligence
-          </p>
-        </div>
+    <div className="mx-auto max-w-3xl px-4 py-12 sm:px-6 sm:py-16">
+
+      {/* ── Page header ────────────────────────────────────────────────────── */}
+      <div className="mb-10">
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.2em] text-[#15803D] dark:text-[#22C55E]">
+          AI-Powered
+        </p>
+
+        <h1 className="text-3xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5] sm:text-4xl">
+          Find the right service, instantly
+        </h1>
+
+        <p className="mt-4 max-w-2xl text-sm leading-7 text-[#1C1917]/70 dark:text-[#A1A1AA] sm:text-base">
+          Describe your home problem in your own words. Our AI will analyse
+          your issue and recommend the most relevant service from the HandyHub
+          platform.
+        </p>
       </div>
 
-      <p className="text-gray-600 dark:text-gray-300 mb-6 text-sm leading-relaxed">
-        আপনার ঘরের যেকোনো সমস্যা (যেমন ফ্যান নষ্ট, পাইপ লিক, এসি সার্ভিসিং) নিচে লিখুন।
-        আমাদের AI স্বয়ংক্রিয়ভাবে ডাটাবেজ থেকে আপনার জন্য সবচেয়ে কার্যকর সার্ভিসটি খুঁজে দেবে।
-      </p>
+      {/* ── Input card ─────────────────────────────────────────────────────── */}
+      <div className="rounded-2xl border border-black/10 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.04)] dark:border-white/10 dark:bg-[#18181B] dark:shadow-[0_10px_35px_rgba(0,0,0,0.22)]">
 
-      {/* Suggestion Chips */}
-      <div className="mb-4">
-        <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider block mb-2">
-          উদাহরণসমূহ (Quick Examples):
-        </span>
-        <div className="flex flex-wrap gap-2">
-          {EXAMPLE_PROMPTS.map((prompt, idx) => (
-            <button
-              key={idx}
-              type="button"
-              onClick={() => handleChipClick(prompt.text)}
-              className="text-xs px-3 py-1.5 rounded-full bg-gray-100 hover:bg-emerald-50 text-gray-700 hover:text-emerald-700 dark:bg-white/5 dark:text-gray-300 dark:hover:bg-emerald-950/40 dark:hover:text-emerald-400 border border-gray-200 dark:border-white/10 transition-all cursor-pointer"
-            >
-              💡 {prompt.label}
-            </button>
-          ))}
-        </div>
-      </div>
+        {/* Card header */}
+        <div className="flex items-center gap-3 border-b border-black/10 px-6 py-4 dark:border-white/10">
+          <span className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-lg bg-[#15803D] text-white shadow-sm dark:bg-[#22C55E] dark:text-[#18181B]">
+            <FiCpu className="h-4 w-4" />
+          </span>
 
-      {/* Form */}
-      <form onSubmit={(e) => handleGetRecommendation(e)} className="space-y-4">
-        <div className="relative">
-          <textarea
-            value={userProblem}
-            onChange={(e) => setUserProblem(e.target.value)}
-            placeholder="আপনার সমস্যাটি বিস্তারিত লিখুন... যেমন: 'আমার ফ্যান ঘুরছে না এবং শব্দ করছে' বা 'I need a plumber to fix kitchen pipe leakage'"
-            rows={4}
-            className="w-full p-4 border border-gray-300 dark:border-white/10 rounded-xl bg-gray-50/50 dark:bg-white/5 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:ring-2 focus:ring-emerald-500 focus:bg-white dark:focus:bg-[#18181B] outline-none transition-all resize-y text-sm"
-          />
+          <div>
+            <p className="text-sm font-semibold text-[#1C1917] dark:text-[#F4F4F5]">
+              HandyHub AI Assistant
+            </p>
+            <p className="text-xs text-[#1C1917]/50 dark:text-[#A1A1AA]">
+              Smart service matching from your database
+            </p>
+          </div>
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || !userProblem.trim()}
-          className="w-full py-3.5 px-6 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-xl shadow-lg shadow-emerald-600/25 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all cursor-pointer"
-        >
-          {loading ? (
-            <>
-              <svg
-                className="animate-spin h-5 w-5 text-white"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 24 24"
+        {/* Card body */}
+        <div className="p-6 sm:p-8">
+
+          {/* Quick example chips */}
+          <div className="mb-6">
+            <p className="mb-3 text-xs font-semibold uppercase tracking-wider text-[#1C1917]/50 dark:text-[#A1A1AA]">
+              Quick examples
+            </p>
+
+            <div className="flex flex-wrap gap-2">
+              {EXAMPLE_PROMPTS.map((prompt, idx) => (
+                <button
+                  key={idx}
+                  type="button"
+                  onClick={() => handleChipClick(prompt.text)}
+                  className="rounded-full border border-black/10 bg-[#FAF9F7] px-3 py-1.5 text-xs font-medium text-[#1C1917]/70 transition-colors hover:border-[#15803D]/40 hover:bg-[#15803D]/5 hover:text-[#15803D] dark:border-white/10 dark:bg-white/5 dark:text-[#A1A1AA] dark:hover:border-[#22C55E]/30 dark:hover:bg-[#22C55E]/5 dark:hover:text-[#22C55E]"
+                >
+                  {prompt.label}
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Form */}
+          <form onSubmit={(e) => handleGetRecommendation(e)} className="space-y-4">
+            <div>
+              <label
+                htmlFor="problem-input"
+                className="mb-2 block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]"
               >
-                <circle
-                  className="opacity-25"
-                  cx="12"
-                  cy="12"
-                  r="10"
-                  stroke="currentColor"
-                  strokeWidth="4"
-                />
-                <path
-                  className="opacity-75"
-                  fill="currentColor"
-                  d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                />
-              </svg>
-              <span>AI ডাটাবেজ বিশ্লেষণ করছে...</span>
-            </>
-          ) : (
-            <>
-              <FiTool className="h-5 w-5" />
-              <span>Get AI Recommendation</span>
-            </>
-          )}
-        </button>
-      </form>
+                Describe your problem
+              </label>
 
-      {/* Error Message */}
-      {errorMessage && (
-        <div className="mt-6 p-4 bg-red-50 dark:bg-red-950/30 border border-red-200 dark:border-red-900/50 rounded-xl flex items-start gap-3 text-red-700 dark:text-red-400 text-sm">
-          <FiAlertCircle className="h-5 w-5 mt-0.5 flex-shrink-0" />
-          <span>{errorMessage}</span>
+              <textarea
+                id="problem-input"
+                value={userProblem}
+                onChange={(e) => setUserProblem(e.target.value)}
+                placeholder="e.g. My fan is making a loud noise and not spinning properly, or I have a water pipe leaking under the sink..."
+                rows={4}
+                className="w-full resize-y rounded-xl border border-black/10 bg-[#FAF9F7] p-4 text-sm text-[#1C1917] placeholder-[#1C1917]/40 outline-none transition-all focus:border-[#15803D]/50 focus:bg-white focus:ring-2 focus:ring-[#15803D]/20 dark:border-white/10 dark:bg-white/5 dark:text-[#F4F4F5] dark:placeholder-white/25 dark:focus:border-[#22C55E]/40 dark:focus:bg-white/[0.07] dark:focus:ring-[#22C55E]/15"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading || !userProblem.trim()}
+              className="flex w-full items-center justify-center gap-2 rounded-xl bg-[#15803D] px-6 py-3.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-[#15803D]/90 disabled:cursor-not-allowed disabled:opacity-50 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
+            >
+              {loading ? (
+                <>
+                  <svg
+                    className="h-4 w-4 animate-spin"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span>Analysing your problem...</span>
+                </>
+              ) : (
+                <>
+                  <FiSearch className="h-4 w-4" />
+                  <span>Get AI Recommendation</span>
+                </>
+              )}
+            </button>
+          </form>
+
+          {/* Error state */}
+          {errorMessage && (
+            <div className="mt-6 flex items-start gap-3 rounded-xl border border-red-200 bg-red-50 p-4 text-sm text-red-700 dark:border-red-900/40 dark:bg-red-950/20 dark:text-red-400">
+              <FiAlertCircle className="mt-0.5 h-4 w-4 flex-shrink-0" />
+              <span>{errorMessage}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ── Result card ────────────────────────────────────────────────────── */}
+      {recommendation && (
+        <div className="relative mt-6 overflow-hidden rounded-2xl border border-black/10 bg-white shadow-[0_8px_30px_rgba(0,0,0,0.06)] dark:border-white/10 dark:bg-[#18181B] dark:shadow-[0_10px_35px_rgba(0,0,0,0.22)]">
+
+          {/* Top green accent line */}
+          <div className="absolute left-0 top-0 h-[3px] w-full bg-[#15803D] dark:bg-[#22C55E]" />
+
+          <div className="p-6 sm:p-8">
+
+            {/* Result header */}
+            <div className="flex flex-wrap items-start justify-between gap-4">
+
+              {/* Service title + category */}
+              <div className="min-w-0 flex-1">
+                <p className="mb-1.5 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.15em] text-[#15803D] dark:text-[#22C55E]">
+                  <FiCheckCircle className="h-3.5 w-3.5 flex-shrink-0" />
+                  Recommended Service
+                </p>
+
+                <h2 className="text-xl font-bold tracking-tight text-[#1C1917] dark:text-[#F4F4F5] sm:text-2xl">
+                  {recommendation.recommendedServiceTitle}
+                </h2>
+
+                {recommendation.category && (
+                  <span className="mt-2 inline-block rounded-full border border-[#15803D]/20 bg-[#15803D]/5 px-2.5 py-0.5 text-xs font-medium text-[#15803D] dark:border-[#22C55E]/20 dark:bg-[#22C55E]/10 dark:text-[#22C55E]">
+                    {recommendation.category}
+                  </span>
+                )}
+              </div>
+
+              {/* Price block */}
+              <div className="flex-shrink-0 rounded-xl border border-black/10 bg-[#FAF9F7] px-5 py-3 text-right dark:border-white/10 dark:bg-white/5">
+                <p className="text-xs font-medium text-[#1C1917]/50 dark:text-[#A1A1AA]">
+                  Estimated price
+                </p>
+                <p className="mt-0.5 text-2xl font-bold text-[#15803D] dark:text-[#22C55E]">
+                  ৳{recommendation.estimatedPrice}
+                </p>
+              </div>
+            </div>
+
+            {/* Why this service */}
+            <div className="mt-6 rounded-xl border border-black/5 bg-[#FAF9F7] p-4 dark:border-white/5 dark:bg-white/[0.03]">
+              <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-[#1C1917]/50 dark:text-[#A1A1AA]">
+                Why this service?
+              </p>
+              <p className="text-sm leading-7 text-[#1C1917]/80 dark:text-[#A1A1AA]">
+                {recommendation.reason}
+              </p>
+            </div>
+
+            {/* Action buttons */}
+            <div className="mt-6 flex flex-wrap gap-3">
+              {recommendation.serviceId ? (
+                <Link
+                  href={`/all-services/${recommendation.serviceId}`}
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
+                >
+                  <span>View &amp; Book Service</span>
+                  <FiArrowRight className="h-4 w-4" />
+                </Link>
+              ) : (
+                <Link
+                  href="/all-services"
+                  className="inline-flex items-center gap-2 rounded-xl bg-[#15803D] px-5 py-2.5 text-sm font-medium text-white transition-colors hover:bg-[#15803D]/90 dark:bg-[#22C55E] dark:text-[#18181B] dark:hover:bg-[#22C55E]/90"
+                >
+                  <span>Browse All Services</span>
+                  <FiArrowRight className="h-4 w-4" />
+                </Link>
+              )}
+
+              <button
+                type="button"
+                onClick={() => {
+                  setUserProblem("");
+                  setRecommendation(null);
+                }}
+                className="rounded-xl border border-black/10 px-4 py-2.5 text-sm font-medium text-[#1C1917]/70 transition-colors hover:bg-black/5 dark:border-white/10 dark:text-[#A1A1AA] dark:hover:bg-white/5"
+              >
+                Start over
+              </button>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Recommendation Result Card */}
-      {recommendation && (
-        <div className="mt-8 p-6 bg-gradient-to-br from-emerald-50/70 to-teal-50/40 dark:from-emerald-950/20 dark:to-teal-950/10 border border-emerald-200/80 dark:border-emerald-800/40 rounded-2xl space-y-4 shadow-sm">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-emerald-200/60 dark:border-emerald-800/40 pb-4">
-            <div className="space-y-1">
-              <span className="text-xs uppercase tracking-wider font-semibold text-emerald-700 dark:text-emerald-400 flex items-center gap-1.5">
-                <FiCheckCircle className="h-4 w-4" /> সেরা সার্ভিস সুপারিশ
-              </span>
-              <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">
-                {recommendation.recommendedServiceTitle}
-              </h3>
-              {recommendation.category && (
-                <span className="inline-block text-xs px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 dark:bg-emerald-900/60 dark:text-emerald-300 font-medium">
-                  {recommendation.category}
-                </span>
-              )}
-            </div>
-
-            <div className="text-right bg-white dark:bg-white/5 px-4 py-2 rounded-xl border border-emerald-100 dark:border-white/5">
-              <span className="text-xs text-gray-500 dark:text-gray-400 block font-medium">আনুমানিক খরচ</span>
-              <span className="text-xl font-bold text-emerald-700 dark:text-emerald-400">
-                ৳{recommendation.estimatedPrice}
-              </span>
-            </div>
-          </div>
-
-          <div>
-            <h4 className="font-semibold text-gray-800 dark:text-gray-200 text-sm mb-1.5">
-              কেন এই সার্ভিসটি আপনার জন্য প্রয়োজন:
-            </h4>
-            <p className="text-gray-700 dark:text-gray-300 text-sm leading-relaxed">
-              {recommendation.reason}
-            </p>
-          </div>
-
-          <div className="pt-2 flex flex-wrap gap-3">
-            {recommendation.serviceId ? (
-              <Link
-                href={`/all-services/${recommendation.serviceId}`}
-                className="inline-flex items-center gap-2 py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow transition-colors"
-              >
-                <span>সার্ভিসটি দেখুন ও বুক করুন</span>
-                <FiArrowRight className="h-4 w-4" />
-              </Link>
-            ) : (
-              <Link
-                href="/all-services"
-                className="inline-flex items-center gap-2 py-2.5 px-5 bg-emerald-600 hover:bg-emerald-700 text-white text-sm font-semibold rounded-lg shadow transition-colors"
-              >
-                <span>সব সার্ভিস দেখুন</span>
-                <FiArrowRight className="h-4 w-4" />
-              </Link>
-            )}
-            <button
-              type="button"
-              onClick={() => {
-                setUserProblem("");
-                setRecommendation(null);
-              }}
-              className="py-2.5 px-4 text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200 bg-gray-100 hover:bg-gray-200 dark:bg-white/5 dark:hover:bg-white/10 rounded-lg transition-colors cursor-pointer"
-            >
-              নতুন সমস্যা খুঁজুন
-            </button>
-          </div>
+      {/* ── Info footer hint (only when no result yet) ──────────────────── */}
+      {!recommendation && !loading && (
+        <div className="mt-6 flex items-start gap-3 rounded-xl border border-black/5 bg-[#FAF9F7] px-5 py-4 dark:border-white/5 dark:bg-white/[0.02]">
+          <FiZap className="mt-0.5 h-4 w-4 flex-shrink-0 text-[#15803D] dark:text-[#22C55E]" />
+          <p className="text-xs leading-5 text-[#1C1917]/60 dark:text-[#A1A1AA]">
+            The AI analyses your description and matches it against real services
+            in the HandyHub database. Results are based on your platform&apos;s
+            live service listings.
+          </p>
         </div>
       )}
     </div>

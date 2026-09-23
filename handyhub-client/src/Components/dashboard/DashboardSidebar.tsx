@@ -49,19 +49,28 @@ export function DashboardSidebar() {
 
   const { data: session, isPending } = authClient.useSession();
 
-  const role = !isPending ? (session?.user as { role?: string })?.role : null;
+  // Determine role from pathname first (consistent between SSR and client), falling back to session
+  const pathRole = pathname.startsWith("/dashboard/admin")
+    ? "admin"
+    : pathname.startsWith("/dashboard/provider")
+    ? "provider"
+    : pathname.startsWith("/dashboard/user")
+    ? "user"
+    : null;
+
+  const role = pathRole || (!isPending ? (session?.user as { role?: string })?.role : null);
 
   const userItems: NavItem[] = [
     { icon: House, label: "Overview", href: "/dashboard/user" },
     {
       icon: ListCheck,
-      label: "My Requests",
-      href: "/dashboard/user/my-requests",
+      label: "My Booking",
+      href: "/dashboard/user/my-bookings",
     },
     {
       icon: Heart,
-      label: "Saved Providers",
-      href: "/dashboard/user/saved-providers",
+      label: "Booking History",
+      href: "/dashboard/user/history",
     },
     { icon: Boxes3, label: "Browse Services", href: "/all-services" },
     {
@@ -98,19 +107,15 @@ export function DashboardSidebar() {
       label: "Active Jobs",
       href: "/dashboard/provider/active-jobs",
     },
-    {
-      icon: LuCircleUserRound,
-      label: "Profile",
-      href: "/dashboard/provider/profile",
-    },
+    {icon: LuCircleUserRound,label: "Profile",href: "/dashboard/provider/profile",},
   ];
 
   const adminItems: NavItem[] = [
     { icon: House, label: "Overview", href: "/dashboard/admin" },
     { icon: Person, label: "Manage Users", href: "/dashboard/admin/manage-users" },
-    { icon: Person, label: "Manage Providers", href: "/dashboard/admin/manage-providers" },
     { icon: Briefcase, label: "Manage Services", href: "/dashboard/admin/manage-services" },
     { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
+    { icon: LuCircleUserRound, label: "Profile", href: "/dashboard/admin/profile" },
   ];
 
   const getNavDetails = () => {

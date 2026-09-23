@@ -8,7 +8,9 @@ const router = Router();
 router.get("/users", AdminController.getAllUsers);
 
 // Protected admin routes
+router.get("/stats", AdminController.getStats);
 router.patch("/users/:userId/role", verifyToken, verifyAdmin, AdminController.updateUserRole);
+router.patch("/users/:userId/status", verifyToken, verifyAdmin, AdminController.updateUserStatus);
 router.get("/services", verifyToken, verifyAdmin, AdminController.getAllServices);
 router.get("/services/:id", verifyToken, verifyAdmin, AdminController.getServiceById);
 router.patch("/services/:id", verifyToken, verifyAdmin, AdminController.updateService);

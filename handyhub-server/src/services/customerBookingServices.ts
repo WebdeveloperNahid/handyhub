@@ -81,7 +81,7 @@ export class CustomerBookingService {
         };
 
         console.log("NEW BOOKING DATA:", newBooking);
-        await bookingCollection.insertOne(newBooking);
+        // await bookingCollection.insertOne(newBooking);
         const result =
             await bookingCollection.insertOne(
                 newBooking,

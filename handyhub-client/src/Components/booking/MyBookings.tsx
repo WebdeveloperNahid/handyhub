@@ -18,22 +18,17 @@ import ReviewModal from "@/Components/booking/ReviewModal";
 import DeleteModal from "@/Components/modals/DeleteModal";
 
 export default function MyBookings() {
-  const { data: session, isPending: sessionLoading } =
-    useSession();
+  const { data: session, isPending: sessionLoading } = useSession();
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
 
-  const [selectedBooking, setSelectedBooking] =
-    useState<Booking | null>(null);
-
-  const [bookingToCancel, setBookingToCancel] =
-    useState<string | null>(null);
-
+  const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
+  const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Fetch actual bookings
+  // Fetch actual bookings & filter out already cancelled ones
   useEffect(() => {
     if (sessionLoading) return;
 
@@ -47,16 +42,20 @@ export default function MyBookings() {
         setIsLoading(true);
         setError("");
 
-        const response = await getMyBookings(
-          session.session.token,
+        const response = await getMyBookings(session.session.token);
+        const rawData = response?.data || [];
+
+        // Active bookings filter (cancelled gula list theke bad jabe)
+        const activeBookings = rawData.filter(
+          (item: Booking) => item.status !== "cancelled"
         );
 
-        setBookings(response?.data || []);
+        setBookings(activeBookings);
       } catch (err) {
         setError(
           err instanceof Error
             ? err.message
-            : "Failed to load bookings.",
+            : "Failed to load bookings."
         );
       } finally {
         setIsLoading(false);
@@ -75,39 +74,31 @@ export default function MyBookings() {
       prev.map((booking) =>
         booking._id === reviewData.bookingId
           ? { ...booking, isReviewed: true }
-          : booking,
-      ),
+          : booking
+      )
     );
 
     setSelectedBooking(null);
   };
 
+  // Fixed handleCancelBooking function
   const handleCancelBooking = async () => {
-    if (
-      !bookingToCancel ||
-      !session?.session?.token
-    ) {
+    if (!bookingToCancel || !session?.session?.token) {
       return;
     }
+
+    const idToRemove = bookingToCancel;
 
     try {
       setIsCancelling(true);
       setError("");
 
-      await cancelBooking(
-        bookingToCancel,
-        session.session.token,
-      );
+      // 1. API Request to Cancel
+      await cancelBooking(idToRemove, session.session.token);
 
+      // 2. Filter out the cancelled booking from the state (UI theke card delete hoye jabe)
       setBookings((prev) =>
-        prev.map((booking) =>
-          booking._id === bookingToCancel
-            ? {
-                ...booking,
-                status: "cancelled",
-              }
-            : booking,
-        ),
+        prev.filter((booking) => String(booking._id) !== String(idToRemove))
       );
 
       setBookingToCancel(null);
@@ -115,7 +106,7 @@ export default function MyBookings() {
       setError(
         err instanceof Error
           ? err.message
-          : "Failed to cancel booking.",
+          : "Failed to cancel booking."
       );
     } finally {
       setIsCancelling(false);
@@ -149,10 +140,7 @@ export default function MyBookings() {
     return (
       <main className="min-h-screen bg-[#FAF9F7] px-4 py-14 dark:bg-[#18181B] sm:px-6">
         <div className="mx-auto max-w-6xl text-center">
-          <h2 className="text-xl font-bold">
-            Please sign in
-          </h2>
-
+          <h2 className="text-xl font-bold">Please sign in</h2>
           <p className="mt-2 text-sm text-gray-500">
             Please sign in to view your bookings.
           </p>
@@ -168,7 +156,6 @@ export default function MyBookings() {
         <div className="mb-10">
           <div className="mb-3 flex items-center gap-2">
             <span className="h-1 w-8 rounded-full bg-[#15803D] dark:bg-[#22C55E]" />
-
             <span className="text-sm font-semibold uppercase tracking-wider text-[#15803D] dark:text-[#22C55E]">
               Customer Dashboard
             </span>
@@ -179,12 +166,11 @@ export default function MyBookings() {
           </h1>
 
           <p className="mt-2 max-w-2xl text-sm text-[#6B7280] dark:text-[#A1A1AA]">
-            Keep track of your service requests, schedules,
-            providers, and booking progress.
+            Keep track of your service requests, schedules, providers, and booking progress.
           </p>
         </div>
 
-        {/* Error */}
+        {/* Error Notification */}
         {error && (
           <div className="mb-6 rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600 dark:text-red-400">
             {error}
@@ -192,11 +178,9 @@ export default function MyBookings() {
         )}
 
         {/* Summary */}
-        {bookings.length > 0 && (
-          <BookingSummary bookings={bookings} />
-        )}
+        {bookings.length > 0 && <BookingSummary bookings={bookings} />}
 
-        {/* Bookings */}
+        {/* Bookings List */}
         {bookings.length > 0 ? (
           <div className="space-y-5">
             {bookings.map((booking, index) => (
@@ -205,7 +189,7 @@ export default function MyBookings() {
                 booking={booking}
                 index={index}
                 onReview={setSelectedBooking}
-                onCancel={setBookingToCancel}
+                onCancel={(id) => setBookingToCancel(id)}
               />
             ))}
           </div>
@@ -213,7 +197,7 @@ export default function MyBookings() {
           <BookingEmptyState />
         )}
 
-        {/* Review */}
+        {/* Review Modal */}
         {selectedBooking && (
           <ReviewModal
             isOpen={!!selectedBooking}
@@ -224,7 +208,7 @@ export default function MyBookings() {
           />
         )}
 
-        {/* Cancel */}
+        {/* Cancel Modal */}
         <DeleteModal
           isOpen={!!bookingToCancel}
           onClose={() => setBookingToCancel(null)}
@@ -233,13 +217,11 @@ export default function MyBookings() {
           description="Are you sure you want to cancel this booking request?"
         />
 
-        {/* Cancelling */}
+        {/* Cancelling Spinner Overlay */}
         {isCancelling && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/30 backdrop-blur-sm">
             <div className="rounded-2xl bg-white px-6 py-5 shadow-xl dark:bg-[#27272A]">
-              <p className="text-sm font-medium">
-                Cancelling booking...
-              </p>
+              <p className="text-sm font-medium">Cancelling booking...</p>
             </div>
           </div>
         )}

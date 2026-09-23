@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { FiChevronDown, FiSearch, FiSliders } from "react-icons/fi";
 
 const categories = [
@@ -13,15 +12,24 @@ const categories = [
   "Appliance Repair",
 ];
 
-const Filtering = () => {
-  const [category, setCategory] = useState("All Services");
-  const [sort, setSort] = useState("Popular");
+interface FilteringProps {
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+  searchQuery: string;
+  onSearchChange: (query: string) => void;
+}
 
+const Filtering = ({
+  selectedCategory,
+  onCategoryChange,
+  searchQuery,
+  onSearchChange,
+}: FilteringProps) => {
   return (
     <section className="mb-8">
       <div className="rounded-2xl border border-black/10 bg-[#FAF9F7] p-4 shadow-sm dark:border-white/10 dark:bg-[#18181B] sm:p-5">
         <div className="flex flex-col gap-4 lg:flex-row">
-          {/* Search */}
+          {/* Search Input */}
           <div className="relative flex-1">
             <FiSearch
               size={18}
@@ -30,12 +38,14 @@ const Filtering = () => {
 
             <input
               type="text"
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
               placeholder="Search services..."
               className="h-12 w-full rounded-xl border border-black/10 bg-white pl-11 pr-4 text-sm text-[#1C1917] outline-none transition-all placeholder:text-[#1C1917]/50 focus:border-[#15803D] dark:border-white/10 dark:bg-[#27272A] dark:text-[#F4F4F5] dark:placeholder:text-[#A1A1AA]/60 dark:focus:border-[#22C55E]"
             />
           </div>
 
-          {/* Category */}
+          {/* Category Select Dropdown */}
           <div className="relative lg:w-52">
             <FiSliders
               size={16}
@@ -43,8 +53,8 @@ const Filtering = () => {
             />
 
             <select
-              value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              value={selectedCategory}
+              onChange={(e) => onCategoryChange(e.target.value)}
               className="h-12 w-full appearance-none rounded-xl border border-black/10 bg-white pl-10 pr-10 text-sm font-medium text-[#1C1917] outline-none transition-all focus:border-[#15803D] dark:border-white/10 dark:bg-[#27272A] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
             >
               {categories.map((item) => (
@@ -64,11 +74,10 @@ const Filtering = () => {
             />
           </div>
 
-          {/* Sort */}
+          {/* Sort Dropdown */}
           <div className="relative lg:w-44">
             <select
-              value={sort}
-              onChange={(e) => setSort(e.target.value)}
+              defaultValue="Popular"
               className="h-12 w-full appearance-none rounded-xl border border-black/10 bg-white px-4 pr-10 text-sm font-medium text-[#1C1917] outline-none transition-all focus:border-[#15803D] dark:border-white/10 dark:bg-[#27272A] dark:text-[#F4F4F5] dark:focus:border-[#22C55E]"
             >
               <option className="bg-white dark:bg-[#27272A]">Popular</option>
@@ -89,17 +98,16 @@ const Filtering = () => {
           </div>
         </div>
 
-        {/* Category buttons */}
+        {/* Category Pill Buttons */}
         <div className="mt-4 flex gap-2 overflow-x-auto pb-1">
           {categories.map((item) => (
             <button
               key={item}
-              onClick={() => setCategory(item)}
-              className={`whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-300 ${
-                category === item
+              onClick={() => onCategoryChange(item)}
+              className={`whitespace-nowrap rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-300 ${selectedCategory === item
                   ? "bg-[#15803D] text-white dark:bg-[#22C55E] dark:text-[#18181B]"
                   : "bg-black/5 text-[#1C1917]/70 hover:bg-[#15803D]/10 hover:text-[#15803D] dark:bg-white/5 dark:text-[#A1A1AA] dark:hover:bg-[#22C55E]/10 dark:hover:text-[#22C55E]"
-              }`}
+                }`}
             >
               {item}
             </button>

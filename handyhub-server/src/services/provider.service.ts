@@ -10,24 +10,20 @@ import { IBooking, IService, ServiceAvailability } from "../types";
 
 /**
  * Valid lifecycle transitions for bookings.
- * Pending -> Accepted, Rejected, Cancelled
- * Accepted -> In Progress, Cancelled
- * In Progress -> Completed
+ * pending -> accepted, rejected, cancelled
+ * accepted -> in-progress, cancelled
+ * in-progress -> completed
  */
 const VALID_BOOKING_TRANSITIONS: Record<string, string[]> = {
-  Pending: ["Accepted", "Rejected", "Cancelled"],
-  Accepted: ["In Progress", "Cancelled"],
-  "In Progress": ["Completed"],
-  Completed: [],
-  Rejected: [],
-  Cancelled: [],
+  pending: ["accepted", "rejected", "cancelled"],
+  accepted: ["in-progress", "cancelled"],
+  "in-progress": ["completed"],
+  completed: [],
+  rejected: [],
+  cancelled: [],
 };
 
 export class ProviderService {
-  /**
-   * Retrieves all services created by a specific provider.
-   * @param providerId Unique identifier of the service provider.
-   */
   static async getProviderServices(providerId: string): Promise<IService[]> {
     return (await serviceCollection
       .find({ providerId })
@@ -35,11 +31,6 @@ export class ProviderService {
       .toArray()) as unknown as IService[];
   }
 
-  /**
-   * Retrieves a single service by ID, optionally verifying ownership.
-   * @param serviceId Service ObjectId string.
-   * @param providerId Optional provider ID to verify ownership.
-   */
   static async getServiceById(
     serviceId: string,
     providerId?: string
@@ -56,12 +47,6 @@ export class ProviderService {
     return (await serviceCollection.findOne(query)) as unknown as IService | null;
   }
 
-  /**
-   * Creates a new service under the authenticated provider's account.
-   * Validates mandatory fields and initial state.
-   * @param providerId Provider ID from authenticated session.
-   * @param serviceData Payload containing service attributes.
-   */
   static async addService(
     providerId: string,
     serviceData: Partial<IService>
@@ -106,7 +91,6 @@ export class ProviderService {
       };
     }
 
-    // Validate and sanitize availability shape
     const validatedAvailability: ServiceAvailability = {
       status:
         availability?.status === "busy" || availability?.status === "by-appointment"
@@ -143,14 +127,6 @@ export class ProviderService {
     return { _id: result.insertedId, ...newDoc } as unknown as IService;
   }
 
-
-  /**
-   * Updates an existing service owned by the provider.
-   * Enforces strict ownership checks and protects immutable fields.
-   * @param providerId Authenticated provider ID.
-   * @param serviceId Service ID to update.
-   * @param updateData Fields to be updated.
-   */
   static async updateService(
     providerId: string,
     serviceId: string,
@@ -202,11 +178,6 @@ export class ProviderService {
     return updated as unknown as IService;
   }
 
-  /**
-   * Deletes a service owned by the provider.
-   * @param providerId Authenticated provider ID.
-   * @param serviceId Service ID to delete.
-   */
   static async deleteService(providerId: string, serviceId: string): Promise<boolean> {
     if (!ObjectId.isValid(serviceId)) {
       throw { status: 400, code: "INVALID_ID", message: "Invalid service ID format" };
@@ -233,12 +204,6 @@ export class ProviderService {
     return result.deletedCount === 1;
   }
 
-  /**
-   * Updates only the availability configuration for a specific service.
-   * @param providerId Authenticated provider ID.
-   * @param serviceId Target service ID.
-   * @param availability New availability schedule and status.
-   */
   static async updateServiceAvailability(
     providerId: string,
     serviceId: string,
@@ -272,16 +237,14 @@ export class ProviderService {
 
   /**
    * Lists bookings assigned to the authenticated provider, with optional status filtering.
-   * @param providerId Authenticated provider ID.
-   * @param status Optional status to filter by (e.g. "Pending", "In Progress").
    */
   static async getAssignedBookings(
     providerId: string,
     status?: string
   ): Promise<IBooking[]> {
     const query: Record<string, unknown> = { providerId };
-    if (status && status !== "All") {
-      query.status = status;
+    if (status && status !== "All" && status !== "all") {
+      query.status = status.toLowerCase();
     }
 
     return (await bookingCollection
@@ -292,11 +255,8 @@ export class ProviderService {
 
   /**
    * Updates booking status while strictly enforcing the state machine lifecycle.
-   * Lifecycle: Pending -> Accepted -> In Progress -> Completed
-   * Terminal branches: Rejected / Cancelled from Pending / Accepted.
-   * @param providerId Authenticated provider ID.
-   * @param bookingId Booking identifier.
-   * @param targetStatus Target state to transition to.
+   * Lifecycle: pending -> accepted -> in-progress -> completed
+   * Terminal branches: rejected / cancelled from pending / accepted.
    */
   static async updateBookingStatus(
     providerId: string,
@@ -320,21 +280,21 @@ export class ProviderService {
       };
     }
 
-    const currentStatus = (booking.status as string) || "Pending";
-    const allowedNext = VALID_BOOKING_TRANSITIONS[currentStatus] || [];
+    const currentStatus = ((booking.status as string) || "pending").toLowerCase();
+const normalizedTarget = targetStatus.toLowerCase().replace(/\s+/g, "-");    const allowedNext = VALID_BOOKING_TRANSITIONS[currentStatus] || [];
 
-    if (!allowedNext.includes(targetStatus)) {
+    if (!allowedNext.includes(normalizedTarget)) {
       throw {
         status: 400,
         code: "INVALID_STATUS_TRANSITION",
-        message: `Cannot transition booking from '${currentStatus}' to '${targetStatus}'. Allowed transitions: ${allowedNext.length > 0 ? allowedNext.join(", ") : "None (terminal state)"
+        message: `Cannot transition booking from '${currentStatus}' to '${normalizedTarget}'. Allowed transitions: ${allowedNext.length > 0 ? allowedNext.join(", ") : "None (terminal state)"
           }`,
       };
     }
 
     await bookingCollection.updateOne(
       { _id: new ObjectId(bookingId) },
-      { $set: { status: targetStatus, updatedAt: new Date() } }
+      { $set: { status: normalizedTarget, updatedAt: new Date() } }
     );
 
     const updated = await bookingCollection.findOne({ _id: new ObjectId(bookingId) });
@@ -343,7 +303,6 @@ export class ProviderService {
 
   /**
    * Aggregates statistics for the provider's overview dashboard.
-   * @param providerId Authenticated provider ID.
    */
   static async getProviderStats(providerId: string) {
     const services = await serviceCollection.find({ providerId }).toArray();
@@ -351,14 +310,14 @@ export class ProviderService {
 
     const totalServices = services.length;
     const activeServices = services.filter((s) => s.status === "active").length;
-    const pendingBookings = bookings.filter((b) => b.status === "Pending").length;
+    const pendingBookings = bookings.filter((b) => b.status === "pending").length;
     const activeJobs = bookings.filter(
-      (b) => b.status === "Accepted" || b.status === "In Progress"
+      (b) => b.status === "accepted" || b.status === "in-progress"
     ).length;
-    const completedBookings = bookings.filter((b) => b.status === "Completed").length;
+    const completedBookings = bookings.filter((b) => b.status === "completed").length;
 
     const estimatedRevenue = bookings
-      .filter((b) => b.status === "Completed")
+      .filter((b) => b.status === "completed")
       .reduce((sum, b) => sum + (Number(b.price) || 0), 0);
 
     return {
@@ -371,4 +330,3 @@ export class ProviderService {
     };
   }
 }
-

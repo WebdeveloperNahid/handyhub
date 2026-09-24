@@ -5,7 +5,7 @@
   "scripts": {
     "start": "tsx index.ts",
     "dev": "nodemon --exec tsx index.ts",
-     "build": "tsc"
+    "build": "tsc"
   },
   "keywords": [],
   "author": "",

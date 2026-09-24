@@ -16,7 +16,8 @@ export default function BookingSummary({
 
   const inProgress = bookings.filter(
     (booking) =>
-      booking.status?.toLowerCase() === "in progress",
+      booking.status?.toLowerCase() === "accepted" ||
+      booking.status?.toLowerCase() === "in-progress",
   ).length;
 
   const completed = bookings.filter(

@@ -9,6 +9,7 @@ import dotenv from "dotenv";
 import { dbMiddleware } from "./src/config/db";
 import authRoutes from "./src/routes/auth.routes";
 import customerRoutes from "./src/routes/customer.routes";
+import customerBookingRoutes from "./src/routes/customerBooking.routes";
 import providerRoutes from "./src/routes/provider.routes";
 import adminRoutes from "./src/routes/admin.routes";
 import profileRoutes from "./src/routes/profile.routes";
@@ -59,6 +60,7 @@ app.get("/", (req: Request, res: Response) => {
 // Modular Routes
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/customer", customerRoutes);
+app.use("/api/v1/customer", customerBookingRoutes);
 app.use("/api/v1/provider", providerRoutes);
 app.use("/api/v1/admin", adminRoutes);
 app.use("/api/v1/ai", aiRoutes);

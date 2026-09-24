@@ -6,3 +6,5 @@ plan.md
 dist/
 src/**/*.js
 index.js
+
+dist

@@ -80,7 +80,7 @@ export class CustomerBookingService {
             updatedAt: new Date(),
         };
 
-        console.log("NEW BOOKING DATA:", newBooking);
+        // console.log("NEW BOOKING DATA:", newBooking);
         // await bookingCollection.insertOne(newBooking);
         const result =
             await bookingCollection.insertOne(

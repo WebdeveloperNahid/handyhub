@@ -28,7 +28,8 @@ export default function MyBookings() {
   const [bookingToCancel, setBookingToCancel] = useState<string | null>(null);
   const [isCancelling, setIsCancelling] = useState(false);
 
-  // Fetch actual bookings & filter out already cancelled ones
+  // Fetch bookings & keep only the ACTIVE ones here
+  // (completed / cancelled / rejected -> Booking History page)
   useEffect(() => {
     if (sessionLoading) return;
 
@@ -45,9 +46,12 @@ export default function MyBookings() {
         const response = await getMyBookings(session.session.token);
         const rawData = response?.data || [];
 
-        // Active bookings filter (cancelled gula list theke bad jabe)
+        // Active bookings filter (completed/cancelled/rejected History page e jabe)
         const activeBookings = rawData.filter(
-          (item: Booking) => item.status !== "cancelled"
+          (item: Booking) =>
+            item.status !== "cancelled" &&
+            item.status !== "completed" &&
+            item.status !== "rejected"
         );
 
         setBookings(activeBookings);
@@ -96,7 +100,7 @@ export default function MyBookings() {
       // 1. API Request to Cancel
       await cancelBooking(idToRemove, session.session.token);
 
-      // 2. Filter out the cancelled booking from the state (UI theke card delete hoye jabe)
+      // 2. Cancel howa booking ke list theke bad dao (Booking History te dekha jabe)
       setBookings((prev) =>
         prev.filter((booking) => String(booking._id) !== String(idToRemove))
       );

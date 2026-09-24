@@ -24,27 +24,4 @@ export class CustomerController {
     }
   }
 
-  static async createBooking(req: Request, res: Response) {
-    try {
-      const customerId = req.user?._id?.toString();
-      const bookingData = { ...req.body, customerId };
-      const result = await CustomerService.createBooking(bookingData);
-      return res.status(201).json({ success: true, data: result });
-    } catch (error) {
-      return res.status(500).json({ message: "Failed to create booking", error });
-    }
-  }
-
-  static async getMyBookings(req: Request, res: Response) {
-    try {
-      const customerId = req.user?._id?.toString();
-      if (!customerId) {
-        return res.status(401).json({ message: "unauthorized access" });
-      }
-      const bookings = await CustomerService.getCustomerBookings(customerId);
-      return res.status(200).json({ success: true, data: bookings });
-    } catch (error) {
-      return res.status(500).json({ message: "Failed to fetch bookings", error });
-    }
-  }
 }

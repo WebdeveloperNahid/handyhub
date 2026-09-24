@@ -1,3 +1,5 @@
+"use client";
+
 import { motion } from "framer-motion";
 import {
   FiCalendar,
@@ -13,7 +15,8 @@ import {
 export type BookingStatus =
   | "pending"
   | "accepted"
-  | "in progress"
+  | "rejected"
+  | "in-progress"
   | "completed"
   | "cancelled";
 
@@ -55,7 +58,10 @@ export default function BookingCard({
       case "accepted":
         return "border-blue-500/20 bg-blue-500/10 text-blue-600 dark:text-blue-400";
 
-      case "in progress":
+      case "rejected":
+        return "border-red-500/20 bg-red-500/10 text-red-600 dark:text-red-400";
+
+      case "in-progress":
         return "border-purple-500/20 bg-purple-500/10 text-purple-600 dark:text-purple-400";
 
       case "completed":
@@ -71,7 +77,7 @@ export default function BookingCard({
 
   const formatStatus = (status: string) =>
     status
-      .split(" ")
+      .split(/[\s-]+/)
       .map(
         (word) =>
           word.charAt(0).toUpperCase() + word.slice(1),
@@ -199,7 +205,13 @@ export default function BookingCard({
             </span>
           )}
 
-          {status === "in progress" && (
+          {status === "rejected" && (
+            <span className="text-xs font-medium text-red-600 dark:text-red-400">
+              This booking was rejected by the provider.
+            </span>
+          )}
+
+          {status === "in-progress" && (
             <span className="inline-flex items-center gap-2 text-xs font-semibold text-purple-600 dark:text-purple-400">
               <FiRefreshCw size={15} />
               Service in progress

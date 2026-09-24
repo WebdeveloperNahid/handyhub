@@ -26,7 +26,7 @@ export class CustomerBookingService {
         customerId: string,
         bookingData: CreateBookingData,
     ) {
-        console.log("🔥 CUSTOMER BOOKING SERVICE CALLED");
+        // console.log("🔥 CUSTOMER BOOKING SERVICE CALLED");
         const {
             serviceId,
             serviceName,

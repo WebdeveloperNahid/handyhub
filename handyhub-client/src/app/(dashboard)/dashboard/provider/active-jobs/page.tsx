@@ -63,14 +63,16 @@ export default function ActiveJobsPage() {
     await loadJobs(false);
   };
 
+  const isInProgress = (st?: string) =>
+    st === "in progress" || st === "in_progress" || st === "in-progress";
 
   const filteredJobs = bookings.filter((b) => {
     const st = b.status?.toLowerCase();
     if (selectedTab === "All Active") {
-      return st === "accepted" || st === "in progress" || st === "in_progress";
+      return st === "accepted" || isInProgress(st);
     }
     if (selectedTab === "In Progress") {
-      return st === "in progress" || st === "in_progress";
+      return isInProgress(st);
     }
     if (selectedTab === "Accepted") {
       return st === "accepted";
@@ -81,8 +83,8 @@ export default function ActiveJobsPage() {
     return true;
   });
 
-  const inProgressCount = bookings.filter(
-    (b) => b.status?.toLowerCase() === "in progress" || b.status?.toLowerCase() === "in_progress"
+  const inProgressCount = bookings.filter((b) =>
+    isInProgress(b.status?.toLowerCase())
   ).length;
 
   const acceptedCount = bookings.filter((b) => b.status?.toLowerCase() === "accepted").length;

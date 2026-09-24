@@ -32,6 +32,7 @@ export interface ServiceFormValues {
   duration: string;
   image: string;
   status: ServiceStatus;
+  availability?: Partial<ServiceAvailability>;
 }
 
 export const SERVICE_CATEGORIES: ServiceCategory[] = [

@@ -105,7 +105,6 @@ const ServiceDetail = ({
                         <ServiceIncluded />
                     </div>
 
-                    {/* Right Booking */}
                     <div className="h-full min-h-full">
                         <div className="sticky top-24 self-start">
                             <BookingSidebar service={service} />

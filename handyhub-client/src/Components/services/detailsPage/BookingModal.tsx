@@ -145,9 +145,16 @@ const BookingModal = ({
 
                 {/* Booking Date */}
                 <div className="mt-5">
-                    <label className="mb-2 block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]">
-                        Booking Date
-                    </label>
+                    <div className="mb-2 flex items-center justify-between">
+                        <label className="block text-sm font-medium text-[#1C1917] dark:text-[#F4F4F5]">
+                            Booking Date
+                        </label>
+                        {service.availability?.days && service.availability.days.length > 0 && (
+                            <span className="text-[11px] text-[#15803D] dark:text-[#22C55E]">
+                                Open: {service.availability.days.join(", ")}
+                            </span>
+                        )}
+                    </div>
 
                     <div className="relative">
                         <FiCalendar

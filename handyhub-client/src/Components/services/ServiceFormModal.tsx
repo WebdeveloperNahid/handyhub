@@ -21,6 +21,24 @@ interface ServiceFormModalProps {
   initialService?: ProviderService | null;
 }
 
+const DAYS_OF_WEEK = [
+  { short: "Mon", full: "Monday" },
+  { short: "Tue", full: "Tuesday" },
+  { short: "Wed", full: "Wednesday" },
+  { short: "Thu", full: "Thursday" },
+  { short: "Fri", full: "Friday" },
+  { short: "Sat", full: "Saturday" },
+  { short: "Sun", full: "Sunday" },
+];
+
+const normalizeDay = (day: string) => {
+  const d = day.trim().toLowerCase();
+  const match = DAYS_OF_WEEK.find(
+    (item) => item.short.toLowerCase() === d || item.full.toLowerCase() === d
+  );
+  return match ? match.short : day;
+};
+
 const emptyForm: ServiceFormValues = {
   title: "",
   category: SERVICE_CATEGORIES[0],
@@ -29,6 +47,9 @@ const emptyForm: ServiceFormValues = {
   duration: "",
   image: "",
   status: "active",
+  availability: {
+    days: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+  },
 };
 
 type FormErrors = Partial<Record<keyof ServiceFormValues, string>>;
@@ -52,6 +73,12 @@ export default function ServiceFormModal({
     if (!isOpen) return;
 
     if (initialService) {
+      const rawDays = initialService.availability?.days;
+      const normalizedDays =
+        Array.isArray(rawDays) && rawDays.length > 0
+          ? rawDays.map(normalizeDay)
+          : ["Mon", "Tue", "Wed", "Thu", "Fri"];
+
       setValues({
         title: initialService.title ?? "",
         category: initialService.category ?? SERVICE_CATEGORIES[0],
@@ -60,6 +87,10 @@ export default function ServiceFormModal({
         duration: initialService.duration ?? "",
         image: initialService.image ?? "",
         status: initialService.status ?? "active",
+        availability: {
+          ...initialService.availability,
+          days: normalizedDays,
+        },
       });
     } else {
       setValues(emptyForm);
@@ -70,11 +101,27 @@ export default function ServiceFormModal({
 
   if (!isOpen) return null;
 
-  const handleChange = (field: keyof ServiceFormValues, value: string) => {
+  const handleChange = (field: keyof ServiceFormValues, value: unknown) => {
     setValues((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) {
       setErrors((prev) => ({ ...prev, [field]: undefined }));
     }
+  };
+
+  const toggleDay = (shortDay: string) => {
+    const currentDays = (values.availability?.days || []).map(normalizeDay);
+    const exists = currentDays.includes(shortDay);
+    const updatedDays = exists
+      ? currentDays.filter((d) => d !== shortDay)
+      : [...currentDays, shortDay];
+
+    setValues((prev) => ({
+      ...prev,
+      availability: {
+        ...prev.availability,
+        days: updatedDays,
+      },
+    }));
   };
 
   const handleImagePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -299,6 +346,39 @@ export default function ServiceFormModal({
                   <option value="active">Active</option>
                   <option value="inactive">Inactive</option>
                 </select>
+              </div>
+            </div>
+
+            {/* Available Working Days */}
+            <div>
+              <div className="mb-2 flex items-center justify-between">
+                <label className="block text-xs font-semibold text-[#1C1917]/70 dark:text-[#A1A1AA]">
+                  Available Working Days
+                </label>
+                <span className="text-[11px] text-[#1C1917]/50 dark:text-[#A1A1AA]/60">
+                  Select all that apply
+                </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {DAYS_OF_WEEK.map((item) => {
+                  const isSelected = (values.availability?.days || [])
+                    .map(normalizeDay)
+                    .includes(item.short);
+                  return (
+                    <button
+                      key={item.short}
+                      type="button"
+                      onClick={() => toggleDay(item.short)}
+                      className={`min-w-11 rounded-xl px-3 py-1.5 text-xs font-semibold transition-all ${
+                        isSelected
+                          ? "bg-[#15803D] text-white shadow-sm dark:bg-[#15803D] dark:text-white"
+                          : "border border-black/10 bg-white text-[#1C1917]/70 hover:border-black/20 dark:border-white/10 dark:bg-[#18181B] dark:text-[#A1A1AA] dark:hover:border-white/20"
+                      }`}
+                    >
+                      {item.short}
+                    </button>
+                  );
+                })}
               </div>
             </div>
 

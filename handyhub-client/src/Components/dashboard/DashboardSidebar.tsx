@@ -92,11 +92,7 @@ export function DashboardSidebar() {
       label: "Add Service",
       href: "/dashboard/provider/add-service",
     },
-    {
-      icon: Calendar,
-      label: "Availability",
-      href: "/dashboard/provider/availability",
-    },
+    
     {
       icon: ListCheck,
       label: "Incoming Requests",

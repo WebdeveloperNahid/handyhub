@@ -6,7 +6,7 @@ export type ServiceCategory =
   | "Home Repair"
   | "Appliance Repair";
 
-export type ServiceStatus = "active" | "inactive";
+export type ServiceStatus = "active" | "inactive" | "pending";
 
 export interface ProviderService {
   _id: string;

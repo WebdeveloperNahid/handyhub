@@ -14,13 +14,16 @@ export default function AllServicesPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
 
+  // State management for Filter and Search
+  const [selectedCategory, setSelectedCategory] = useState("All Services");
+  const [searchQuery, setSearchQuery] = useState("");
+
   useEffect(() => {
     let isMounted = true;
     getAllServices()
       .then((res) => {
         if (!isMounted) return;
         const data = res?.data || (Array.isArray(res) ? res : []);
-        // Extra safeguard: only show active services
         const activeServices = data.filter(
           (service: ProviderService) => service.status === "active"
         );
@@ -39,16 +42,42 @@ export default function AllServicesPage() {
     };
   }, []);
 
-  // Compute pagination based on active services
-  const totalPages = Math.ceil(services.length / ITEMS_PER_PAGE) || 1;
+  // Filter Services by Category and Search Input
+  const filteredServices = useMemo(() => {
+    return services.filter((service) => {
+      const matchesCategory =
+        selectedCategory === "All Services" ||
+        selectedCategory === "All" ||
+        service.category?.toLowerCase() === selectedCategory.toLowerCase();
+
+      const matchesSearch =
+        service.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        service.description?.toLowerCase().includes(searchQuery.toLowerCase());
+
+      return matchesCategory && matchesSearch;
+    });
+  }, [services, selectedCategory, searchQuery]);
+
+  // Pagination based on filtered results
+  const totalPages = Math.ceil(filteredServices.length / ITEMS_PER_PAGE) || 1;
   const paginatedServices = useMemo(() => {
     const start = (currentPage - 1) * ITEMS_PER_PAGE;
-    return services.slice(start, start + ITEMS_PER_PAGE);
-  }, [services, currentPage]);
+    return filteredServices.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredServices, currentPage]);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
     window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  const handleCategoryChange = (category: string) => {
+    setSelectedCategory(category);
+    setCurrentPage(1);
+  };
+
+  const handleSearchChange = (query: string) => {
+    setSearchQuery(query);
+    setCurrentPage(1);
   };
 
   return (
@@ -70,7 +99,12 @@ export default function AllServicesPage() {
         </div>
 
         {/* Filtering */}
-        <Filtering />
+        <Filtering
+          selectedCategory={selectedCategory}
+          onCategoryChange={handleCategoryChange}
+          searchQuery={searchQuery}
+          onSearchChange={handleSearchChange}
+        />
 
         {/* Service Cards */}
         <ServiceCard services={paginatedServices} isLoading={isLoading} />

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSession } from "@/lib/auth-client";
 import {
     CalendarDays,
     CheckCircle2,
@@ -8,73 +9,89 @@ import {
     XCircle,
 } from "lucide-react";
 
+import { getMyBookings } from "@/lib/booking_API";
+
 import BookingHistoryTable from "./BookingHistoryTable";
 import BookingHistoryPagination from "./BookingHistoryPagination";
 
 export interface Booking {
     id: string;
     serviceName: string;
+    serviceImage?: string;
     providerName: string;
     date: string;
     price: number;
-    status: "Completed" | "Cancelled";
+    status: "Completed" | "Cancelled" | "Rejected";
+}
+
+interface RawBooking {
+    _id: string;
+    serviceName?: string;
+    serviceTitle?: string;
+    serviceImage?: string;
+    providerName?: string;
+    bookingDate: string;
+    price: number;
+    status?: string;
 }
 
 const BookingHistory = () => {
-    const [bookings] = useState<Booking[]>([
-        {
-            id: "BK-001",
-            serviceName: "Home Cleaning",
-            providerName: "John Doe",
-            date: "Sep 18, 2026",
-            price: 1200,
-            status: "Completed",
-        },
-        {
-            id: "BK-002",
-            serviceName: "AC Repair",
-            providerName: "Rahim Ahmed",
-            date: "Sep 15, 2026",
-            price: 1800,
-            status: "Completed",
-        },
-        {
-            id: "BK-003",
-            serviceName: "Plumbing Service",
-            providerName: "Karim Hasan",
-            date: "Sep 10, 2026",
-            price: 900,
-            status: "Completed",
-        },
-        {
-            id: "BK-004",
-            serviceName: "Electrician Service",
-            providerName: "Sakib Khan",
-            date: "Sep 05, 2026",
-            price: 1500,
-            status: "Cancelled",
-        },
-        {
-            id: "BK-005",
-            serviceName: "Painting Service",
-            providerName: "Hasan Ali",
-            date: "Aug 30, 2026",
-            price: 2500,
-            status: "Cancelled",
-        },
-        {
-            id: "BK-006",
-            serviceName: "Gardening Service",
-            providerName: "Rafiq Ahmed",
-            date: "Aug 25, 2026",
-            price: 1000,
-            status: "Completed",
-        },
-    ]);
+    const { data: session, isPending: sessionLoading } = useSession();
+
+    const [bookings, setBookings] = useState<Booking[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState("");
 
     const [currentPage, setCurrentPage] = useState(1);
-
     const itemsPerPage = 5;
+
+    useEffect(() => {
+        if (sessionLoading) return;
+
+        if (!session?.session?.token) {
+            setIsLoading(false);
+            return;
+        }
+
+        const fetchHistory = async () => {
+            try {
+                setIsLoading(true);
+                setError("");
+
+                const response = await getMyBookings(session.session.token);
+                const rawData: RawBooking[] = response?.data || [];
+
+                const historyBookings: Booking[] = rawData
+                    .filter((item) =>
+                        ["completed", "cancelled", "rejected"].includes(
+                            item.status?.toLowerCase() || ""
+                        )
+                    )
+                    .map((item) => ({
+                        id: item._id,
+                        serviceName: item.serviceName || item.serviceTitle || "Service",
+                        serviceImage: item.serviceImage,
+                        providerName: item.providerName || "Provider",
+                        date: item.bookingDate,
+                        price: item.price,
+                        status: (item.status!.charAt(0).toUpperCase() +
+                            item.status!.slice(1).toLowerCase()) as Booking["status"],
+                    }));
+
+                setBookings(historyBookings);
+            } catch (err) {
+                setError(
+                    err instanceof Error
+                        ? err.message
+                        : "Failed to load booking history."
+                );
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchHistory();
+    }, [session, sessionLoading]);
 
     const totalPages = Math.ceil(bookings.length / itemsPerPage);
 
@@ -88,8 +105,17 @@ const BookingHistory = () => {
     ).length;
 
     const cancelledBookings = bookings.filter(
-        (booking) => booking.status === "Cancelled"
+        (booking) => booking.status === "Cancelled" || booking.status === "Rejected"
     ).length;
+
+    if (sessionLoading || isLoading) {
+        return (
+            <div className="space-y-4">
+                <div className="h-8 w-48 animate-pulse rounded bg-gray-200 dark:bg-zinc-700" />
+                <div className="h-40 animate-pulse rounded-2xl bg-gray-100 dark:bg-zinc-800" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-7">
@@ -120,6 +146,12 @@ const BookingHistory = () => {
                     <span>{bookings.length} Total Bookings</span>
                 </div>
             </div>
+
+            {error && (
+                <div className="rounded-2xl border border-red-500/20 bg-red-500/10 px-5 py-4 text-sm text-red-600 dark:text-red-400">
+                    {error}
+                </div>
+            )}
 
             {/* Summary */}
             {bookings.length > 0 && (
@@ -174,7 +206,7 @@ const BookingHistory = () => {
                 </div>
             )}
 
-            {/* History Table */}
+            {/* History List */}
             {bookings.length === 0 ? (
                 <div className="rounded-2xl border border-black/[0.06] bg-white px-6 py-20 text-center dark:border-white/[0.06] dark:bg-[#18181B]">
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-2xl bg-[#15803D]/10 text-[#15803D] dark:bg-[#22C55E]/10 dark:text-[#22C55E]">

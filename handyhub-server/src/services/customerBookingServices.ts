@@ -26,7 +26,7 @@ export class CustomerBookingService {
         customerId: string,
         bookingData: CreateBookingData,
     ) {
-        console.log("🔥 CUSTOMER BOOKING SERVICE CALLED");
+        // console.log("🔥 CUSTOMER BOOKING SERVICE CALLED");
         const {
             serviceId,
             serviceName,
@@ -80,8 +80,8 @@ export class CustomerBookingService {
             updatedAt: new Date(),
         };
 
-        console.log("NEW BOOKING DATA:", newBooking);
-        await bookingCollection.insertOne(newBooking);
+        // console.log("NEW BOOKING DATA:", newBooking);
+        // await bookingCollection.insertOne(newBooking);
         const result =
             await bookingCollection.insertOne(
                 newBooking,

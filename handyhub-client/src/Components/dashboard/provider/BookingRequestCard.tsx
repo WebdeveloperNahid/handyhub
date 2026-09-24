@@ -8,7 +8,6 @@ import {
   MapPin,
   User,
   Phone,
-  Mail,
   CheckCircle2,
   XCircle,
   PlayCircle,
@@ -20,8 +19,8 @@ import toast from "react-hot-toast";
 import type { Booking, BookingStatus } from "@/types/index";
 import BookingStatusBadge from "./BookingStatusBadge";
 
-// Database field types matching your MongoDB schema
-interface DatabaseBooking extends Omit<Booking, "status"> {
+// Fixed DatabaseBooking interface resolving price and _id conflicts
+interface DatabaseBooking extends Omit<Booking, "status" | "_id" | "price"> {
   _id?: string;
   status?: BookingStatus | string;
   serviceName?: string;
@@ -133,7 +132,7 @@ export function BookingRequestCard({
                   </span>
                 )}
               </div>
-              <BookingStatusBadge status={booking.status as BookingStatus} />
+              <BookingStatusBadge status={(booking.status || "Pending") as BookingStatus} />
             </div>
 
             {/* Dynamic Title From DB */}

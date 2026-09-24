@@ -114,7 +114,6 @@ export function DashboardSidebar() {
     { icon: House, label: "Overview", href: "/dashboard/admin" },
     { icon: Person, label: "Manage Users", href: "/dashboard/admin/manage-users" },
     { icon: Briefcase, label: "Manage Services", href: "/dashboard/admin/manage-services" },
-    { icon: Boxes3, label: "Manage Categories", href: "/dashboard/admin/manage-categories" },
     { icon: LuCircleUserRound, label: "Profile", href: "/dashboard/admin/profile" },
   ];
 
